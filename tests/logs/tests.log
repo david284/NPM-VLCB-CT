@@ -1,0 +1,162 @@
+13:22:34.603 debug	Mock CBUS Network: Starting
+13:22:34.607 info	Connecting to 127.0.0.1:5550
+
+13:22:34.615 debug	Mock CBUS Network: remote client 1 at port : 65184
+13:22:34.615 debug	MERGLCB: Client Connected at port 5550
+13:22:34.617 info	 
+13:22:34.618 info	======================================================================
+13:22:34.618 info	----------------------- MERGLCB unit tests -------------------
+13:22:34.618 info	======================================================================
+13:22:34.618 info	 
+13:22:34.622 info	 
+13:22:34.623 info	UNIT TEST: BEGIN RQNN test
+13:22:34.623 debug	Mock CBUS Network: node 0 request start setup
+13:22:34.624 debug	Mock CBUS Network: Output RQNN (50) Node 0
+13:22:34.624 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N500000;
+13:22:34.625 debug	MERGLCB: Test client: data received :SB780N500000; RQNN (50) Node 0
+13:22:34.626 info	MERGLCB: module 0 in setup mode 
+13:22:34.933 info	UNIT TEST: RQNN ended
+13:22:34.933 debug	Mock CBUS Network: node 0 request exit setup
+13:22:34.936 info	 
+13:22:34.937 info	UNIT TEST: BEGIN RQNN test
+13:22:34.937 debug	Mock CBUS Network: node 1 request start setup
+13:22:34.938 debug	Mock CBUS Network: Output RQNN (50) Node 1
+13:22:34.938 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N500001;
+13:22:34.938 debug	MERGLCB: Test client: data received :SB780N500001; RQNN (50) Node 1
+13:22:34.939 info	MERGLCB: module 1 in setup mode 
+13:22:35.240 info	UNIT TEST: RQNN ended
+13:22:35.241 debug	Mock CBUS Network: node 1 request exit setup
+13:22:35.243 info	 
+13:22:35.243 info	UNIT TEST: BEGIN RQNN test
+13:22:35.244 debug	Mock CBUS Network: node 65535 request start setup
+13:22:35.244 debug	Mock CBUS Network: Output RQNN (50) Node 65535
+13:22:35.244 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N50FFFF;
+13:22:35.245 debug	MERGLCB: Test client: data received :SB780N50FFFF; RQNN (50) Node 65535
+13:22:35.245 info	MERGLCB: module 65535 in setup mode 
+13:22:35.550 info	UNIT TEST: RQNN ended
+13:22:35.550 debug	Mock CBUS Network: node 65535 request exit setup
+13:22:35.552 info	 
+13:22:35.553 info	UNIT TEST: BEGIN RQNP test
+13:22:35.553 debug	Mock CBUS Network: node 0 request start setup
+13:22:35.553 debug	Mock CBUS Network: Output RQNN (50) Node 0
+13:22:35.554 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N500000;
+13:22:35.554 debug	MERGLCB: BEGIN RQNP test
+13:22:35.555 debug	MERGLCB: Test client: data received :SB780N500000; RQNN (50) Node 0
+13:22:35.556 info	MERGLCB: module 0 in setup mode 
+13:22:35.556 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:35.557 debug	Mock CBUS Network: Receive <<<< STANDARD ID message RQNP (10)
+13:22:35.557 debug	Mock CBUS Network: Output PARAMS (EF) param1 165 param2 117 param3 3 param4 0 param5 0 param6 0 param7 2
+13:22:35.557 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780NEFA5750300000002;
+13:22:35.557 debug	MERGLCB: Test client: data received :SB780NEFA5750300000002; PARAMS (EF) param1 165 param2 117 param3 3 param4 0 param5 0 param6 0 param7 2
+13:22:35.767 debug	MERGLCB: Found message PARAMS
+13:22:35.767 info	MERGLCB: RQNP passed
+13:22:35.768 info	      RQNP: Manufacturer’s Id : 165
+13:22:35.768 info	      RQNP: Minor Version  : 117
+13:22:35.768 info	      RQNP: Module Type      : 3
+13:22:35.768 info	      RQNP: No. of events supported  : 0
+13:22:35.768 info	      RQNP: No. of Event Variables per event : 0
+13:22:35.768 info	      RQNP: No. of Node Variables  : 0
+13:22:35.769 info	      RQNP: Major Version  : 2
+13:22:35.859 info	UNIT TEST: RQNP ended
+13:22:35.860 debug	Mock CBUS Network: node 0 request exit setup
+13:22:35.861 info	 
+13:22:35.862 info	UNIT TEST: BEGIN RQMN test
+13:22:35.863 debug	MERGLCB: BEGIN RQMN test
+13:22:35.864 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:35.864 debug	Mock CBUS Network: Receive <<<< STANDARD ID message RQMN (11)
+13:22:35.866 debug	Mock CBUS Network: Output NAME (E2) name CANTEST
+13:22:35.866 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780NE243414e54455354;
+13:22:35.867 debug	MERGLCB: Test client: data received :SB780NE243414e54455354; NAME (E2) name CANTEST
+13:22:36.076 debug	MERGLCB: Found message NAME
+13:22:36.076 info	MERGLCB: RQMN passed
+13:22:36.076 info	      RQMN: Name  : CANTEST
+13:22:36.168 info	UNIT TEST: RQMN ended
+13:22:36.170 info	 
+13:22:36.171 info	UNIT TEST: BEGIN SNN test
+13:22:36.171 debug	MERGLCB: BEGIN SNN test
+13:22:36.172 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:36.172 debug	Mock CBUS Network: Receive <<<< STANDARD ID message SNN (42) Node 0
+13:22:36.172 debug	Mock CBUS Network: received SNN : new Node Number 0
+13:22:36.173 debug	Mock CBUS Network: Output NNACK (52) Node 0
+13:22:36.173 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N520000;
+13:22:36.174 debug	MERGLCB: Test client: data received :SB780N520000; NNACK (52) Node 0
+13:22:36.384 debug	MERGLCB: Found message NNACK
+13:22:36.385 info	MERGLCB: SNN passed
+13:22:36.478 info	UNIT TEST: SNN ended
+13:22:36.480 info	 
+13:22:36.481 info	UNIT TEST: BEGIN QNN test
+13:22:36.481 debug	MERGLCB: BEGIN QNN test
+13:22:36.482 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:36.483 debug	Mock CBUS Network: Receive <<<< STANDARD ID message QNN (0D)
+13:22:36.483 debug	Mock CBUS Network: received QNN
+13:22:36.483 debug	Mock CBUS Network: Output PNN (B6) Node 0 Manufacturer Id 165 Module Id 3 Flags 7
+13:22:36.484 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780NB60000A50307;
+13:22:36.484 debug	Mock CBUS Network: Output PNN (B6) Node 1 Manufacturer Id 165 Module Id 19 Flags 7
+13:22:36.484 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780NB60001A51307;
+13:22:36.485 debug	Mock CBUS Network: Output PNN (B6) Node 65535 Manufacturer Id 165 Module Id 32 Flags 7
+13:22:36.485 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780NB6FFFFA52007;
+13:22:36.486 debug	MERGLCB: Test client: data received :SB780NB60000A50307; PNN (B6) Node 0 Manufacturer Id 165 Module Id 3 Flags 7
+13:22:36.486 debug	MERGLCB: Test client: data received :SB780NB60001A51307; PNN (B6) Node 1 Manufacturer Id 165 Module Id 19 Flags 7
+13:22:36.486 debug	MERGLCB: Test client: data received :SB780NB6FFFFA52007; PNN (B6) Node 65535 Manufacturer Id 165 Module Id 32 Flags 7
+13:22:36.695 info	PNN (B6) Node 0 Manufacturer Id 165 Module Id 3 Flags 7
+13:22:36.696 info	MERGLCB: QNN passed
+13:22:36.696 info	PNN (B6) Node 1 Manufacturer Id 165 Module Id 19 Flags 7
+13:22:36.696 info	PNN (B6) Node 65535 Manufacturer Id 165 Module Id 32 Flags 7
+13:22:36.787 info	UNIT TEST: QNN ended
+13:22:36.789 info	 
+13:22:36.790 info	UNIT TEST:: BEGIN RQNPN test
+13:22:36.790 debug	MERGLCB: Get Param 0
+13:22:36.791 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:36.792 debug	Mock CBUS Network: Receive <<<< STANDARD ID message RQNPN (73) Node 0 Node parameter Index 0
+13:22:36.792 debug	Mock CBUS Network: received RQNPN
+13:22:36.792 debug	Mock CBUS Network: Output PARAN (9B) Node 0 Parameter Index 0 Parameter Value 8
+13:22:36.793 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N9B00000008;
+13:22:36.793 debug	MERGLCB: Test client: data received :SB780N9B00000008; PARAN (9B) Node 0 Parameter Index 0 Parameter Value 8
+13:22:36.897 debug	MERGLCB: Found message PARAN
+13:22:36.897 info	MERGLCB: RQNPN index 0 passed
+13:22:36.897 debug	MERGLCB: RQNPN value 8
+13:22:37.097 info	UNIT TEST: RQNPN ended
+13:22:37.099 info	 
+13:22:37.100 info	UNIT TEST:: BEGIN RQNPN test
+13:22:37.100 debug	MERGLCB: Get Param 1
+13:22:37.101 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:37.101 debug	Mock CBUS Network: Receive <<<< STANDARD ID message RQNPN (73) Node 0 Node parameter Index 1
+13:22:37.101 debug	Mock CBUS Network: received RQNPN
+13:22:37.101 debug	Mock CBUS Network: Output PARAN (9B) Node 0 Parameter Index 1 Parameter Value 165
+13:22:37.102 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N9B000001A5;
+13:22:37.102 debug	MERGLCB: Test client: data received :SB780N9B000001A5; PARAN (9B) Node 0 Parameter Index 1 Parameter Value 165
+13:22:37.205 debug	MERGLCB: Found message PARAN
+13:22:37.205 info	MERGLCB: RQNPN index 1 passed
+13:22:37.205 debug	MERGLCB: RQNPN value 165
+13:22:37.407 info	UNIT TEST: RQNPN ended
+13:22:37.408 info	 
+13:22:37.409 info	UNIT TEST:: BEGIN RQNPN test
+13:22:37.409 debug	MERGLCB: Get Param 7
+13:22:37.410 debug	Mock CBUS Network: Receive <<<< Port: 65184
+13:22:37.410 debug	Mock CBUS Network: Receive <<<< STANDARD ID message RQNPN (73) Node 0 Node parameter Index 7
+13:22:37.410 debug	Mock CBUS Network: received RQNPN
+13:22:37.411 debug	Mock CBUS Network: Output PARAN (9B) Node 0 Parameter Index 7 Parameter Value 2
+13:22:37.411 debug	Mock CBUS Network: Transmit >>>> Port: 65184 Data: :SB780N9B00000702;
+13:22:37.411 debug	MERGLCB: Test client: data received :SB780N9B00000702; PARAN (9B) Node 0 Parameter Index 7 Parameter Value 2
+13:22:37.516 debug	MERGLCB: Found message PARAN
+13:22:37.516 info	MERGLCB: RQNPN index 7 passed
+13:22:37.516 debug	MERGLCB: RQNPN value 2
+13:22:37.716 info	UNIT TEST: RQNPN ended
+13:22:37.718 info	 
+13:22:37.719 debug	MERGLCB: BEGIN test_harness
+13:22:37.825 debug	MERGLCB: test_harness timeout done
+13:22:37.825 debug	MERGLCB: test_function
+13:22:38.027 info	UNIT TEST: Harness ended
+13:22:38.029 info	 
+13:22:38.031 debug	MERGLCB: retrieved_values : {"NAME":"CANTEST","Manufacturer’s Id":"165","Major Version":"2","Minor Version":"117"}
+13:22:38.032 info	MERGLCB: module descriptor file read succesfully : CANTEST_165_2_117.json
+13:22:38.032 debug	UNIT TEST: Module Descriptor : {"NAME":"CANTEST","nodeParameters":{"0":{"name":"Number of parameters","value":"8"},"1":{"name":"Manufacturer’s Id","value":"165"},"2":{"name":"Minor Version","value":"165"},"3":{"name":"Module Type","value":"3"},"4":{"name":"No. of events supported","value":"0"},"5":{"name":"No. of Event Variables per event","value":"0"},"6":{"name":"No. of Node Variables","value":"0"},"7":{"name":"Major Version","value":"2"},"8":{"name":"Node Flags","value":"13"}}}
+13:22:38.033 debug	UNIT TEST: Module Descriptor : "Number of parameters"
+13:22:38.033 info	UNIT TEST: module_descriptor_read ended
+13:22:38.034 info	 
+13:22:38.035 debug	MERGLCB: retrieved_values : "./module_descriptors/does_not_exist.json"
+13:22:38.035 debug	MERGLCB: module descriptor file read failed : Error: ./module_descriptors/undefined_undefined_undefined_undefined.json: ENOENT: no such file or directory, open './module_descriptors/undefined_undefined_undefined_undefined.json'
+13:22:38.035 info	MERGLCB: failed to read module descriptor file : undefined_undefined_undefined_undefined.json
+13:22:38.036 info	UNIT TEST: module_descriptor_read ended
+13:22:38.151 info	 
+13:22:38.152 info	UNIT TEST: tests finished 

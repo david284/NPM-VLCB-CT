@@ -1,0 +1,44 @@
+{
+	"NAME" : "CANTEST",
+	"nodeParameters": {
+		"0": {
+			"name" : "Number of parameters",
+			"value" : 8
+		},
+		"1": {
+			"name" : "Manufacturer’s Id",
+			"value" : 165
+		},
+		"2": {
+			"name" : "Minor Version",
+			"value" : 117
+		},
+		"3": {
+			"name" : "Module Type",
+			"value" : 3
+		},
+		"4": {
+			"name" : "No. of events supported",
+			"value" : 0
+		},
+		"5": {
+			"name" : "No. of Event Variables per event",
+			"value" : 0
+		},
+		"6": {
+			"name" : "No. of Node Variables",
+			"value" : 0
+		},
+		"7": {
+			"name" : "Major Version",
+			"value" : 2
+		},
+		"8": {
+			"name" : "Node Flags",
+			"value" : 13
+		}
+	}
+}
+
+
+
