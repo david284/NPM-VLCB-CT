@@ -1,9 +1,11 @@
 'use strict';
-var winston = require('winston');		// use config from root instance
+const winston = require('winston');		// use config from root instance
 const net = require('net');
 const io = require('socket.io-client');
 const jsonfile = require('jsonfile')
-var cbusLib = require('cbuslibrary');
+const cbusLib = require('cbuslibrary');
+const MNS = require('./MinimumNodeServiceTests.js');
+
 
 var NodeParameterText = [
     "Number of parameters",		        // 0
