@@ -6,8 +6,10 @@ const itParam = require('mocha-param');
 const net = require('net')
 const cbusLib = require('cbusLibrary');
 const fs = require('fs')
-const cbus_tests = require('./../cbus_tests.js')
 const Mock_Cbus = require('./mock_CbusNetwork.js')
+const IP_Network = require('./../ip_network.js')
+const MNS_tests = require('./../MinimumNodeServiceTests.js');
+
 // Assert style
 var assert = require('chai').assert;
 
@@ -18,7 +20,9 @@ const NET_ADDRESS = "127.0.0.1"
 
 describe('MERGLCB tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-    let target = new cbus_tests.cbus_tests(NET_ADDRESS, NET_PORT);
+	let  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+	let target = new MNS_tests.MinimumNodeServiceTests(Network);
+
     // targets have their own timeouts, so need to reflect that and add a little bit
     // to ensure the unti tests don't timeout first
     let test_timeout = target.response_time + 100;
@@ -35,6 +39,7 @@ describe('MERGLCB tests', function(){
     
     beforeEach (function() {
    		winston.info({message: ' '});   // blank line to separate tests
+		Network.messagesIn = [];
     })
 
 	after(function(done) {
@@ -68,6 +73,7 @@ describe('MERGLCB tests', function(){
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
         mock_Cbus.enterSetup(value.nodeNumber);
 		setTimeout(function(){
+			target.checkForRQNN();
             expect(target.inSetupMode).to.equal(true);
             expect(target.test_nodeNumber).to.equal(value.nodeNumber);
             winston.info({message: 'UNIT TEST: RQNN ended'});
