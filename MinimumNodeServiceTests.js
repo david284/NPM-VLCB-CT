@@ -97,7 +97,6 @@ class MinimumNodeServiceTests {
 		
         winston.info({message: ' '});                       // blank line to separate tests
         winston.info({message: 'Test run finished - Passed count : ' + this.passed_count});                       // blank line to separate tests
-		this.network.closeConnection()
     }
 
     sleep(timeout) {

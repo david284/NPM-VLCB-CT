@@ -20,7 +20,17 @@ let  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
 let MNS = new MNS_tests.MinimumNodeServiceTests(Network);
 
-MNS.runTests();
+// Block to call tests to ensure they run in sequence
+async function runtests() {
+	await (MNS.runTests());
+
+	// tests done, close connection
+	Network.closeConnection()
+	winston.info({message: 'MERGLCB: End of test sequence'});
+}
+
+// actually invoke block of tests
+runtests();
 
 
 
