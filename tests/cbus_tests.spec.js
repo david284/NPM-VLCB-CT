@@ -9,6 +9,7 @@ const fs = require('fs')
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const MNS_tests = require('./../MinimumNodeServiceTests.js');
+const fetch_file = require('./../fetch_module_descriptor.js')
 
 // Assert style
 var assert = require('chai').assert;
@@ -176,7 +177,7 @@ describe('MERGLCB tests', function(){
 		retrieved_values["Major Version"] = '2';
 		retrieved_values["Minor Version"]  = '117';
 		
-        var module_descriptor = target.module_descriptor_read(retrieved_values);
+        var module_descriptor = fetch_file.module_descriptor(retrieved_values);
         assert.exists(module_descriptor, 'module_descriptor is either `null` nor `undefined`');
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor.nodeParameters["0"].name)}`});
@@ -184,7 +185,7 @@ describe('MERGLCB tests', function(){
     })
 
 	it("test_module_descriptor_read_fail", function () {
-        var module_descriptor = target.module_descriptor_read('./module_descriptors/does_not_exist.json');
+        var module_descriptor = fetch_file.module_descriptor('./module_descriptors/does_not_exist.json');
         assert.notExists(module_descriptor, 'module_descriptor is neither `null` nor `undefined`');
 
         winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
