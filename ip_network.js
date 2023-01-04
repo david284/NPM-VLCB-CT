@@ -9,6 +9,7 @@ const cbusLib = require('cbuslibrary');
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
+// const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
 class IP_Network {

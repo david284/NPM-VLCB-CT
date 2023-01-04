@@ -1,7 +1,14 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
-const jsonfile = require('jsonfile')
 const cbusLib = require('cbuslibrary');
+const fetch_file = require('./fetch_module_descriptor.js')
+
+// Scope:
+// variables declared outside of the class are 'global' to this module only
+// callbacks need a bind(this) option to allow access to the class members
+// let has block scope (or global if top level)
+// var has function scope (or global if top level)
+// const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
 var NodeParameterText = [
@@ -23,24 +30,16 @@ var retrieved_values = {};
 // JSON array of expected module values to test against
 var module_descriptor;
 
-// Scope:
-// variables declared outside of the class are 'global' to this module only
-// callbacks need a bind(this) option to allow access to the class members
-// let has block scope (or global if top level)
-// var has function scope (or global if top level)
-
 
 class MinimumNodeServiceTests {
 
-
     constructor(NETWORK) {
+		this.network = NETWORK;
         this.hasTestPassed = false;
         this.inSetupMode = false;
         this.test_nodeNumber = 0;
         this.response_time = 200;
         this.passed_count = 0;
-		
-		this.network = NETWORK;
     }
 
 
@@ -66,7 +65,7 @@ class MinimumNodeServiceTests {
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 			// so fetch matching module descriptor file
-			module_descriptor = this.module_descriptor_read(retrieved_values); 			
+			module_descriptor = fetch_file.module_descriptor(retrieved_values); 			
 			
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
@@ -339,34 +338,7 @@ class MinimumNodeServiceTests {
 
         winston.debug({message: 'MERGLCB: test_function'});
     }
-
-//
-// module_descriptor_read
-//
-// Synchronous file read, so will block execution till completed, so no timeouts needed
-// input - json array with values retrieved from module under test
-//
-	module_descriptor_read(retrieved_values)
-	{
-		
-		try {
-			winston.debug({message: `MERGLCB: retrieved_values : ${JSON.stringify(retrieved_values)}`});
-			// use values retrieved from module to create filename
-			var filename = retrieved_values["NAME"] + '_' + 
-			retrieved_values["Manufacturer’s Id"] + '_' + 
-			retrieved_values["Major Version"] + '_' + 
-			retrieved_values["Minor Version"] +
-			'.json';
-
-			const module_descriptor = jsonfile.readFileSync('./module_descriptors/' + filename)
-			winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
-			return module_descriptor;
-		} catch (err) {
-			winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
-			winston.info({message: `MERGLCB: failed to read module descriptor file : ` + filename});
-		}
-		winston.debug({message: '-'});
-	}
+	
 
 }
 
