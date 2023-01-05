@@ -40,6 +40,7 @@ class MinimumNodeServiceTests {
         this.test_nodeNumber = 0;
         this.response_time = 200;
         this.passed_count = 0;
+		this.failed_count = 0;
     }
 
 
@@ -99,7 +100,7 @@ class MinimumNodeServiceTests {
         }
 		
         winston.info({message: ' '});                       // blank line to separate tests
-        winston.info({message: 'Test run finished - Passed count : ' + this.passed_count});                       // blank line to separate tests
+        winston.info({message: 'Test run finished - Passed count : ' + this.passed_count + ' Failed count : ' + this.failed_count});
     }
 
     sleep(timeout) {
@@ -154,7 +155,6 @@ class MinimumNodeServiceTests {
                     var message = this.getMessage('PARAMS');
                     if (message.mnemonic == "PARAMS"){
                         winston.info({message: 'MERGLCB: RQNP passed'});
-                        this.passed_count++;
                         this.hasTestPassed = true;
 						retrieved_values [NodeParameterText[1]] = message.param1;
 						retrieved_values [NodeParameterText[2]] = message.param2;
@@ -172,7 +172,13 @@ class MinimumNodeServiceTests {
                         winston.info({message: '      RQNP: ' + NodeParameterText[7] + '  : ' + message.param7});
                     }
                 }
-                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: RQNP failed'}); }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: RQNP passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: RQNP failed'});
+					this.failed_count++;
+				}
 				winston.debug({message: '-'});
                 resolve();
                 ;} , this.response_time
@@ -192,13 +198,18 @@ class MinimumNodeServiceTests {
                     var message = this.getMessage('NAME');
                     if (message.mnemonic == "NAME"){
                         winston.info({message: 'MERGLCB: RQMN passed'});
-                        this.passed_count++;
                         this.hasTestPassed = true;
 						retrieved_values ["NAME"] = message.name;
                         winston.info({message: '      RQMN: Name  : ' + message.name});
                     }
                 }
-                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: RQMN failed'}); }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: RQMN passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: RQMN failed'});
+					this.failed_count++;
+				}
 				winston.debug({message: '-'});
                 resolve();
                 ;} , this.response_time
@@ -219,12 +230,17 @@ class MinimumNodeServiceTests {
                     if (message.mnemonic == "NNACK"){
                         if (message.nodeNumber == this.test_nodeNumber) {
                             winston.info({message: 'MERGLCB: SNN passed'});
-                            this.passed_count++;
                             this.hasTestPassed = true;
                         }
                     }
                 }
-                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: SNN failed'}); }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: SNN passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: SNN failed'});
+					this.failed_count++;
+				}
 				winston.debug({message: '-'});
                 resolve();
                 ;} , this.response_time
@@ -248,14 +264,19 @@ class MinimumNodeServiceTests {
 						if (msg.mnemonic == "PNN"){
 							if (msg.nodeNumber == test_node_number){
 								winston.info({message: 'MERGLCB: QNN passed'});
-								this.passed_count++;
 								this.hasTestPassed = true;
 							}
 						}
 					});
 				}
 				
-                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: QNN failed'}); }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: QNN passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: QNN failed'});
+					this.failed_count++;
+				}
 				winston.debug({message: '-'});
                 resolve();
                 ;} , this.response_time
@@ -307,6 +328,7 @@ class MinimumNodeServiceTests {
 					this.passed_count++;
 				} else {
 					winston.info({message: 'MERGLCB: RQNPN failed'});
+					this.failed_count++;
 				}
 				winston.debug({message: '-'});
                 resolve();
@@ -326,26 +348,27 @@ class MinimumNodeServiceTests {
             setTimeout(()=>{
 					
                 if (this.network.messagesIn.length > 0){
-					
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						winston.info({message: msg.text});
 						if (msg.mnemonic == "SD"){
-							winston.info({message: 'MERGLCB: received ' + JSON.stringify(msg)});
 							if (msg.nodeNumber == NodeNumber){
-								winston.info({message: 'MERGLCB: RQSD passed'});
-								this.passed_count++;
 								this.hasTestPassed = true;
 							}
 							else{
-								winston.info({message: 'MERGLCB: RQSD failed - node number - received : ' + msg.nodeNumber + " expected : " + NodeNumber});
-
+								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + NodeNumber});
 							}
 						}
 					});
 				}
 				
-                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: RQSD failed'}); }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: RQSD passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: RQSD failed'});
+					this.failed_count++;
+				}
 				winston.debug({message: '-'});
                 resolve();
                 ;} , this.response_time

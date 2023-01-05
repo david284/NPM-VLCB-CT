@@ -229,7 +229,11 @@ class mock_CbusNetwork {
             case '78':
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});
                 // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
-				this.outputSD(cbusMsg.nodeNumber);
+				if (cbusMsg.ServiceNumber == 0) {
+					this.outputSD(cbusMsg.nodeNumber, 0);
+					this.outputSD(cbusMsg.nodeNumber, 1);
+					this.outputSD(cbusMsg.nodeNumber, 255);
+				}
 				break;
             case '90':
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
@@ -400,9 +404,8 @@ class mock_CbusNetwork {
 	}
 
 	// 8C
-	outputSD(nodeNumber) {
+	outputSD(nodeNumber, ServiceNumber) {
 		// SD Format: [<MjPri><MinPri=3><CANID>]<8C><NN hi><NN lo><ServiceNumber><ServiceVersion>
-		var ServiceNumber = 1;
 		var ServiceVersion = 2;
 		var msgData = cbusLib.encodeSD(nodeNumber, ServiceNumber, ServiceVersion);
         this.broadcast(msgData)
