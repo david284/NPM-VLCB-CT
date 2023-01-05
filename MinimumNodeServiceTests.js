@@ -350,7 +350,6 @@ class MinimumNodeServiceTests {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						winston.info({message: msg.text});
 						if (msg.mnemonic == "SD"){
 							if (msg.nodeNumber == NodeNumber){
 								this.hasTestPassed = true;

@@ -179,7 +179,7 @@ describe('MERGLCB tests', function(){
 
 
     //
-    itParam("RQSD test parameterIndex ${value.ServiceIndex}", GetTestCase_RQSD(), function (done, value) {
+    itParam("RQSD test ServiceIndex ${value.ServiceIndex}", GetTestCase_RQSD(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
         var result = mns_tests.test_RQSD(0, value.ServiceIndex);
 		setTimeout(function(){
