@@ -226,6 +226,10 @@ class mock_CbusNetwork {
                 var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
                 this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
                 break;
+            case '78':
+                winston.debug({message: 'Mock CBUS Network: received RQSD'});
+                // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
+				break;
             case '90':
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received ACON'});

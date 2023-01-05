@@ -1,7 +1,6 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
-const fetch_file = require('./fetch_module_descriptor.js')
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -11,41 +10,24 @@ const fetch_file = require('./fetch_module_descriptor.js')
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
-var NodeParameterText = [
-    "Number of parameters",		        // 0
-    "Manufacturer’s Id",                // 1
-    "Minor Version",                    // 2
-    "Module Type",                      // 3
-    "No. of events supported",          // 4
-    "No. of Event Variables per event", // 5
-    "No. of Node Variables",            // 6
-    "Major Version",                    // 7
-	"Node Flags"						// 8
-    ];
-	
-
-// storage for values retrieved from module under test	
-var retrieved_values = {};
-
-// JSON array of expected module values to test against
-var module_descriptor;
-
 
 class ExampleTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
         this.hasTestPassed = false;
-        this.inSetupMode = false;
-        this.test_nodeNumber = 0;
-        this.response_time = 200;
         this.passed_count = 0;
     }
 
-
+	//
+	// runTests is an async function so that the 'await' command can be used
+	// This is need to ensure that the flow  waits for each test to complete before moving to the next test
+	// Each test typically has a timeout to wait for a response from the module under test
+	//
     async runTests() {
         winston.info({message: 'MERGLCB: example tests'});
 		
+        await this.sleep(1000);								// example of a delay
         await this.test_harness();
 		
         winston.info({message: ' '});                       // blank line to separate tests
@@ -62,34 +44,16 @@ class ExampleTests {
         });
     }
 	
-
-    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
-                break;
-            }
-        }
-        if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
-    
-        
     
     test_harness()
     {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN test_harness'});
             this.hasTestPassed = false;
+			// would typically be sending a command to the module under test here
 			
             setTimeout(()=>{
+				// would typically be checking that a response has been received from the module under test here
                 winston.debug({message: 'MERGLCB: test_harness timeout done'});
                 this.test_function();
 				this.passed_count++;
@@ -102,7 +66,6 @@ class ExampleTests {
     }
 
     test_function(){
-
         winston.debug({message: 'MERGLCB: test_function'});
     }
 	

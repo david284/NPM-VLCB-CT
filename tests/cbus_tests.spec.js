@@ -10,6 +10,8 @@ const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const MNS_tests = require('./../MinimumNodeServiceTests.js');
 const fetch_file = require('./../fetch_module_descriptor.js')
+const example_tests = require('./../exampletests.js');
+
 
 // Assert style
 var assert = require('chai').assert;
@@ -22,11 +24,13 @@ const NET_ADDRESS = "127.0.0.1"
 describe('MERGLCB tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
-	let target = new MNS_tests.MinimumNodeServiceTests(Network);
+	let mns_tests = new MNS_tests.MinimumNodeServiceTests(Network);
+	const examples = new example_tests.ExampleTests(Network);
 
-    // targets have their own timeouts, so need to reflect that and add a little bit
+
+    // mns_testss have their own timeouts, so need to reflect that and add a little bit
     // to ensure the unti tests don't timeout first
-    let test_timeout = target.response_time + 100;
+    let test_timeout = mns_tests.response_time + 100;
 
 	before(function() {
 		winston.info({message: ' '});
@@ -55,6 +59,13 @@ describe('MERGLCB tests', function(){
             }, 100);
 		}, 100);
     });
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// 				Testing Minimum Node Services (MNS) 
+//
+
 	
 
     function GetTestCase_RQNN() {
@@ -74,9 +85,9 @@ describe('MERGLCB tests', function(){
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
         mock_Cbus.enterSetup(value.nodeNumber);
 		setTimeout(function(){
-			target.checkForRQNN();
-            expect(target.inSetupMode).to.equal(true);
-            expect(target.test_nodeNumber).to.equal(value.nodeNumber);
+			mns_tests.checkForRQNN();
+            expect(mns_tests.inSetupMode).to.equal(true);
+            expect(mns_tests.test_nodeNumber).to.equal(value.nodeNumber);
             winston.info({message: 'UNIT TEST: RQNN ended'});
             mock_Cbus.exitSetup(value.nodeNumber);
 			done();
@@ -88,9 +99,9 @@ describe('MERGLCB tests', function(){
 	it("RQNP test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
         mock_Cbus.enterSetup(0);
-        var result = target.test_RQNP();
+        var result = mns_tests.test_RQNP();
 		setTimeout(function(){
-            expect(target.hasTestPassed).to.equal(true);
+            expect(mns_tests.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQNP ended'});
             mock_Cbus.exitSetup(0);
 			done();
@@ -101,9 +112,9 @@ describe('MERGLCB tests', function(){
     //
 	it("RQMN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
-        var result = target.test_RQMN();
+        var result = mns_tests.test_RQMN();
 		setTimeout(function(){
-            expect(target.hasTestPassed).to.equal(true);
+            expect(mns_tests.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQMN ended'});
 			done();
 		}, test_timeout);
@@ -113,10 +124,10 @@ describe('MERGLCB tests', function(){
     //
 	it("SNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
-        var result = target.test_SNN();
+        var result = mns_tests.test_SNN();
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: SNN ended'});
-            expect(target.hasTestPassed).to.equal(true);
+            expect(mns_tests.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);
 	})
@@ -124,10 +135,10 @@ describe('MERGLCB tests', function(){
     
 	it("QNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
-        var result = target.test_QNN(0);
+        var result = mns_tests.test_QNN(0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: QNN ended'});
-            expect(target.hasTestPassed).to.equal(true);
+            expect(mns_tests.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);
 	})
@@ -148,24 +159,55 @@ describe('MERGLCB tests', function(){
     //
     itParam("RQNPN test parameterIndex ${value.parameterIndex}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
-        var result = target.test_RQNPN(value.parameterIndex, test_module_descriptor);
+        var result = mns_tests.test_RQNPN(value.parameterIndex, test_module_descriptor);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQNPN ended'});
-            expect(target.hasTestPassed).to.equal(true);
+            expect(mns_tests.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);
 	})
 
 
+    function GetTestCase_RQSD() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 2; a++) {
+			if (a == 1) arg1 = 0;
+			testCases.push({'ServiceIndex':arg1});
+		}
+		return testCases;
+	}
+
+
+    //
+    itParam("RQSD test parameterIndex ${value.ServiceIndex}", GetTestCase_RQSD(), function (done, value) {
+		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
+        var result = mns_tests.test_RQSD(value.ServiceIndex);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: RQSD ended'});
+            expect(mns_tests.hasTestPassed).to.equal(true);
+			done();
+		}, test_timeout);
+	})
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// 						Testing examples tests
+//
+
     //
 	it("test_harness", function (done) {
-        target.test_harness();
+        examples.test_harness();
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: Harness ended'});
-            expect(target.hasTestPassed).to.equal(true);
+            expect(examples.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);
     })
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// 						Testing supporting functions
+//
 
     //
 	it("test_module_descriptor_read_pass", function () {

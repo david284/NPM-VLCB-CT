@@ -83,6 +83,9 @@ class MinimumNodeServiceTests {
 				}
 				
 				//
+				await this.test_RQSD(0);
+				
+				//
 				// Add more tests.......
 				//
 				
@@ -318,25 +321,39 @@ class MinimumNodeServiceTests {
     }
  
     
-    test_harness()
-    {
+    test_RQSD(ServiceIndex) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN test_harness'});
-			
+            //here our function should be implemented 
+            winston.debug({message: 'MERGLCB: BEGIN RQSD test'});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeRQSD(ServiceIndex);
+            this.network.write(msgData);
             setTimeout(()=>{
-                winston.debug({message: 'MERGLCB: test_harness timeout done'});
-                this.test_function();
+					
+                if (this.network.messagesIn.length > 0){
+					
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						winston.info({message: msg.text});
+						if (msg.mnemonic == "SD"){
+							if (msg.nodeNumber == test_node_number){
+								winston.info({message: 'MERGLCB: QNN passed'});
+								this.passed_count++;
+								this.hasTestPassed = true;
+							}
+						}
+					});
+				}
+				
+                if (!this.hasTestPassed){ winston.info({message: 'MERGLCB: RQSD failed'}); }
 				winston.debug({message: '-'});
                 resolve();
-                ;} , 100
+                ;} , this.response_time
             );
         }.bind(this));
     }
-
-    test_function(){
-
-        winston.debug({message: 'MERGLCB: test_function'});
-    }
+    
 	
 
 }
