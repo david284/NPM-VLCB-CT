@@ -16,7 +16,7 @@ const example_tests = require('./../exampletests.js');
 // Assert style
 var assert = require('chai').assert;
 
-const NET_PORT = 5550;
+const NET_PORT = 5555;
 const NET_ADDRESS = "127.0.0.1"
 
 
@@ -159,7 +159,7 @@ describe('MERGLCB tests', function(){
     //
     itParam("RQNPN test parameterIndex ${value.parameterIndex}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
-        var result = mns_tests.test_RQNPN(value.parameterIndex, test_module_descriptor);
+        var result = mns_tests.test_RQNPN(0, value.parameterIndex, test_module_descriptor);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQNPN ended'});
             expect(mns_tests.hasTestPassed).to.equal(true);
@@ -181,7 +181,7 @@ describe('MERGLCB tests', function(){
     //
     itParam("RQSD test parameterIndex ${value.ServiceIndex}", GetTestCase_RQSD(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
-        var result = mns_tests.test_RQSD(value.ServiceIndex);
+        var result = mns_tests.test_RQSD(0, value.ServiceIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
             expect(mns_tests.hasTestPassed).to.equal(true);

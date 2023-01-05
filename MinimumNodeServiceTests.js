@@ -75,15 +75,15 @@ class MinimumNodeServiceTests {
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command unfortunately
-				await this.test_RQNPN(0, module_descriptor);
+				await this.test_RQNPN(this.test_nodeNumber, 0, module_descriptor);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				for (var i=1; i<retrieved_values["Number of parameters"]+1; i++) {
-					await this.test_RQNPN(i, module_descriptor);
+					await this.test_RQNPN(this.test_nodeNumber, i, module_descriptor);
 				}
 				
 				//
-				await this.test_RQSD(0);
+				await this.test_RQSD(this.test_nodeNumber, 0);
 				
 				//
 				// Add more tests.......
@@ -144,7 +144,6 @@ class MinimumNodeServiceTests {
         
     test_RQNP() {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
@@ -183,7 +182,6 @@ class MinimumNodeServiceTests {
     
     test_RQMN() {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
@@ -210,7 +208,6 @@ class MinimumNodeServiceTests {
     
     test_SNN() {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: BEGIN SNN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
@@ -237,7 +234,6 @@ class MinimumNodeServiceTests {
     
     test_QNN(test_node_number) {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: BEGIN QNN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
@@ -267,13 +263,12 @@ class MinimumNodeServiceTests {
         }.bind(this));
     }
     
-    test_RQNPN(parameterIndex, module_descriptor) {
+    test_RQNPN(NodeNumber, parameterIndex, module_descriptor) {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: Get Param ' + parameterIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNPN(this.test_nodeNumber, parameterIndex);
+            var msgData = cbusLib.encodeRQNPN(NodeNumber, parameterIndex);
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
@@ -321,13 +316,12 @@ class MinimumNodeServiceTests {
     }
  
     
-    test_RQSD(ServiceIndex) {
+    test_RQSD(NodeNumber, ServiceIndex) {
         return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
             winston.debug({message: 'MERGLCB: BEGIN RQSD test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQSD(ServiceIndex);
+            var msgData = cbusLib.encodeRQSD(NodeNumber, ServiceIndex);
             this.network.write(msgData);
             setTimeout(()=>{
 					
@@ -337,10 +331,15 @@ class MinimumNodeServiceTests {
 						var msg = cbusLib.decode(element);
 						winston.info({message: msg.text});
 						if (msg.mnemonic == "SD"){
-							if (msg.nodeNumber == test_node_number){
-								winston.info({message: 'MERGLCB: QNN passed'});
+							winston.info({message: 'MERGLCB: received ' + JSON.stringify(msg)});
+							if (msg.nodeNumber == NodeNumber){
+								winston.info({message: 'MERGLCB: RQSD passed'});
 								this.passed_count++;
 								this.hasTestPassed = true;
+							}
+							else{
+								winston.info({message: 'MERGLCB: RQSD failed - node number - received : ' + msg.nodeNumber + " expected : " + NodeNumber});
+
 							}
 						}
 					});
