@@ -19,6 +19,7 @@ winston.info({message: ' MERGLCB Conformance Test '});
 // create network conenction for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
+
 // create instance of MNS tests
 const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
@@ -27,12 +28,16 @@ const examples = new example_tests.ExampleTests(Network);
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
 async function runtests() {
-	await (MNS.runTests());
+	// JSON array of module values to use within the tests - needs to be empty array so it's passed by reference
+	var module_descriptor = {a: 1};
+
+	module_descriptor = await (MNS.runTests(module_descriptor));
 	await (examples.runTests());
 
 	// tests done, close connection
 	Network.closeConnection()
 	winston.info({message: 'MERGLCB: End of test sequence'});
+	winston.info({message: 'MERGLCB: Module Descriptor ' + JSON.stringify(module_descriptor)});
 }
 
 // actually invoke block of tests

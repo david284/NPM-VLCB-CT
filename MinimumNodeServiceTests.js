@@ -27,9 +27,6 @@ var NodeParameterText = [
 // storage for values retrieved from module under test	
 var retrieved_values = {};
 
-// JSON array of expected module values to test against
-var module_descriptor;
-
 
 class MinimumNodeServiceTests {
 
@@ -66,7 +63,7 @@ class MinimumNodeServiceTests {
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 			// so fetch matching module descriptor file
-			module_descriptor = fetch_file.module_descriptor(retrieved_values); 			
+			var module_descriptor = fetch_file.module_descriptor(retrieved_values); 			
 			
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
@@ -101,6 +98,9 @@ class MinimumNodeServiceTests {
 		
         winston.info({message: ' '});                       // blank line to separate tests
         winston.info({message: 'Test run finished - Passed count : ' + this.passed_count + ' Failed count : ' + this.failed_count});
+		
+		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
+		return module_descriptor;
     }
 
     sleep(timeout) {
