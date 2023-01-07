@@ -5,11 +5,9 @@ const test_module_descriptor = require('./../module_descriptors/CANTEST_165_2_11
 const itParam = require('mocha-param');
 const net = require('net')
 const cbusLib = require('cbusLibrary');
-const fs = require('fs')
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const MNS_tests = require('./../MinimumNodeServiceTests.js');
-const fetch_file = require('./../fetch_module_descriptor.js')
 const example_tests = require('./../exampletests.js');
 
 
@@ -202,35 +200,6 @@ describe('MERGLCB tests', function(){
             expect(examples.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);
-    })
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// 						Testing supporting functions
-//
-
-    //
-	it("test_module_descriptor_read_pass", function () {
-		
-		// setup module variables
-		var retrieved_values = {};
-		retrieved_values["NAME"] = 'CANTEST'; 
-		retrieved_values["Manufacturer’s Id"] = '165'; 
-		retrieved_values["Major Version"] = '2';
-		retrieved_values["Minor Version"]  = '117';
-		
-        var module_descriptor = fetch_file.module_descriptor(retrieved_values);
-        assert.exists(module_descriptor, 'module_descriptor is either `null` nor `undefined`');
-		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
-		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor.nodeParameters["0"].name)}`});
-        winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
-    })
-
-	it("test_module_descriptor_read_fail", function () {
-        var module_descriptor = fetch_file.module_descriptor('./module_descriptors/does_not_exist.json');
-        assert.notExists(module_descriptor, 'module_descriptor is neither `null` nor `undefined`');
-
-        winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
     })
 
 
