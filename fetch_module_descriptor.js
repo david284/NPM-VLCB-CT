@@ -9,6 +9,49 @@ const jsonfile = require('jsonfile')
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
+var Template = 
+{
+	"NAME" : "",
+	"nodeParameters": {
+		"0": {
+			"name" : "Number of parameters",
+			"value" : 20
+		},
+		"1": {
+			"name" : "Manufacturer’s Id",
+			"value" : 165
+		},
+		"2": {
+			"name" : "Minor Version",
+			"value" : 250
+		},
+		"3": {
+			"name" : "Module Type",
+			"value" : 251
+		},
+		"4": {
+			"name" : "No. of events supported",
+			"value" : 252
+		},
+		"5": {
+			"name" : "No. of Event Variables per event",
+			"value" : 20
+		},
+		"6": {
+			"name" : "No. of Node Variables",
+			"value" : 20
+		},
+		"7": {
+			"name" : "Major Version",
+			"value" : 253
+		}
+	},
+	"services": {
+	}
+}
+
+
+
 
 //
 // fetch_module_descriptor
