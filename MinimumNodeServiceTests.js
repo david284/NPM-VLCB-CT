@@ -63,7 +63,7 @@ class MinimumNodeServiceTests {
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 			// so fetch matching module descriptor file
-			var module_descriptor = fetch_file.module_descriptor(retrieved_values); 			
+			var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', retrieved_values); 			
 			
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){

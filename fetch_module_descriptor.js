@@ -57,9 +57,10 @@ var Template =
 // fetch_module_descriptor
 //
 // Synchronous file read, so will block execution till completed, so no timeouts needed
-// input - json array with values retrieved from module under test
+// param 1 - file path to use
+// param 2 - json array with values retrieved from module under test
 //
-exports.module_descriptor = function module_descriptor(retrieved_values)
+exports.module_descriptor = function module_descriptor(file_path, retrieved_values)
 {
 	
 	try {
@@ -71,7 +72,7 @@ exports.module_descriptor = function module_descriptor(retrieved_values)
 		retrieved_values["Minor Version"] +
 		'.json';
 
-		const module_descriptor = jsonfile.readFileSync('./module_descriptors/' + filename)
+		const module_descriptor = jsonfile.readFileSync(file_path + filename)
 		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
 		return module_descriptor;
 	} catch (err) {
