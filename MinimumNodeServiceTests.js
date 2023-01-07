@@ -97,7 +97,7 @@ class MinimumNodeServiceTests {
         }
 		
         winston.info({message: ' '});                       // blank line to separate tests
-        winston.info({message: 'Test run finished - Passed count : ' + this.passed_count + ' Failed count : ' + this.failed_count});
+        winston.info({message: 'Test run finished \n Passed count : ' + this.passed_count + '\n\x1B[31m Failed count : ' + this.failed_count + '\x1B[37m'});
 		
 		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 		return module_descriptor;
