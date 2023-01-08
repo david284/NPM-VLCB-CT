@@ -1,7 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
-//const ServiceTypeNames = require('./ServiceTypeNames.js');
+const ServiceTypeNames = require('./ServiceTypeNames.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -23,18 +23,6 @@ var NodeParameterText = [
 	"Node Flags"						// 8
     ];
 
-
-const ServiceTypeNames = [
-    "Reserved",		        			// 0
-    "Minimum Node Service",             // 1
-    "Node Variable Service",            // 2
-    "CAN Service",                      // 3
-    "Teaching Service",          		// 4
-    "Producer Service", 				// 5
-    "Consumer Service"		            // 6
-    ];
-
-	
 
 class MinimumNodeServiceTests {
 

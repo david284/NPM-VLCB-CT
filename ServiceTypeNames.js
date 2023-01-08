@@ -1,6 +1,6 @@
 'use strict';
 
-var ServiceTypeNames = [
+module.exports = [
     "Reserved",		        			// 0
     "Minimum Node Service",             // 1
     "Node Variable Service",            // 2
