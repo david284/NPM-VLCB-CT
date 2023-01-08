@@ -58,7 +58,7 @@ describe('fetch_module_descriptor tests', function(){
 		retrieved_values["nodeParameters"]["2"]  = '117';
 		
         var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
-        assert.exists(module_descriptor, 'module_descriptor is either `null` nor `undefined`');
+        assert.exists(module_descriptor, 'test module_descriptor exists');
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor.nodeParameters["0"].name)}`});
         winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
@@ -73,11 +73,17 @@ describe('fetch_module_descriptor tests', function(){
 		retrieved_values["nodeParameters"]["1"] = '165'; 
 		retrieved_values["nodeParameters"]["7"] = '2';
 		retrieved_values["nodeParameters"]["2"]  = '117';
+		
+		// delete existing file if there
+		try {
+			fs.unlinkSync('./unit_tests/module_descriptors/UNKNOWN_165_2_117.json')
+		} catch (err) {
+		}
 
         var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
 		
-        assert.notExists(module_descriptor, 'module_descriptor is neither `null` nor `undefined`');
+        assert.exists(module_descriptor, 'test module_descriptor exists');
 
         winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
     })

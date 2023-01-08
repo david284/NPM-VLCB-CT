@@ -36,9 +36,14 @@ class MinimumNodeServiceTests {
 
 
     async runTests(retrieved_values, module_descriptor) {
-		winston.debug({message: '=======================================-=============================='});
-		winston.debug({message: '-------------------------- Minimum Node Service tests ----------------'});
-		winston.debug({message: '=======================================-=============================='});
+		winston.debug({message: ' '});
+		winston.debug({message: '========================================'});
+		//                       0123456789012345678998765432109876543210
+		winston.info({message: '------- Minimum Node Service tests ------'});
+		winston.debug({message: '========================================'});
+		winston.debug({message: ' '});
+		
+
 		
 		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
 		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});

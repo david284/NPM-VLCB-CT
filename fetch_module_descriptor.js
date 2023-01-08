@@ -36,9 +36,6 @@ var Template =
 		},
 		"7": {
 			"name" : "Major Version",
-		},
-		"8": {
-			"name" : "Flags",
 		}
 	},
 	"services": {
@@ -69,10 +66,11 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 		'.json';
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)
-		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
+		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename +'\n'});
 		return module_descriptor;
 	} catch (err) {
 		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
+		winston.debug({message: `MERGLCB: Building new module_descriptor : `});
 		module_descriptor = Template;
 		module_descriptor.NAME = retrieved_values["NAME"];
 		
@@ -81,8 +79,10 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 			module_descriptor["nodeParameters"][key]["value"] = retrieved_values["nodeParameters"][key];
 		}
 		
-		winston.info({message: `MERGLCB: failed to read module descriptor file : ` + filename});
+		// now write it to disk
+		jsonfile.writeFile(file_path + filename, module_descriptor);
+		
+		winston.info({message: `MERGLCB: New module descriptor file created : ` + filename +'\n'});
 		return module_descriptor;
 	}
-	winston.debug({message: '-'});
 }

@@ -26,8 +26,14 @@ class ExampleTests {
 	// Each test typically has a timeout to wait for a response from the module under test
 	//
     async runTests(retrieved_values, module_descriptor) {
-        winston.info({message: 'MERGLCB: example tests'});
+		winston.debug({message: ' '});
+		winston.debug({message: '========================================'});
+		//                       0123456789012345678998765432109876543210
+		winston.info({message: '------------- Example tests -------------'});
+		winston.debug({message: '========================================'});
+		winston.debug({message: ' '});
 		
+
         await this.sleep(1000);								// example of a delay
         await this.test_harness();
 		
