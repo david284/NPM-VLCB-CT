@@ -157,25 +157,31 @@ class MinimumNodeServiceTests {
 						// and fail the test if any of these tests fail
 						this.hasTestPassed = true;
 						
-						if (retrieved_values [parameterIndex] != null){
+						//start building an ouput string in case it fails
+						var fail_output = ' - parameter index : ' + parameterIndex +'\n';
+						fail_output += '  actual value : ' + message.parameterValue +'\n';
+						
+						if (retrieved_values["nodeParameters"][parameterIndex] != null){
+							fail_output += '  retrieved_value : ' + retrieved_values ["nodeParameters"][parameterIndex] +'\n';
 							// we have previously read this value, so check it's still the same
 							if ( retrieved_values ["nodeParameters"][parameterIndex] != message.parameterValue){
-								winston.info({message: 'MERGLCB: Node parameter failed retrieved value ' 
-												+ NodeParameterText[parameterIndex]});
 								this.hasTestPassed = false;
 							}
 						} else {
 							// new value, so save it
 							retrieved_values ["nodeParameters"][parameterIndex] = message.parameterValue;
+							winston.debug({message: 'MERGLCB: Node Parameter ' + parameterIndex + ' added to retrieved_values'});
 						}
 						
 						// if it's in the module_descriptor, we need to check we've read the same value
 						if (module_descriptor.nodeParameters[parameterIndex] != null) {
-							if ( module_descriptor.nodeParameters[parameterIndex].value != message.parameterValue) {
-								winston.info({message: 'MERGLCB: Node parameter failed module_descriptor value ' 
-												+ module_descriptor.nodeParameters[parameterIndex].name
-												+ ' expected : ' + module_descriptor.nodeParameters[parameterIndex].value });
-								this.hasTestPassed = false;
+							if (module_descriptor.nodeParameters[parameterIndex].value != null) {
+								fail_output += '  module_descriptor : ' + module_descriptor.nodeParameters[parameterIndex].value +'\n';
+								if ( module_descriptor.nodeParameters[parameterIndex].value != message.parameterValue) {
+									this.hasTestPassed = false;
+								}
+							} else {
+								winston.info({message: 'MERGLCB: Warning: No module_descriptor value entry for Node Parameter ' + parameterIndex});
 							}
 						} else {
 							winston.info({message: 'MERGLCB: Warning: No module_descriptor file entry for Node Parameter ' + parameterIndex});
@@ -187,7 +193,7 @@ class MinimumNodeServiceTests {
                     winston.debug({message: 'MERGLCB: RQNPN value ' + message.parameterValue});
 					this.passed_count++;
 				} else {
-					winston.info({message: 'MERGLCB: RQNPN failed'});
+					winston.info({message: 'MERGLCB: RQNPN failed ' + fail_output});
 					this.failed_count++;
 				}
 				winston.debug({message: '-'});
