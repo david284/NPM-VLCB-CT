@@ -23,7 +23,7 @@ winston.info({message: ' MERGLCB Conformance Test '});
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
 
-// create instance of MNS tests
+// create instances of tests
 const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
 const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
@@ -40,8 +40,10 @@ async function runtests() {
 	// so fetch matching module descriptor file
 	var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', retrieved_values); 			
 	
+	// now do all the other tests - passing in retrieved_values & module_descriptor
+	// capture returned retrieved_values as it may be updated
 	retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
-	await (examples.runTests());
+	retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
 
 	// tests done, close connection
 	Network.closeConnection()
