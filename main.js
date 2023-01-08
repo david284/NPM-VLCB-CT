@@ -45,10 +45,15 @@ async function runtests() {
 	retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
 	retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
 
+	// check that retrieved_values is still defined, and not lost by one of the tests
+	if (retrieved_values == null) {
+		winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
+	}
+	winston.debug({message: 'MERGLCB: retrieved_values ' + JSON.stringify(retrieved_values)});
+
 	// tests done, close connection
 	Network.closeConnection()
 	winston.info({message: 'MERGLCB: End of test sequence'});
-	winston.info({message: 'MERGLCB: retrieved_values ' + JSON.stringify(retrieved_values)});
 }
 
 // actually invoke block of tests

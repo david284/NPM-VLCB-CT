@@ -34,7 +34,7 @@ class IP_Network {
         }.bind(this));
         
         this.testClient.on('end', function () {
-            winston.info({message: 'MERGLCB: Client Disconnected at port ' + this.testClient.remotePort});
+            winston.debug({message: 'MERGLCB: Client Disconnected at port ' + this.testClient.remotePort});
         }.bind(this));
         
         this.testClient.on('error', function(err) {

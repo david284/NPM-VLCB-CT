@@ -17,6 +17,7 @@ class ExampleTests {
 		this.network = NETWORK;
         this.hasTestPassed = false;
         this.passed_count = 0;
+		this.failed_count = 0;
     }
 
 	//
@@ -24,14 +25,15 @@ class ExampleTests {
 	// This is need to ensure that the flow  waits for each test to complete before moving to the next test
 	// Each test typically has a timeout to wait for a response from the module under test
 	//
-    async runTests() {
+    async runTests(retrieved_values, module_descriptor) {
         winston.info({message: 'MERGLCB: example tests'});
 		
         await this.sleep(1000);								// example of a delay
         await this.test_harness();
 		
+        winston.info({message: 'Examples Test run finished \n Passed count : ' + this.passed_count + '\n\x1B[31m Failed count : ' + this.failed_count + '\x1B[37m'});
         winston.info({message: ' '});                       // blank line to separate tests
-        winston.info({message: 'Test run finished - Passed count : ' + this.passed_count});                       // blank line to separate tests
+		return retrieved_values;
     }
 
     sleep(timeout) {
