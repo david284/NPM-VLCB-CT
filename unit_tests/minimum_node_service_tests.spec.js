@@ -100,23 +100,18 @@ describe('Minimum Node Service tests', function(){
 	})
 
 
-    function GetTestCase_RQSD() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 2; a++) {
-			if (a == 1) arg1 = 0;
-			testCases.push({'ServiceIndex':arg1});
-		}
-		return testCases;
-	}
-
-
     //
-    itParam("RQSD test ServiceIndex ${value.ServiceIndex}", GetTestCase_RQSD(), function (done, value) {
+	it("RQSD test", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
-        var result = mns_tests.test_RQSD(0, value.ServiceIndex);
+		// storage for values retrieved from module under test	
+		var retrieved_values = {	"nodeNumber": 0	};
+        var result = mns_tests.test_RQSD(retrieved_values, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
+            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values)});
             expect(mns_tests.hasTestPassed).to.equal(true);
+			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
+			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
 			done();
 		}, test_timeout);
 	})

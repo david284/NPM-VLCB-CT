@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const ServiceTypeNames = require('./ServiceTypeNames.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -65,7 +66,7 @@ class MinimumNodeServiceTests {
 				}
 				
 				//
-				await this.test_RQSD(retrieved_values.nodeNumber, 0);
+				await this.test_RQSD(retrieved_values, 0);
 				
 				//
 				// Add more tests.......
@@ -209,24 +210,31 @@ class MinimumNodeServiceTests {
     }
  
     
-    test_RQSD(NodeNumber, ServiceIndex) {
+    test_RQSD(retrieved_values, ServiceIndex) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQSD test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQSD(NodeNumber, ServiceIndex);
+            var msgData = cbusLib.encodeRQSD(retrieved_values.nodeNumber, ServiceIndex);
             this.network.write(msgData);
+			if (retrieved_values["Services"] == null){
+				retrieved_values["Services"] = {};
+			}
             setTimeout(()=>{
 					
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						if (msg.mnemonic == "SD"){
-							if (msg.nodeNumber == NodeNumber){
+							if (msg.nodeNumber == retrieved_values.nodeNumber){
 								this.hasTestPassed = true;
+								retrieved_values["Services"][msg.ServiceIndex] = {};
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
 							}
 							else{
-								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + NodeNumber});
+								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
 							}
 						}
 					});
