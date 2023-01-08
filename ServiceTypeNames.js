@@ -7,5 +7,5 @@ var ServiceTypeNames = [
     "CAN Service",                      // 3
     "Teaching Service",          		// 4
     "Producer Service", 				// 5
-    "Consumer Service",		            // 6
+    "Consumer Service"		            // 6
     ];
