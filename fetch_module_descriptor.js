@@ -15,35 +15,30 @@ var Template =
 	"nodeParameters": {
 		"0": {
 			"name" : "Number of parameters",
-			"value" : 20
 		},
 		"1": {
 			"name" : "Manufacturer’s Id",
-			"value" : 165
 		},
 		"2": {
 			"name" : "Minor Version",
-			"value" : 250
 		},
 		"3": {
 			"name" : "Module Type",
-			"value" : 251
 		},
 		"4": {
 			"name" : "No. of events supported",
-			"value" : 252
 		},
 		"5": {
 			"name" : "No. of Event Variables per event",
-			"value" : 20
 		},
 		"6": {
 			"name" : "No. of Node Variables",
-			"value" : 20
 		},
 		"7": {
 			"name" : "Major Version",
-			"value" : 253
+		},
+		"8": {
+			"name" : "Flags",
 		}
 	},
 	"services": {
@@ -62,22 +57,27 @@ var Template =
 //
 exports.module_descriptor = function module_descriptor(file_path, retrieved_values)
 {
+	var module_descriptor;
 	
 	try {
 		winston.debug({message: `MERGLCB: retrieved_values : ${JSON.stringify(retrieved_values)}`});
 		// use values retrieved from module to create filename
 		var filename = retrieved_values["NAME"] + '_' + 
-		retrieved_values["Manufacturer’s Id"] + '_' + 
-		retrieved_values["Major Version"] + '_' + 
-		retrieved_values["Minor Version"] +
+		retrieved_values["nodeParameters"]["1"] + '_' + 
+		retrieved_values["nodeParameters"]["7"] + '_' + 
+		retrieved_values["nodeParameters"]["2"] +
 		'.json';
 
-		const module_descriptor = jsonfile.readFileSync(file_path + filename)
+		module_descriptor = jsonfile.readFileSync(file_path + filename)
 		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
 		return module_descriptor;
 	} catch (err) {
 		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
+		module_descriptor = Template;
+		module_descriptor.NAME = retrieved_values["NAME"];
+		
 		winston.info({message: `MERGLCB: failed to read module descriptor file : ` + filename});
+		return module_descriptor;
 	}
 	winston.debug({message: '-'});
 }

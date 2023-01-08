@@ -25,7 +25,8 @@ var NodeParameterText = [
 	
 
 // storage for values retrieved from module under test	
-var retrieved_values = {};
+var retrieved_values = {	"nodeParameters": {}
+};
 
 
 class MinimumNodeServiceTests {
@@ -76,7 +77,8 @@ class MinimumNodeServiceTests {
 				await this.test_RQNPN(this.test_nodeNumber, 0, module_descriptor);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
-				for (var i=1; i<retrieved_values["Number of parameters"]+1; i++) {
+				//using value now stored in parameter 0
+				for (var i=1; i<retrieved_values["nodeParameters"]["0"]+1; i++) {
 					await this.test_RQNPN(this.test_nodeNumber, i, module_descriptor);
 				}
 				
@@ -156,13 +158,13 @@ class MinimumNodeServiceTests {
                     if (message.mnemonic == "PARAMS"){
                         winston.info({message: 'MERGLCB: RQNP passed'});
                         this.hasTestPassed = true;
-						retrieved_values [NodeParameterText[1]] = message.param1;
-						retrieved_values [NodeParameterText[2]] = message.param2;
-						retrieved_values [NodeParameterText[3]] = message.param3;
-						retrieved_values [NodeParameterText[4]] = message.param4;
-						retrieved_values [NodeParameterText[5]] = message.param5;
-						retrieved_values [NodeParameterText[6]] = message.param6;
-						retrieved_values [NodeParameterText[7]] = message.param7;
+						retrieved_values ["nodeParameters"]["1"] = message.param1;
+						retrieved_values ["nodeParameters"]["2"] = message.param2;
+						retrieved_values ["nodeParameters"]["3"] = message.param3;
+						retrieved_values ["nodeParameters"]["4"] = message.param4;
+						retrieved_values ["nodeParameters"]["5"] = message.param5;
+						retrieved_values ["nodeParameters"]["6"] = message.param6;
+						retrieved_values ["nodeParameters"]["7"] = message.param7;
                         winston.info({message: '      RQNP: ' + NodeParameterText[1] + ' : ' + message.param1});
                         winston.info({message: '      RQNP: ' + NodeParameterText[2] + '  : ' + message.param2});
                         winston.info({message: '      RQNP: ' + NodeParameterText[3] + '      : ' + message.param3});
@@ -296,14 +298,14 @@ class MinimumNodeServiceTests {
                     var message = this.getMessage('PARAN');
                     if (message.mnemonic == "PARAN"){
 						if ( parameterIndex == 0) {
-							retrieved_values [NodeParameterText[0]] = message.parameterValue;
+							retrieved_values["nodeParameters"]["0"] = message.parameterValue;
 						}
 						
 						// ok - we have a value, so assume the test has passed - now do additional consistency tests
 						// and fail the test if any of these tests fail
 						this.hasTestPassed = true;
-						if (retrieved_values [NodeParameterText[parameterIndex]] != null){
-							if ( retrieved_values [NodeParameterText[parameterIndex]] != message.parameterValue){
+						if (retrieved_values [parameterIndex] != null){
+							if ( retrieved_values ["nodeParameters"][parameterIndex] != message.parameterValue){
 								winston.info({message: 'MERGLCB: Node parameter failed retrieved value ' 
 												+ NodeParameterText[parameterIndex]});
 								this.hasTestPassed = false;
