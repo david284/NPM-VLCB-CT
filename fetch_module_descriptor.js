@@ -76,6 +76,11 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 		module_descriptor = Template;
 		module_descriptor.NAME = retrieved_values["NAME"];
 		
+		for (var key in retrieved_values["nodeParameters"]) {
+			winston.debug({message: `MERGLCB: Key ` + JSON.stringify(key) + " " + retrieved_values["nodeParameters"][key]});
+			module_descriptor["nodeParameters"][key]["value"] = retrieved_values["nodeParameters"][key];
+		}
+		
 		winston.info({message: `MERGLCB: failed to read module descriptor file : ` + filename});
 		return module_descriptor;
 	}
