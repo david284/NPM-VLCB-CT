@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const NodeParameterText = require('./NodeParameterText.js');
 const ServiceTypeNames = require('./ServiceTypeNames.js');
 
 // Scope:
@@ -9,19 +10,6 @@ const ServiceTypeNames = require('./ServiceTypeNames.js');
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
-
-
-var NodeParameterText = [
-    "Number of parameters",		        // 0
-    "Manufacturer’s Id",                // 1
-    "Minor Version",                    // 2
-    "Module Type",                      // 3
-    "No. of events supported",          // 4
-    "No. of Event Variables per event", // 5
-    "No. of Node Variables",            // 6
-    "Major Version",                    // 7
-	"Node Flags"						// 8
-    ];
 
 
 class MinimumNodeServiceTests {
