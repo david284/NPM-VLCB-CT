@@ -5,6 +5,8 @@ const SetupMode_tests = require('./SetupModeTests.js');
 const MNS_tests = require('./MinimumNodeServiceTests.js');
 const example_tests = require('./exampletests.js');
 const fetch_file = require('./fetch_module_descriptor.js')
+const ServiceTypeNames = require('./ServiceTypeNames.js');
+
 
 
 // Scope:
@@ -49,16 +51,41 @@ async function runtests() {
 	// capture returned retrieved_values as it may be updated
 	retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
 	retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
+	
 
 	// check that retrieved_values is still defined, and not lost by one of the tests
 	if (retrieved_values == null) {
 		winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
 	}
 	winston.debug({message: 'MERGLCB: retrieved_values ' + JSON.stringify(retrieved_values)});
+	
+	// now do tests dependant on the retrieved service types the nodule supports
+	for (var key in retrieved_values["Services"]) {
+		var serviceType = retrieved_values["Services"][key]["ServiceType"];
+		switch (serviceType) {
+			case 1:
+				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[1]});
+				break;
+			case 2:
+				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[2]});
+				break;
+			case 3:
+				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[3]});
+				break;
+			//
+			// add more types...
+			//
+			default:
+				winston.info({message: 'MERGLCB: unknown ServiceType ' + serviceType});
+		}
+		
+	}
+		
+
 
 	// tests done, close connection
 	Network.closeConnection()
-	winston.info({message: 'MERGLCB: End of test sequence'});
+	winston.info({message: '\nMERGLCB: End of test sequence\n'});
 }
 
 // actually invoke block of tests
