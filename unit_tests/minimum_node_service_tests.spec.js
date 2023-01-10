@@ -7,7 +7,7 @@ const net = require('net')
 const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
-const MNS_tests = require('./../MinimumNodeServiceTests.js');
+const MNS_tests = require('./../Tests_MinimumNodeService.js');
 
 
 // Assert style

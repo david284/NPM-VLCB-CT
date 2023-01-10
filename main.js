@@ -1,9 +1,9 @@
 'use strict';
 const winston = require('./config/winston.js');
 const IP_Network = require('./ip_network.js')
-const SetupMode_tests = require('./SetupModeTests.js');
-const MNS_tests = require('./MinimumNodeServiceTests.js');
-const example_tests = require('./exampletests.js');
+const SetupMode_tests = require('./Tests_SetupMode.js');
+const MNS_tests = require('./Tests_MinimumNodeService.js');
+const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
 const ServiceTypeNames = require('./Text_ServiceTypeNames.js');
 
