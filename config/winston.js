@@ -43,7 +43,7 @@ var options = {
     handleExceptions: true,
 	format: messageOnly
   },
-  file: {
+  report: {
     level: 'info',
     filename: `./TestReport.txt`,
 	options: { flags: 'w' },
@@ -64,6 +64,7 @@ var options = {
 
 winston.add(new winston.transports.File(options.file));
 winston.add(new winston.transports.Console(options.console));
+winston.add(new winston.transports.File(options.report));
 
 
 winston.stream = {

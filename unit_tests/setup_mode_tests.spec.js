@@ -80,8 +80,9 @@ describe('Setup Mode tests', function(){
     itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
         mock_Cbus.enterSetup(value.nodeNumber);
+		var retrieved_values = {};
 		setTimeout(function(){
-			SetupMode.checkForRQNN();
+			SetupMode.checkForRQNN(retrieved_values);
             expect(SetupMode.inSetupMode).to.equal(true);
             expect(SetupMode.test_nodeNumber).to.equal(value.nodeNumber);
             winston.info({message: 'UNIT TEST: RQNN ended'});
@@ -94,8 +95,9 @@ describe('Setup Mode tests', function(){
     //
 	it("RQNP test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
+		var retrieved_values = {};
         mock_Cbus.enterSetup(0);
-        var result = SetupMode.test_RQNP();
+        var result = SetupMode.test_RQNP(retrieved_values);
 		setTimeout(function(){
             expect(SetupMode.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQNP ended'});
@@ -108,7 +110,8 @@ describe('Setup Mode tests', function(){
     //
 	it("RQMN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
-        var result = SetupMode.test_RQMN();
+		var retrieved_values = {};
+        var result = SetupMode.test_RQMN(retrieved_values);
 		setTimeout(function(){
             expect(SetupMode.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQMN ended'});

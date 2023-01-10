@@ -42,9 +42,11 @@ const examples = new example_tests.ExampleTests(Network);
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
 async function runtests() {
+	// retrieved_values is used to store information gleaned from the module under test
+	// and is shared with, & updated by, all tests
+	var retrieved_values = { "DateTime" : new Date() };		// include datetime of test run start
 
-	// retrieved_values is used to store information gleaned from the module under test, and share it between tests
-	var retrieved_values = await (SetupMode.runTests());
+	retrieved_values = await (SetupMode.runTests(retrieved_values));
 	
 	// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 	// so fetch matching module descriptor file

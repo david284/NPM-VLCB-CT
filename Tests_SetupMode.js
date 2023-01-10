@@ -23,9 +23,10 @@ var NodeParameterText = [
     ];
 	
 
+/*
 // storage for values retrieved from module under test	
-var retrieved_values = {	"nodeParameters": {}
-};
+var retrieved_values = { "nodeParameters": {} };
+*/
 
 
 class SetupMode_tests {
@@ -41,7 +42,7 @@ class SetupMode_tests {
     }
 
 
-    async runTests() {
+    async runTests(retrieved_values) {
 		winston.debug({message: ' '});
 		winston.debug({message: '========================================'});
 		//                       0123456789012345678998765432109876543210
@@ -54,7 +55,7 @@ class SetupMode_tests {
         while (1){
             await this.sleep(1000);
             setup_tries++;
-			this.checkForRQNN();
+			this.checkForRQNN(retrieved_values);
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
             winston.info({message: 'MERGLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
@@ -64,8 +65,8 @@ class SetupMode_tests {
         if (this.inSetupMode) {
             this.passed_count=1;     // passed first test if in setup
             // do opcodes only possible in setup mode
-            await this.test_RQMN();
-            await this.test_RQNP();
+            await this.test_RQMN(retrieved_values);
+            await this.test_RQNP(retrieved_values);
             await this.test_SNN();      // takes module out of setup mode
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
@@ -91,7 +92,7 @@ class SetupMode_tests {
         });
     }
 	
-	checkForRQNN(){
+	checkForRQNN(retrieved_values){
 		var message = this.getMessage('RQNN');
 			if (message != null) {
             if (message.mnemonic == "RQNN"){
@@ -122,9 +123,10 @@ class SetupMode_tests {
     }
     
         
-    test_RQNP() {
+    test_RQNP(retrieved_values) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
+			retrieved_values["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRQNP();
@@ -165,7 +167,7 @@ class SetupMode_tests {
         }.bind(this));
     }
     
-    test_RQMN() {
+    test_RQMN(retrieved_values) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
             this.hasTestPassed = false;
