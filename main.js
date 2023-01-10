@@ -1,5 +1,7 @@
 'use strict';
 const winston = require('./config/winston.js');
+const fs = require('fs');
+
 const IP_Network = require('./ip_network.js')
 const SetupMode_tests = require('./Tests_SetupMode.js');
 const MNS_tests = require('./Tests_MinimumNodeService.js');
@@ -61,8 +63,7 @@ async function runtests() {
 	// check that retrieved_values is still defined, and not lost by one of the tests
 	if (retrieved_values == null) {
 		winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
-	}
-	winston.debug({message: 'MERGLCB: retrieved_values ' + JSON.stringify(retrieved_values)});
+	}	
 	
 	// now do tests dependant on the retrieved service types the nodule supports
 	for (var key in retrieved_values["Services"]) {
@@ -87,11 +88,19 @@ async function runtests() {
 	}
 		
 
+	//
+	// all tests done, so do final items
+	//
+	
+	// now write retrieved_values to disk
+	var text = JSON.stringify(retrieved_values, null, '    ');
+	fs.writeFileSync('./Retrieved Values.txt', text);
+	winston.debug({message: 'MERGLCB: retrieved_values \n' + text});
 
-	// tests done, close connection
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
 	winston.info({message: '\nMERGLCB: a copy of these results has been saved as TestReport.txt\n'});
+	winston.info({message: 'MERGLCB: a copy of the values retrieved from the module under test has been saved as Retrieved Values.txt\n'});
 
 }
 
