@@ -1,8 +1,12 @@
 # NPM-MERGLCB-CT
 
 # Installation:
-This application required NodeJs (& npm) to run
-https://nodejs.org/en/download/package-manager/
+This application requires NodeJs (& npm) to run
+Get NPM from -> https://nodejs.org/en/download/package-manager/
+
+On windows, once installed, if you then get npm failing to run (I get mixed '\' and '/' trying to load files),  you may need to "Set the npm run shell" by running the following
+	npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"
+Original source -> https://digipie.github.io/digidocs/nodejs/set-npm-run-shell/
 
 After the repo is cloned locally, at the root of the repo, run 'npm install' to load all dependancies
 
