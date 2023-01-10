@@ -153,6 +153,8 @@ class MinimumNodeServiceTests {
 						//start building an ouput string in case it fails
 						var fail_output = ' - parameter index : ' + parameterIndex +'\n';
 						fail_output += '  actual value : ' + message.parameterValue +'\n';
+						// and a warning outputstring also
+						var warning_output = "";
 						
 						if (retrieved_values["nodeParameters"][parameterIndex] != null){
 							fail_output += '  retrieved_value : ' + retrieved_values ["nodeParameters"][parameterIndex] +'\n';
@@ -174,19 +176,19 @@ class MinimumNodeServiceTests {
 									this.hasTestPassed = false;
 								}
 							} else {
-								winston.info({message: 'MERGLCB: Warning: No module_descriptor value entry for Node Parameter ' + parameterIndex});
+								warning_output = ' :: Warning: No matching module_descriptor value entry';
 							}
 						} else {
-							winston.info({message: 'MERGLCB: Warning: No module_descriptor file entry for Node Parameter ' + parameterIndex});
+							warning_output =  ' :: Warning: No matching module_descriptor file entry';
 						}
 					}
 				}
 				if (this.hasTestPassed) {
-                    winston.info({message: 'MERGLCB: RQNPN index ' + parameterIndex + ' passed'});
+                    winston.info({message: 'MERGLCB: RQNPN index ' + parameterIndex + ' passed - ' + NodeParameterNames[parameterIndex] + warning_output});
                     winston.debug({message: 'MERGLCB: RQNPN value ' + message.parameterValue});
 					this.passed_count++;
 				} else {
-					winston.info({message: 'MERGLCB: RQNPN failed ' + fail_output});
+					winston.info({message: 'MERGLCB: RQNPN failed - ' + NodeParameterNames[parameterIndex] + fail_output});
 					this.failed_count++;
 				}
 				winston.debug({message: '-'});
