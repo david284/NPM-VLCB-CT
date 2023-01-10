@@ -20,11 +20,14 @@ const NET_ADDRESS = "127.0.0.1"
 const NET_PORT = 5550;
 
 winston.info({message: ' '});
-winston.info({message: '======================================================================'});
-//                       0123456789012345678901234567890123456789987654321098765432109876543210
-winston.info({message: '--------------------------- MERGLCB Compliance Test ------------------'});
-winston.info({message: '======================================================================'});
+winston.info({message: '================================================================================'});
+//                      01234567890123456789012345678901234567899876543210987654321098765432109876543210
+winston.info({message: '--------------------------- MERGLCB Compliance Test ----------------------------'});
+winston.info({message: '------------------------------- Version 0.0.0.0 --------------------------------'});
+winston.info({message: '================================================================================'});
 winston.info({message: ' '});
+
+winston.info({message: 'Test Run : ' + new Date()+ '\n'});
 		
 // create network conenction for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
