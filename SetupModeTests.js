@@ -75,8 +75,7 @@ class SetupMode_tests {
             winston.info({message: 'MERGLCB: failed to go into setup'});
         }
 		
-        winston.info({message: 'Setup Mode Test run finished \n Passed count : ' + this.passed_count + '\n\x1B[31m Failed count : ' + this.failed_count + '\x1B[37m'});
-        winston.info({message: ' '});                       // blank line to separate tests
+        winston.info({message: 'Setup Mode Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
 		
 		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
 		return retrieved_values;

@@ -64,8 +64,7 @@ class MinimumNodeServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MNS Test run finished \n Passed count : ' + this.passed_count + '\n\x1B[31m Failed count : ' + this.failed_count + '\x1B[37m'});
-        winston.info({message: ' '});                       // blank line to separate tests
+        winston.info({message: 'MNS Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
 		
 		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 		return retrieved_values;

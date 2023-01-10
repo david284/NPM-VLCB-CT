@@ -43,6 +43,15 @@ var options = {
     handleExceptions: true,
 	format: messageOnly
   },
+  file: {
+    level: 'info',
+    filename: `./TestReport.txt`,
+	options: { flags: 'w' },
+    handleExceptions: true,
+    maxsize: 5242880, // 5MB
+    maxFiles: 5,
+	format: messageOnly
+  }
 };
 
 //
