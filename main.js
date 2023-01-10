@@ -89,6 +89,8 @@ async function runtests() {
 	// tests done, close connection
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
+	winston.info({message: '\nMERGLCB: a copy of these results has been saved as TestReport.txt\n'});
+
 }
 
 // actually invoke block of tests
