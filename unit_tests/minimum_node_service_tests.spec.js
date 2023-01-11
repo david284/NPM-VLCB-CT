@@ -63,10 +63,11 @@ describe('Minimum Node Service tests', function(){
 //
 
 
-    
+    // 0x0D - QNN
 	it("QNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
-        var result = mns_tests.test_QNN(0);
+		var retrieved_values = { "nodeNumber": 0 };
+        var result = mns_tests.test_QNN(retrieved_values);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: QNN ended'});
             expect(mns_tests.hasTestPassed).to.equal(true);
@@ -87,11 +88,11 @@ describe('Minimum Node Service tests', function(){
 	}
 
 
-    //
+    // 0x73 - RQNPN
     itParam("RQNPN test parameterIndex ${value.parameterIndex}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
-		var retrieved_values = {"nodeParameters": {}};
-        var result = mns_tests.test_RQNPN(0, value.parameterIndex, retrieved_values, test_module_descriptor);
+		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
+        var result = mns_tests.test_RQNPN(value.parameterIndex, retrieved_values, test_module_descriptor);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQNPN ended'});
             expect(mns_tests.hasTestPassed).to.equal(true);
@@ -100,11 +101,24 @@ describe('Minimum Node Service tests', function(){
 	})
 
 
-    //
+    function GetTestCase_CANID() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 7;
+			testCases.push({'CANID':arg1});
+		}
+		return testCases;
+	}
+
+
+
+    // 0x78 - RQSD
 	it("RQSD test", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
 		// storage for values retrieved from module under test	
-		var retrieved_values = {	"nodeNumber": 0	};
+		var retrieved_values = { "nodeNumber": 0 };
         var result = mns_tests.test_RQSD(retrieved_values, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});

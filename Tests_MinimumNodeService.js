@@ -41,17 +41,21 @@ class MinimumNodeServiceTests {
 			if (module_descriptor != null){
 				
 				// check for response to QNN from module under test
-				await this.test_QNN(retrieved_values.nodeNumber);
+				await this.test_QNN(retrieved_values);
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command unfortunately
-				await this.test_RQNPN(retrieved_values.nodeNumber, 0, retrieved_values, module_descriptor);
+				await this.test_RQNPN(0, retrieved_values, module_descriptor);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				//using value now stored in parameter 0
 				for (var i=1; i<retrieved_values["nodeParameters"]["0"]+1; i++) {
-					await this.test_RQNPN(retrieved_values.nodeNumber, i, retrieved_values, module_descriptor);
+					await this.test_RQNPN(i, retrieved_values, module_descriptor);
 				}
+
+				//
+//				await this.test_CANID(retrieved_values, 100);
+
 				
 				//
 				await this.test_RQSD(retrieved_values, 0);
@@ -97,23 +101,34 @@ class MinimumNodeServiceTests {
         }
         return message
     }
+
             
-    
-    test_QNN(test_node_number) {
+    // 0x0D - QNN
+    test_QNN(retrieved_values) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN QNN test'});
             this.hasTestPassed = false;
+			retrieved_values["modules"] = {}; 	// ensure theres an element for 'modules'
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeQNN();
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
-					
+					var i=0;
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						winston.info({message: msg.text});
+						var newModule = {
+							"nodeNumber":msg.nodeNumber,
+							"manufacturerId":msg.manufacturerId,
+							"moduleId":msg.moduleId,
+							"flags":msg.flags,
+							"CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
+						}
+						retrieved_values["modules"][i++] = newModule;
+						//
 						if (msg.mnemonic == "PNN"){
-							if (msg.nodeNumber == test_node_number){
+							if (msg.nodeNumber == retrieved_values.nodeNumber){
 								winston.info({message: 'MERGLCB: QNN passed'});
 								this.hasTestPassed = true;
 							}
@@ -134,13 +149,15 @@ class MinimumNodeServiceTests {
             );
         }.bind(this));
     }
-    
-    test_RQNPN(NodeNumber, parameterIndex, retrieved_values, module_descriptor) {
+
+
+	// 0x73 - RQNPN
+    test_RQNPN(parameterIndex, retrieved_values, module_descriptor) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: Get Param ' + parameterIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNPN(NodeNumber, parameterIndex);
+            var msgData = cbusLib.encodeRQNPN(retrieved_values.nodeNumber, parameterIndex);
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
@@ -199,6 +216,46 @@ class MinimumNodeServiceTests {
     }
  
     
+    // 0x75 - CANID
+    test_CANID(retrieved_values, CANID) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN CANID test'});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeCANID(retrieved_values.nodeNumber, CANID);
+            this.network.write(msgData);
+            setTimeout(()=>{
+                if (this.network.messagesIn.length > 0){
+					/*
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						winston.info({message: msg.text});
+						if (msg.mnemonic == "PNN"){
+							if (msg.nodeNumber == test_node_number){
+								winston.info({message: 'MERGLCB: QNN passed'});
+								this.hasTestPassed = true;
+							}
+						}
+					});
+					*/
+				}
+				
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: CANID passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: CANID failed'});
+					this.failed_count++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , this.response_time
+            );
+        }.bind(this));
+    }
+	
+	
+	// 0x78 - RQSD
     test_RQSD(retrieved_values, ServiceIndex) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQSD test'});
