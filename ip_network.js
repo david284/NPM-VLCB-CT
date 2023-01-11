@@ -46,7 +46,7 @@ class IP_Network {
 	write(msgData) {
         this.testClient.write(msgData);
         var decodedMsg = cbusLib.decode(msgData);
-        winston.debug({message: 'MERGLCB: Network transmit ' + decodedMsg.text});		
+        winston.debug({message: 'MERGLCB: Network transmit >> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
 	}
 	
 	closeConnection(){

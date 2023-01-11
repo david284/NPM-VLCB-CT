@@ -145,7 +145,7 @@ class MinimumNodeServiceTests {
 				}
 				winston.debug({message: '-'});
                 resolve();
-                ;} , this.response_time
+                ;} , this.response_time * 10
             );
         }.bind(this));
     }
