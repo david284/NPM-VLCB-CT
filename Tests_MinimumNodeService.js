@@ -26,10 +26,10 @@ class MinimumNodeServiceTests {
 
     async runTests(retrieved_values, module_descriptor) {
 		winston.debug({message: ' '});
-		winston.debug({message: '========================================'});
-		//                       0123456789012345678998765432109876543210
-		winston.info({message: '------- Minimum Node Service tests ------'});
-		winston.debug({message: '========================================'});
+		//                      012345678901234567890123456789987654321098765432109876543210
+		winston.debug({message: '==========================================================='});
+		winston.info({message:  '--------------- Minimum Node Service tests ----------------'});
+		winston.debug({message: '==========================================================='});
 		winston.debug({message: ' '});
 		
 

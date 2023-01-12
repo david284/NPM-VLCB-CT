@@ -30,9 +30,10 @@ describe('Setup Mode tests', function(){
 
 	before(function() {
 		winston.info({message: ' '});
-		winston.info({message: '======================================================================'});
-		winston.info({message: '----------------------- Setup Mode unit tests -------------------'});
-		winston.info({message: '======================================================================'});
+		//                      012345678901234567890123456789987654321098765432109876543210
+		winston.info({message: '============================================================'});
+		winston.info({message: '------------------ Setup Mode unit tests -------------------'});
+		winston.info({message: '============================================================'});
 		winston.info({message: ' '});
 
 

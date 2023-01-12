@@ -44,10 +44,10 @@ class SetupMode_tests {
 
     async runTests(retrieved_values) {
 		winston.debug({message: ' '});
-		winston.debug({message: '========================================'});
-		//                       0123456789012345678998765432109876543210
-		winston.info({message: '------------ Setup Mode tests -----------'});
-		winston.debug({message: '========================================'});
+		//                      012345678901234567890123456789987654321098765432109876543210
+		winston.debug({message: '==========================================================='});
+		winston.info({message:  '-------------------- Setup Mode tests ---------------------'});
+		winston.debug({message: '==========================================================='});
 		winston.debug({message: ' '});
 		
         winston.info({message: 'MERGLCB: put module into setup'});
