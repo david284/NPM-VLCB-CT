@@ -69,8 +69,11 @@ class MinimumNodeServiceTests {
 			}
 		
         winston.info({message: 'MNS Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
+		// update total tests counts
+		retrieved_values.TestsPassed += this.passed_count;
+		retrieved_values.TestsFailed += this.failed_count;
 		
-		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
+		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;
     }
 
@@ -314,27 +317,37 @@ class MinimumNodeServiceTests {
 				retrieved_values["Services"] = {};
 			}
             setTimeout(()=>{
-								this.hasTestPassed = true;
-/*					
+				var nonMatchingCount = 0;
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (msg.mnemonic == "SD"){
-							if (msg.nodeNumber == retrieved_values.nodeNumber){
-								this.hasTestPassed = true;
-								retrieved_values["Services"][msg.ServiceIndex] = {};
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = ServiceTypeNames[msg.ServiceType];
-							}
-							else{
-								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+						if (msg.mnemonic == "DGN"){
+							nonMatchingCount++;				// ok, got +1 message not yet matched
+							// check for matching diagnostics to already known services
+							for (var key in retrieved_values["Services"]) {
+								var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
+								if (msg.ServiceIndex == serviceIndex){
+									nonMatchingCount--; // message matches service, so decrement count
+									winston.info({message: 'MERGLCB: Matching service found '});
+
+									// ok, matches a service, so store values if they don't already exist
+									if (retrieved_values["Services"][key]["diagnostics"] == null) {
+										retrieved_values["Services"][key]["diagnostics"] = {};
+									}
+									if (retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode]== null) {
+										retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode] = {
+											"DiagnosticCode": msg.DiagnosticCode,
+											"DiagnosticeValue" : msg.DiagnosticValue
+										};
+									}
+								}
 							}
 						}
 					});
 				}
-*/				
+				
+				// to pass, all diagnostic messages must match an existing service (i.e. nonMatchedCount will be zero)
+				if ( nonMatchingCount == 0) {this.hasTestPassed = true;}
 
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RDGN passed'}); 

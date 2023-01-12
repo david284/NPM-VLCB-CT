@@ -56,8 +56,16 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 {
 	var module_descriptor;
 	
+		winston.debug({message: ' '});
+		winston.debug({message: '========================================'});
+		//                       0123456789012345678998765432109876543210
+		winston.info({message: '-------- Fetch_Module_descriptor --------'});
+		winston.debug({message: '========================================'});
+		winston.debug({message: ' '});
+	
 	try {
-		winston.debug({message: `MERGLCB: retrieved_values : ${JSON.stringify(retrieved_values)}`});
+		
+		winston.debug({message: `MERGLCB: Fetch_Module_descriptor: retrieved_values : ${JSON.stringify(retrieved_values, null, "    ")}`});
 		// use values retrieved from module to create filename
 		var filename = retrieved_values["NAME"] + '_' + 
 		retrieved_values["nodeParameters"]["1"] + '_' + 

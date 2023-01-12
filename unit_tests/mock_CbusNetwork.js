@@ -243,7 +243,7 @@ class mock_CbusNetwork {
                 winston.debug({message: 'Mock CBUS Network: received RDGN'});
                 // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
 				if (cbusMsg.ServiceIndex == 0) {
-					this.outputDGN(cbusMsg.nodeNumber, 0, 1, 65535);
+					this.outputDGN(cbusMsg.nodeNumber, 1, 1, 65535);
 					this.outputDGN(cbusMsg.nodeNumber, 1, 255, 0);
 					this.outputDGN(cbusMsg.nodeNumber, 255, 0, 1);
 				}

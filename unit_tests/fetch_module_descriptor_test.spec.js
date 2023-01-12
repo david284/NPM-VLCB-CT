@@ -59,7 +59,7 @@ describe('fetch_module_descriptor tests', function(){
 		
         var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
         assert.exists(module_descriptor, 'test module_descriptor exists');
-		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
+		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor.nodeParameters["0"].name)}`});
         winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
     })
@@ -81,7 +81,7 @@ describe('fetch_module_descriptor tests', function(){
 		}
 
         var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
-		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor)}`});
+		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
 		
         assert.exists(module_descriptor, 'test module_descriptor exists');
 

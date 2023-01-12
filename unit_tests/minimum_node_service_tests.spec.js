@@ -122,7 +122,7 @@ describe('Minimum Node Service tests', function(){
         var result = mns_tests.test_RQSD(retrieved_values, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
-            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values)});
+            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
             expect(mns_tests.hasTestPassed).to.equal(true);
 			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
@@ -135,11 +135,11 @@ describe('Minimum Node Service tests', function(){
 	it("RDGN test", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
 		// storage for values retrieved from module under test	
-		var retrieved_values = { "nodeNumber": 0 };
+		var retrieved_values = { "Services": { "1": { "ServiceIndex": 1 }, "2": { "ServiceIndex": 2 },  "3": { "ServiceIndex": 255 } } };
         var result = mns_tests.test_RDGN(retrieved_values, 0, 0, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RDGN ended'});
-            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values)});
+            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
             expect(mns_tests.hasTestPassed).to.equal(true);
 //			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 //			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1

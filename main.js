@@ -46,7 +46,9 @@ const examples = new example_tests.ExampleTests(Network);
 async function runtests() {
 	// retrieved_values is used to store information gleaned from the module under test
 	// and is shared with, & updated by, all tests
-	var retrieved_values = { "DateTime" : new Date() };		// include datetime of test run start
+	var retrieved_values = { "DateTime" : new Date(),	// include datetime of test run start
+							"TestsPassed": 0,
+							"TestsFailed": 0};	
 
 	retrieved_values = await (SetupMode.runTests(retrieved_values));
 	
@@ -91,11 +93,13 @@ async function runtests() {
 	//
 	// all tests done, so do final items
 	//
+	winston.info({message: '\n\nAll Tests finished \n Passed count : ' + retrieved_values.TestsPassed + '\n Failed count : ' + retrieved_values.TestsFailed + '\n'});
+
 	
 	// now write retrieved_values to disk
 	var text = JSON.stringify(retrieved_values, null, '    ');
 	fs.writeFileSync('./Retrieved Values.txt', text);
-	winston.debug({message: 'MERGLCB: retrieved_values \n' + text});
+	winston.debug({message: 'MERGLCB: Write to disk: retrieved_values \n' + text});
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});

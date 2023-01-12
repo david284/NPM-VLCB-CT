@@ -77,8 +77,11 @@ class SetupMode_tests {
         }
 		
         winston.info({message: 'Setup Mode Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
+		// update total tests counts
+		retrieved_values.TestsPassed += this.passed_count;
+		retrieved_values.TestsFailed += this.failed_count;
 		
-		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
+		winston.debug({message: 'MERGLCB: Setup Mode : retrieved_values \n' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;
     }
 
