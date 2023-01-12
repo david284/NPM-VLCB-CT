@@ -239,6 +239,15 @@ class mock_CbusNetwork {
 					this.outputSD(cbusMsg.nodeNumber, 255, 3, 5);
 				}
 				break;
+            case '87': 
+                winston.debug({message: 'Mock CBUS Network: received RDGN'});
+                // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
+				if (cbusMsg.ServiceIndex == 0) {
+					this.outputDGN(cbusMsg.nodeNumber, 0, 1, 65535);
+					this.outputDGN(cbusMsg.nodeNumber, 1, 255, 0);
+					this.outputDGN(cbusMsg.nodeNumber, 255, 0, 1);
+				}
+				break;
             case '90':
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received ACON'});
@@ -507,6 +516,13 @@ class mock_CbusNetwork {
         this.broadcast(msgData)
 	}
 
+
+	// C7
+	outputDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue) {
+		/* // DGN Format: [<MjPri><MinPri=3><CANID>]<C7><NN hi><NN lo><ServiceIndex><DiagnosticCode><DiagnosticValue> */
+		var msgData = cbusLib.encodeDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue);
+        this.broadcast(msgData)
+	}
 
 	// D0
 	outputACON2(nodeNumber, eventNumber, data1, data2) {

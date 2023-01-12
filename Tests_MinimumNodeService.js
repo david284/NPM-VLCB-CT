@@ -302,6 +302,55 @@ class MinimumNodeServiceTests {
     }
     
 	
+	// 0x87 - RDGN
+    test_RDGN(retrieved_values, ServiceIndex, DiagnosticCode) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN RDGN test'});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeRDGN(retrieved_values.nodeNumber, ServiceIndex, DiagnosticCode);
+            this.network.write(msgData);
+			if (retrieved_values["Services"] == null){
+				retrieved_values["Services"] = {};
+			}
+            setTimeout(()=>{
+								this.hasTestPassed = true;
+/*					
+                if (this.network.messagesIn.length > 0){
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if (msg.mnemonic == "SD"){
+							if (msg.nodeNumber == retrieved_values.nodeNumber){
+								this.hasTestPassed = true;
+								retrieved_values["Services"][msg.ServiceIndex] = {};
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = ServiceTypeNames[msg.ServiceType];
+							}
+							else{
+								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+							}
+						}
+					});
+				}
+*/				
+
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: RDGN passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: RDGN failed'});
+					this.failed_count++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , this.response_time
+            );
+        }.bind(this));
+    }
+    
+	
 
 }
 

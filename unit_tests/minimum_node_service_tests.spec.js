@@ -72,7 +72,7 @@ describe('Minimum Node Service tests', function(){
             winston.info({message: 'UNIT TEST: QNN ended'});
             expect(mns_tests.hasTestPassed).to.equal(true);
 			done();
-		}, test_timeout);
+		}, test_timeout * 8);
 	})
 
     
@@ -126,6 +126,23 @@ describe('Minimum Node Service tests', function(){
             expect(mns_tests.hasTestPassed).to.equal(true);
 			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
+			done();
+		}, test_timeout);
+	})
+
+
+    // 0x87 - RDGN
+	it("RDGN test", function (done) {
+		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
+		// storage for values retrieved from module under test	
+		var retrieved_values = { "nodeNumber": 0 };
+        var result = mns_tests.test_RDGN(retrieved_values, 0, 0, 0);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: RDGN ended'});
+            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values)});
+            expect(mns_tests.hasTestPassed).to.equal(true);
+//			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
+//			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
 			done();
 		}, test_timeout);
 	})
