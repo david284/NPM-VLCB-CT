@@ -4,6 +4,8 @@ const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./Text_NodeParameterNames.js');
 const ServiceTypeNames = require('./Text_ServiceTypeNames.js');
 
+const opcodes_0x8x = require('./opcodes/opcodes_0x8x.js');
+
 // Scope:
 // variables declared outside of the class are 'global' to this module only
 // callbacks need a bind(this) option to allow access to the class members
@@ -21,6 +23,9 @@ class MinimumNodeServiceTests {
         this.response_time = 200;
         this.passed_count = 0;
 		this.failed_count = 0;
+		
+		this.opcodes_0x8x = new opcodes_0x8x.opcodes_0x8x(this.network);
+
     }
 
 
@@ -63,6 +68,11 @@ class MinimumNodeServiceTests {
 				// request all the diagnostics, for all services, not just MNS
 				await this.test_RDGN(retrieved_values, 0, 0);
 				
+				// now request diagnostics just for MNS
+				await this.test_RDGN(retrieved_values, 1, 0);
+				
+				// request all the diagnostics, for all services, not just MNS
+//				await this.opcodes_0x8x.test_RDGN(retrieved_values, 1, 0);
 				//
 				// Add more tests.......
 				//
