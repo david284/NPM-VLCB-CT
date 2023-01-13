@@ -57,8 +57,11 @@ class MinimumNodeServiceTests {
 //				await this.test_CANID(retrieved_values, 100);
 
 				
-				//
+				// this will get all the services that this module supports
 				await this.test_RQSD(retrieved_values, 0);
+				
+				// request all the diagnostics, for all services, not just MNS
+				await this.test_RDGN(retrieved_values, 0, 0);
 				
 				//
 				// Add more tests.......
@@ -344,11 +347,11 @@ class MinimumNodeServiceTests {
 							}
 						}
 					});
+
+					// to pass, all diagnostic messages must match an existing service (i.e. nonMatchedCount will be zero)
+					if ( nonMatchingCount == 0) {this.hasTestPassed = true;}
 				}
 				
-				// to pass, all diagnostic messages must match an existing service (i.e. nonMatchedCount will be zero)
-				if ( nonMatchingCount == 0) {this.hasTestPassed = true;}
-
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RDGN passed'}); 
 					this.passed_count++;
