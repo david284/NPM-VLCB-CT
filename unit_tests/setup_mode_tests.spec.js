@@ -81,19 +81,6 @@ describe('Setup Mode tests', function(){
 
 
     //
-	it("RQMN test", function (done) {
-		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
-		var retrieved_values = {};
-        var result = SetupMode.test_RQMN(retrieved_values);
-		setTimeout(function(){
-            expect(SetupMode.hasTestPassed).to.equal(true);
-            winston.info({message: 'UNIT TEST: RQMN ended'});
-			done();
-		}, test_timeout);
-	})
-
-
-    //
 	it("SNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
         var result = SetupMode.test_SNN();

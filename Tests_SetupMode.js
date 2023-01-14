@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const opcodes_1x = require('./opcodes/opcodes_1x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
 
 
@@ -42,6 +43,7 @@ class SetupMode_tests {
         this.passed_count = 0;
 		this.failed_count = 0;
 		
+		this.opcodes_1x = new opcodes_1x.opcodes_1x(this.network);
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
     }
 
@@ -72,7 +74,7 @@ class SetupMode_tests {
         if (this.inSetupMode) {
             this.passed_count=1;     // passed first test if in setup
             // do opcodes only possible in setup mode
-            await this.test_RQMN(retrieved_values);
+            await this.opcodes_1x.test_RQMN(retrieved_values);
             await this.test_RQNP(retrieved_values);
             await this.test_SNN();      // takes module out of setup mode
 			
@@ -169,6 +171,7 @@ class SetupMode_tests {
         }.bind(this));
     }
     
+/*
     test_RQMN(retrieved_values) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
@@ -199,6 +202,8 @@ class SetupMode_tests {
             );
         }.bind(this));
     }
+*/
+
     
     test_SNN() {
         return new Promise(function (resolve, reject) {
