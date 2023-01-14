@@ -75,7 +75,7 @@ class SetupMode_tests {
             this.passed_count=1;     // passed first test if in setup
             // do opcodes only possible in setup mode
             await this.opcodes_1x.test_RQMN(retrieved_values);
-            await this.test_RQNP(retrieved_values);
+            await this.opcodes_1x.test_RQNP(retrieved_values);
             await this.test_SNN();      // takes module out of setup mode
 			
 			retrieved_values.setup_completed = true;
@@ -124,51 +124,6 @@ class SetupMode_tests {
             winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
         }
         return message
-    }
-    
-        
-    test_RQNP(retrieved_values) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
-			retrieved_values["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNP();
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('PARAMS');
-                    if (message.mnemonic == "PARAMS"){
-                        winston.info({message: 'MERGLCB: RQNP passed'});
-                        this.hasTestPassed = true;
-						retrieved_values ["nodeParameters"]["1"] = message.param1;
-						retrieved_values ["nodeParameters"]["2"] = message.param2;
-						retrieved_values ["nodeParameters"]["3"] = message.param3;
-						retrieved_values ["nodeParameters"]["4"] = message.param4;
-						retrieved_values ["nodeParameters"]["5"] = message.param5;
-						retrieved_values ["nodeParameters"]["6"] = message.param6;
-						retrieved_values ["nodeParameters"]["7"] = message.param7;
-                        winston.info({message: '      RQNP: ' + NodeParameterText[1] + ' : ' + message.param1});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[2] + '  : ' + message.param2});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[3] + '      : ' + message.param3});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[4] + '  : ' + message.param4});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[5] + ' : ' + message.param5});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[6] + '  : ' + message.param6});
-                        winston.info({message: '      RQNP: ' + NodeParameterText[7] + '  : ' + message.param7});
-                    }
-                }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQNP passed'}); 
-					this.passed_count++;
-				}else{
-					winston.info({message: 'MERGLCB: RQNP failed'});
-					this.failed_count++;
-				}
-				winston.debug({message: '-'});
-                resolve();
-                ;} , this.response_time
-            );
-        }.bind(this));
     }
     
     

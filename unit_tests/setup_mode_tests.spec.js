@@ -66,21 +66,6 @@ describe('Setup Mode tests', function(){
 	
 
     //
-	it("RQNP test", function (done) {
-		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
-		var retrieved_values = {};
-        mock_Cbus.enterSetup(0);
-        var result = SetupMode.test_RQNP(retrieved_values);
-		setTimeout(function(){
-            expect(SetupMode.hasTestPassed).to.equal(true);
-            winston.info({message: 'UNIT TEST: RQNP ended'});
-            mock_Cbus.exitSetup(0);
-			done();
-		}, test_timeout);
-	})
-
-
-    //
 	it("SNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
         var result = SetupMode.test_SNN();
