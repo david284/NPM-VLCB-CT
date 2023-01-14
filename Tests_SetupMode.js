@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const opcodes_1x = require('./opcodes/opcodes_1x.js');
+const opcodes_4x = require('./opcodes/opcodes_4x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
 
 
@@ -11,25 +12,6 @@ const opcodes_5x = require('./opcodes/opcodes_5x.js');
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
-
-
-var NodeParameterText = [
-    "Number of parameters",		        // 0
-    "Manufacturer’s Id",                // 1
-    "Minor Version",                    // 2
-    "Module Type",                      // 3
-    "No. of events supported",          // 4
-    "No. of Event Variables per event", // 5
-    "No. of Node Variables",            // 6
-    "Major Version",                    // 7
-	"Node Flags"						// 8
-    ];
-	
-
-/*
-// storage for values retrieved from module under test	
-var retrieved_values = { "nodeParameters": {} };
-*/
 
 
 class SetupMode_tests {
@@ -44,6 +26,7 @@ class SetupMode_tests {
 		this.failed_count = 0;
 		
 		this.opcodes_1x = new opcodes_1x.opcodes_1x(this.network);
+		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
     }
 
@@ -59,6 +42,7 @@ class SetupMode_tests {
         winston.info({message: 'MERGLCB: put module into setup'});
 		retrieved_values["setup_completed"]= false;
         var setup_tries = 0;
+		
         while (1){
             await this.sleep(1000);
             setup_tries++;
@@ -76,7 +60,7 @@ class SetupMode_tests {
             // do opcodes only possible in setup mode
             await this.opcodes_1x.test_RQMN(retrieved_values);
             await this.opcodes_1x.test_RQNP(retrieved_values);
-            await this.test_SNN();      // takes module out of setup mode
+            await this.opcodes_4x.test_SNN(retrieved_values);      // takes module out of setup mode
 			
 			retrieved_values.setup_completed = true;
 			
@@ -107,58 +91,6 @@ class SetupMode_tests {
         });
     }
 	
-
-    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
-                break;
-            }
-        }
-        if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
-    
-    
-    test_SNN() {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN SNN test'});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeSNN(this.test_nodeNumber);
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('NNACK');
-                    if (message.mnemonic == "NNACK"){
-                        if (message.nodeNumber == this.test_nodeNumber) {
-                            winston.info({message: 'MERGLCB: SNN passed'});
-                            this.hasTestPassed = true;
-                        }
-                    }
-                }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: SNN passed'}); 
-					this.passed_count++;
-				}else{
-					winston.info({message: 'MERGLCB: SNN failed'});
-					this.failed_count++;
-				}
-				winston.debug({message: '-'});
-                resolve();
-                ;} , this.response_time
-            );
-        }.bind(this));
-    }
-    
-
 }
 
 module.exports = {

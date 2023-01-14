@@ -7,7 +7,6 @@ const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_0x = require('./../opcodes/opcodes_0x.js');
-//const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTEST_165_2_117.json');
 
 
 // Scope:
@@ -21,7 +20,7 @@ const opcodes_0x = require('./../opcodes/opcodes_0x.js');
 // Assert style
 const assert = require('chai').assert;
 
-const NET_PORT = 5559;
+const NET_PORT = 5560;			// 5560 + opcode catagory offset
 const NET_ADDRESS = "127.0.0.1"
 
 

@@ -21,7 +21,7 @@ const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTE
 // Assert style
 const assert = require('chai').assert;
 
-const NET_PORT = 5558;
+const NET_PORT = 5567;			// 5560 + opcode catagory offset
 const NET_ADDRESS = "127.0.0.1"
 
 

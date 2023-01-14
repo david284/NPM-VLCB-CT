@@ -20,7 +20,7 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 // Assert style
 const assert = require('chai').assert;
 
-const NET_PORT = 5557;
+const NET_PORT = 5568;			// 5560 + opcode catagory offset
 const NET_ADDRESS = "127.0.0.1"
 
 

@@ -65,17 +65,5 @@ describe('Setup Mode tests', function(){
 
 	
 
-    //
-	it("SNN test", function (done) {
-		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
-        var result = SetupMode.test_SNN();
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: SNN ended'});
-            expect(SetupMode.hasTestPassed).to.equal(true);
-			done();
-		}, test_timeout);
-	})
-
-    
 
 })

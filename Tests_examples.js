@@ -37,7 +37,7 @@ class ExampleTests {
         await this.sleep(1000);								// example of a delay
         await this.test_harness();
 		
-        winston.info({message: 'Examples Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
+        winston.info({message: 'Examples Test run finished\n'});
 		return retrieved_values;
     }
 
