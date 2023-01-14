@@ -171,39 +171,6 @@ class SetupMode_tests {
         }.bind(this));
     }
     
-/*
-    test_RQMN(retrieved_values) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQMN();
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('NAME');
-                    if (message.mnemonic == "NAME"){
-                        winston.info({message: 'MERGLCB: RQMN passed'});
-                        this.hasTestPassed = true;
-						retrieved_values ["NAME"] = message.name;
-                        winston.info({message: '      RQMN: Name  : ' + message.name});
-                    }
-                }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQMN passed'}); 
-					this.passed_count++;
-				}else{
-					winston.info({message: 'MERGLCB: RQMN failed'});
-					this.failed_count++;
-				}
-				winston.debug({message: '-'});
-                resolve();
-                ;} , this.response_time
-            );
-        }.bind(this));
-    }
-*/
-
     
     test_SNN() {
         return new Promise(function (resolve, reject) {

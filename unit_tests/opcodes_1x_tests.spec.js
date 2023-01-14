@@ -67,8 +67,24 @@ describe('opcodes_1x tests', function(){
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 				Tests
+// 				Unit Tests
 //
+
+    //10 - RQNP
+	//
+	it("RQNP test", function (done) {
+		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
+		var retrieved_values = {};
+        mock_Cbus.enterSetup(0);
+        var result = tests.test_RQNP(retrieved_values);
+		setTimeout(function(){
+            expect(tests.hasTestPassed).to.equal(true);
+            winston.info({message: 'UNIT TEST: RQNP ended'});
+            mock_Cbus.exitSetup(0);
+			done();
+		}, 200);
+	})
+
 
 
     // 0x11 - RQMN

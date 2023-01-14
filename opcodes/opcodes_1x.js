@@ -1,6 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const NodeParameterNames = require('./../Text_NodeParameterNames.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -37,6 +39,53 @@ class opcodes_1x {
         }
         return message
     }
+	
+	
+	// 10 - RQNP
+	test_RQNP(retrieved_values) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
+			retrieved_values["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeRQNP();
+            this.network.write(msgData);
+            setTimeout(()=>{
+                if (this.network.messagesIn.length > 0){
+                    var message = this.getMessage('PARAMS');
+                    if (message.mnemonic == "PARAMS"){
+                        winston.info({message: 'MERGLCB: RQNP passed'});
+                        this.hasTestPassed = true;
+						retrieved_values ["nodeParameters"]["1"] = message.param1;
+						retrieved_values ["nodeParameters"]["2"] = message.param2;
+						retrieved_values ["nodeParameters"]["3"] = message.param3;
+						retrieved_values ["nodeParameters"]["4"] = message.param4;
+						retrieved_values ["nodeParameters"]["5"] = message.param5;
+						retrieved_values ["nodeParameters"]["6"] = message.param6;
+						retrieved_values ["nodeParameters"]["7"] = message.param7;
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[1] + ' : ' + message.param1});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[2] + '  : ' + message.param2});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[3] + '      : ' + message.param3});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[4] + '  : ' + message.param4});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[5] + ' : ' + message.param5});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[6] + '  : ' + message.param6});
+                        winston.info({message: '      RQNP: ' + NodeParameterNames[7] + '  : ' + message.param7});
+                    }
+                }
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: RQNP passed'}); 
+					this.passed_count++;
+				}else{
+					winston.info({message: 'MERGLCB: RQNP failed'});
+					this.failed_count++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , 100
+            );
+        }.bind(this));
+    }
+    
 
 	// 11 - RQMN
     test_RQMN(retrieved_values) {
