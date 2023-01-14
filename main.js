@@ -52,41 +52,45 @@ async function runtests() {
 
 	retrieved_values = await (SetupMode.runTests(retrieved_values));
 	
-	// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
-	// so fetch matching module descriptor file
-	var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', retrieved_values); 			
-	
-	// now do all the other tests - passing in retrieved_values & module_descriptor
-	// capture returned retrieved_values as it may be updated
-	retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
-	retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
-	
-
-	// check that retrieved_values is still defined, and not lost by one of the tests
-	if (retrieved_values == null) {
-		winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
-	}	
-	
-	// now do tests dependant on the retrieved service types the nodule supports
-	for (var key in retrieved_values["Services"]) {
-		var serviceType = retrieved_values["Services"][key]["ServiceType"];
-		switch (serviceType) {
-			case 1:
-				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[1]});
-				break;
-			case 2:
-				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[2]});
-				break;
-			case 3:
-				winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[3]});
-				break;
-			//
-			// add more types...
-			//
-			default:
-				winston.info({message: 'MERGLCB: unknown ServiceType ' + serviceType});
-		}
+	if (retrieved_values.setup_completed){
+		// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
+		// so fetch matching module descriptor file
+		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', retrieved_values); 			
 		
+		// now do all the other tests - passing in retrieved_values & module_descriptor
+		// capture returned retrieved_values as it may be updated
+		retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
+		retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
+		
+
+		// check that retrieved_values is still defined, and not lost by one of the tests
+		if (retrieved_values == null) {
+			winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
+		}	
+		
+		// now do tests dependant on the retrieved service types the nodule supports
+		for (var key in retrieved_values["Services"]) {
+			var serviceType = retrieved_values["Services"][key]["ServiceType"];
+			switch (serviceType) {
+				case 1:
+					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[1]});
+					break;
+				case 2:
+					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[2]});
+					break;
+				case 3:
+					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[3]});
+					break;
+				//
+				// add more types...
+				//
+				default:
+					winston.info({message: 'MERGLCB: unknown ServiceType ' + serviceType});
+			}
+			
+		}
+	} else {
+		winston.info({message: '\nFailed to complete setup - further tests aborted\n'});
 	}
 		
 

@@ -55,6 +55,7 @@ class SetupMode_tests {
 		winston.debug({message: ' '});
 		
         winston.info({message: 'MERGLCB: put module into setup'});
+		retrieved_values["setup_completed"]= false;
         var setup_tries = 0;
         while (1){
             await this.sleep(1000);
@@ -75,14 +76,17 @@ class SetupMode_tests {
             await this.test_RQNP(retrieved_values);
             await this.test_SNN();      // takes module out of setup mode
 			
+			retrieved_values.setup_completed = true;
+			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 			
         } else {
             winston.info({message: ''});
             winston.info({message: 'MERGLCB: failed to go into setup'});
+			retrieved_values.TestsFailed++;
         }
 		
-        winston.info({message: 'Setup Mode Test run finished \n Passed count : ' + this.passed_count + '\n Failed count : ' + this.failed_count + '\n'});
+        winston.info({message: 'Setup Mode Test run finished\n'});
 		// update total tests counts
 		retrieved_values.TestsPassed += this.passed_count;
 		retrieved_values.TestsFailed += this.failed_count;
