@@ -17,7 +17,7 @@ class opcodes_7x {
     constructor(NETWORK) {
 		winston.debug({message:  ' '});
 		//                        012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message:  '----------------------- opcodes_0x7x -----------------------\n'});
+		winston.debug({message:  '------------------------ opcodes_7x -----------------------\n'});
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;
