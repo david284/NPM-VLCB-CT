@@ -15,7 +15,7 @@ module.exports = [
 	"Boot2 service",					// 11
 	"Fast Clock Service",				// 12
 	"DCC Cab Service",					// 13
-	"DCC Command Service".				// 14
+	"DCC Command Service",				// 14
 	"CAN Bridge Service",				// 15
 	"SLiM Service",						// 16
 	"Long Message Service"				// 17
