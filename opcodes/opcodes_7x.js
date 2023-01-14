@@ -1,8 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
-const NodeParameterNames = require('./../Text_NodeParameterNames.js');
-const ServiceTypeNames = require('./../Text_ServiceTypeNames.js');
+const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
+const ServiceTypeNames = require('./../Definitions/Text_ServiceTypeNames.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only

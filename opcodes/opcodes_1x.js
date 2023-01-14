@@ -1,7 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
-const NodeParameterNames = require('./../Text_NodeParameterNames.js');
+const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 
 
 // Scope:

@@ -7,7 +7,7 @@ const SetupMode_tests = require('./Tests_SetupMode.js');
 const MNS_tests = require('./Tests_MinimumNodeService.js');
 const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
-const ServiceTypeNames = require('./Text_ServiceTypeNames.js');
+const ServiceTypeNames = require('./Definitions/Text_ServiceTypeNames.js');
 
 
 
