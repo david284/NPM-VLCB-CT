@@ -10,9 +10,16 @@ const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTEST_165_2_117.json');
 
 
+// Scope:
+// variables declared outside of the class are 'global' to this module only
+// callbacks need a bind(this) option to allow access to the class members
+// let has block scope (or global if top level)
+// var has function scope (or global if top level)
+// const has block sscope (like let), and can't be changed through reassigment or redeclared
+
 
 // Assert style
-var assert = require('chai').assert;
+const assert = require('chai').assert;
 
 const NET_PORT = 5558;
 const NET_ADDRESS = "127.0.0.1"
@@ -20,14 +27,14 @@ const NET_ADDRESS = "127.0.0.1"
 
 
 describe('opcodes_7x tests', function(){
-	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	let Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
-	let tests = new opcodes_7x.opcodes_7x(Network);
+	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
+	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+	const tests = new opcodes_7x.opcodes_7x(Network);
 
 
     // mns_testss have their own timeouts, so need to reflect that and add a little bit
     // to ensure the unti tests don't timeout first
-    let test_timeout = tests.response_time + 100;
+    const test_timeout = tests.response_time + 100;
 
 	before(function() {
 		winston.info({message: ' '});

@@ -77,7 +77,7 @@ describe('Setup Mode tests', function(){
 	}
 
 
-    //
+    // 0x50 RQNN
     itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
         mock_Cbus.enterSetup(value.nodeNumber);

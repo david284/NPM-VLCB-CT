@@ -15,9 +15,8 @@ const ServiceTypeNames = require('./../Text_ServiceTypeNames.js');
 class opcodes_7x {
 
     constructor(NETWORK) {
-		winston.debug({message:  ' '});
-		//                        012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message:  '------------------------ opcodes_7x -----------------------\n'});
+		//                        0123456789012345678901234567890123456789
+		winston.debug({message:  '----------------- opcodes_7x Constructor'});
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;

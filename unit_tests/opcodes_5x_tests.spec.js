@@ -6,7 +6,7 @@ const net = require('net')
 const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
-const opcodes_8x = require('./../opcodes/opcodes_8x.js');
+const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 
 
 // Scope:
@@ -20,26 +20,21 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 // Assert style
 const assert = require('chai').assert;
 
-const NET_PORT = 5557;
+const NET_PORT = 5560;
 const NET_ADDRESS = "127.0.0.1"
 
 
 
-describe('opcodes_8x tests', function(){
+describe('opcodes_5x tests', function(){
 	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
-	const tests = new opcodes_8x.opcodes_8x(Network);
-
-
-    // mns_testss have their own timeouts, so need to reflect that and add a little bit
-    // to ensure the unti tests don't timeout first
-    const test_timeout = tests.response_time + 100;
+	const tests = new opcodes_5x.opcodes_5x(Network);
 
 	before(function() {
 		winston.info({message: ' '});
 		//                      012345678901234567890123456789987654321098765432109876543210
 		winston.info({message: '============================================================'});
-		winston.info({message: '------------------ opcodes_8x unit tests -------------------'});
+		winston.info({message: '------------------ opcodes_5x unit tests -------------------'});
 		winston.info({message: '============================================================'});
 		winston.info({message: ' '});
 
@@ -72,22 +67,34 @@ describe('opcodes_8x tests', function(){
 
 
 
+    function GetTestCase_RQNN() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
 
-    // 0x87 - RDGN
-	it("RDGN test", function (done) {
-		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
-		// storage for values retrieved from module under test	
-		var retrieved_values = { "Services": { "1": { "ServiceIndex": 1 }, "2": { "ServiceIndex": 2 },  "3": { "ServiceIndex": 255 } } };
-        var result = tests.test_RDGN(retrieved_values, 0, 0, 0);
+
+    // 0x50 RQNN
+    itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
+		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
+        mock_Cbus.enterSetup(value.nodeNumber);
+		var retrieved_values = {};
 		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: RDGN ended'});
-            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
-            expect(tests.hasTestPassed).to.equal(true);
-//			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
-//			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
+			tests.checkForRQNN(retrieved_values);
+            expect(tests.inSetupMode).to.equal(true);
+            expect(tests.test_nodeNumber).to.equal(value.nodeNumber);
+            winston.info({message: 'UNIT TEST: RQNN ended'});
+            mock_Cbus.exitSetup(value.nodeNumber);
 			done();
-		}, test_timeout);
+		}, 100);
 	})
+
+
 
 
 })
