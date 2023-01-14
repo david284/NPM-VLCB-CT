@@ -1,6 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const opcodes_5x = require('./opcodes/opcodes_5x.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -39,6 +41,8 @@ class SetupMode_tests {
         this.response_time = 200;
         this.passed_count = 0;
 		this.failed_count = 0;
+		
+		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
     }
 
 
@@ -55,7 +59,9 @@ class SetupMode_tests {
         while (1){
             await this.sleep(1000);
             setup_tries++;
-			this.checkForRQNN(retrieved_values);
+			this.opcodes_5x.checkForRQNN(retrieved_values);
+			this.inSetupMode = this.opcodes_5x.inSetupMode;
+            this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
             winston.info({message: 'MERGLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
@@ -95,17 +101,6 @@ class SetupMode_tests {
         });
     }
 	
-	checkForRQNN(retrieved_values){
-		var message = this.getMessage('RQNN');
-			if (message != null) {
-            if (message.mnemonic == "RQNN"){
-                this.test_nodeNumber = message.nodeNumber;
-				retrieved_values ["nodeNumber"] = message.nodeNumber;
-                this.inSetupMode = true;
-                winston.info({message: 'MERGLCB: module ' + this.test_nodeNumber + ' in setup mode '});
-			}
-		}
-	}
 
     //
     // get first instance of a received message with the specified mnemonic

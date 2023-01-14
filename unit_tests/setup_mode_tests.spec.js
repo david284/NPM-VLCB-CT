@@ -60,38 +60,10 @@ describe('Setup Mode tests', function(){
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 				Testing Minimum Node Services (MNS) 
+// 				Tests 
 //
 
 	
-
-    function GetTestCase_RQNN() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
-
-    // 0x50 RQNN
-    itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
-		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
-        mock_Cbus.enterSetup(value.nodeNumber);
-		var retrieved_values = {};
-		setTimeout(function(){
-			SetupMode.checkForRQNN(retrieved_values);
-            expect(SetupMode.inSetupMode).to.equal(true);
-            expect(SetupMode.test_nodeNumber).to.equal(value.nodeNumber);
-            winston.info({message: 'UNIT TEST: RQNN ended'});
-            mock_Cbus.exitSetup(value.nodeNumber);
-			done();
-		}, test_timeout);
-	})
-
 
     //
 	it("RQNP test", function (done) {
