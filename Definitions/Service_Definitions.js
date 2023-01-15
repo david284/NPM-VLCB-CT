@@ -7,6 +7,17 @@ module.exports = {
 	"1":{
 		"name":"Minimum Node Service",
 		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"STATUS"},
+					"2":{"name":"UPTIME upper word"},
+					"3":{"name":"UPTIME lower word"},
+					"4":{"name":"Memory Fault Indicator"},
+					"5":{"name":"Node ID change count"},
+					"6":{"name":"Software Error Status"},
+					"7":{"name":"Message Processed Count"}
+				}
+			},
 			"1": {
 				"diagnostics":{
 					"1":{"name":"STATUS"},
@@ -21,10 +32,40 @@ module.exports = {
 		}
 	},
 	"2":{
-		"name":"Node Variable Service"
+		"name":"Node Variable Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Access Count"},
+					"2":{"name":"Failure Count"}
+				}
+			}
+		}
 	},
 	"3":{
-		"name":"CAN Service"
+		"name":"CAN Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Receive error count"},
+					"2":{"name":"Transmit error count"},
+					"3":{"name":"Error bits"},
+					"4":{"name":"Transmit buffers in use"},
+					"5":{"name":"Transmit buffer overrun count"},
+					"6":{"name":"Transmitted message count"},
+					"7":{"name":"Received buffers in use"},
+					"8":{"name":"Receive buffer overrun count"},
+					"9":{"name":"Received message count"},
+					"10":{"name":"Received CAN error frame count"},
+					"11":{"name":"Transmitted CAN error frame count"},
+					"12":{"name":"Lost CAN arbitration count"},
+					"13":{"name":"CANID enumeration count"},
+					"14":{"name":"CANID conflict count"},
+					"15":{"name":"CANID change count"},
+					"16":{"name":"CANID enumeration failure count"}
+				}
+			}
+		}
 	},
 	"4":{
 		"name":"Teaching Service"
