@@ -31,7 +31,7 @@ var messageOnly = winston.format.combine(
 var options = {
   file1: {
     level: 'debug',
-    filename: `./unit_tests/logs/tests.log`,
+    filename: `./unit_tests/logs/unit_test_debug.log`,
 	options: { flags: 'w' },
     handleExceptions: true,
     maxsize: 5242880, // 5MB
@@ -40,7 +40,7 @@ var options = {
   },
   file2: {
     level: 'error',
-    filename: `./unit_tests/logs/errors.log`,
+    filename: `./unit_tests/logs/unit_test_error.log`,
 	options: { flags: 'w' },
     handleExceptions: true,
     maxsize: 5242880, // 5MB

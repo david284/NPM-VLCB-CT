@@ -31,7 +31,7 @@ var messageOnly = winston.format.combine(
 var options = {
   file: {
     level: 'debug',
-    filename: `./logs/winston.log`,
+    filename: `./logs/debug.log`,
 	options: { flags: 'w' },
     handleExceptions: true,
     maxsize: 5242880, // 5MB
