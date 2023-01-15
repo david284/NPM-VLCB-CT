@@ -37,8 +37,8 @@ class MinimumNodeServiceTests {
 		
 
 		
-		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
-		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
+//		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
+//		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
@@ -75,7 +75,7 @@ class MinimumNodeServiceTests {
 		
         winston.info({message: 'MNS Test run finished \n'});
 		
-		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
+//		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;
     }
 

@@ -57,7 +57,7 @@ class NodeVariableServiceTests {
 		
         winston.info({message: 'NVS Test run finished \n'});
 		
-		winston.debug({message: 'MERGLCB: NVS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
+//		winston.debug({message: 'MERGLCB: NVS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;
     }
 

@@ -64,7 +64,7 @@ async function runtests() {
 		// now do all the other tests - passing in retrieved_values & module_descriptor
 		// capture returned retrieved_values as it may be updated
 		retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
-		retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
+//		retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
 		
 
 		// check that retrieved_values is still defined, and not lost by one of the tests

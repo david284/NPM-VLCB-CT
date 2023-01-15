@@ -113,7 +113,7 @@ class opcodes_8x {
 				if(ServiceIndex == 0) {
 					testType = "\'all services\'";
 				} else {
-					testType = "\'service " + ServiceIndex + "\'";
+					testType = "\'ServiceIndex " + ServiceIndex + "\'";
 				}
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RDGN ' + testType + ' passed'}); 

@@ -55,7 +55,7 @@ class CANServiceTests {
 		
         winston.info({message: 'CS Test run finished \n'});
 		
-		winston.debug({message: 'MERGLCB: CS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
+//		winston.debug({message: 'MERGLCB: CS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;
     }
 

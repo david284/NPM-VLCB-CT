@@ -173,14 +173,14 @@ class opcodes_7x {
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-								if(Service_Definitions[msg.ServiceIndex] != null) {
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceIndex].name;
+								if(Service_Definitions[msg.ServiceType] != null) {
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
 								} else{
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
 								}
 								winston.info({message: 'MERGLCB: Service Discovery : ' 
 												+ retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]
-												+ " (" + msg.ServiceIndex + ")"});
+												+ " (" + msg.ServiceType + ") ServiceIndex " + msg.ServiceIndex});
 
 							}
 							else{
