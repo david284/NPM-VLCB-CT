@@ -7,7 +7,15 @@ module.exports = [
 	},
 	"1":{
 		"name":"Minimum Node Service",
-		"diagnostics":{}
+		"diagnostics":{
+			"1":{"name":"STATUS"},
+			"2":{"name":"UPTIME upper word"},
+			"3":{"name":"UPTIME lower word"},
+			"4":{"name":"Memory Fault Indicator"},
+			"5":{"name":"Node ID change count"},
+			"6":{"name":"Software Error Status"},
+			"7":{"name":"Message Processed Count"}
+		}
 	},
 	"2":{
 		"name":"Node Variable Service",
