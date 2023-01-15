@@ -7,7 +7,7 @@ const SetupMode_tests = require('./Tests_SetupMode.js');
 const MNS_tests = require('./Tests_MinimumNodeService.js');
 const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
-const ServiceTypeNames = require('./Definitions/Text_ServiceTypeNames.js');
+const Service_Definitions = require('./Definitions/Service_Definitions.js');
 
 
 
@@ -73,13 +73,13 @@ async function runtests() {
 			var serviceType = retrieved_values["Services"][key]["ServiceType"];
 			switch (serviceType) {
 				case 1:
-					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[1]});
+					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[1].name});
 					break;
 				case 2:
-					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[2]});
+					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[2].name});
 					break;
 				case 3:
-					winston.info({message: 'MERGLCB: add tests for ' + ServiceTypeNames[3]});
+					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[3].name});
 					break;
 				//
 				// add more types...
