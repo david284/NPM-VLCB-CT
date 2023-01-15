@@ -42,6 +42,14 @@ class opcodes_8x {
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						if (msg.mnemonic == "DGN"){
+							if ( Service_Definitions[msg.ServiceIndex] != null) {
+								winston.info({message: 'MERGLCB: ' + Service_Definitions[msg.ServiceIndex].name
+												+ " Diagnostic " 
+												+ msg.DiagnosticCode});	
+							} else {
+								winston.info({message: 'MERGLCB: unknown service type'});	
+							}								
+							
 							nonMatchingCount++;				// ok, got +1 message not yet matched
 							// check for matching diagnostics to already known services
 							for (var key in retrieved_values["Services"]) {
