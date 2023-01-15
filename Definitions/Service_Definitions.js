@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = [
+module.exports = {
 	"0":{
 		"name":"Reserved",
 		"diagnostics":{}
@@ -75,4 +75,4 @@ module.exports = [
 		"name":"Long Message Service",
 		"diagnostics":{}
 	}
-];
+};
