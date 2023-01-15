@@ -178,9 +178,10 @@ class opcodes_7x {
 								} else{
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
 								}
-								winston.info({message: 'MERGLCB: Service Discovery : ' 
-												+ retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]
-												+ " (" + msg.ServiceType + ") ServiceIndex " + msg.ServiceIndex});
+								winston.info({message: 'MERGLCB: Service Discovery : ServiceIndex ' + msg.ServiceIndex
+												+ ' ServiceType ' + msg.ServiceType
+												+ ' ServiceVersion ' + msg.ServiceVersion
+												+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
 
 							}
 							else{
