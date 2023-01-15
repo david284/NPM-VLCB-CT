@@ -173,7 +173,15 @@ class opcodes_7x {
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
+								if(Service_Definitions[msg.ServiceIndex] != null) {
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceIndex].name;
+								} else{
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
+								}
+								winston.info({message: 'MERGLCB: Service Discovery : ' 
+												+ retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]
+												+ " (" + msg.ServiceIndex + ")"});
+
 							}
 							else{
 								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});

@@ -9,7 +9,7 @@ const Service_Definitions = require('./../Definitions/Service_Definitions.js');
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
-// const has block sscope (like let), and can't be changed through reassigment or redeclared
+// const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
 class opcodes_8x {
@@ -47,7 +47,8 @@ class opcodes_8x {
 												+ " Diagnostic " 
 												+ msg.DiagnosticCode});	
 							} else {
-								winston.info({message: 'MERGLCB: unknown service type'});	
+								winston.info({message: 'MERGLCB: unknown service type ' + msg.ServiceIndex
+								+ ' Diagnostic ' + msg.DiagnosticCode});	
 							}								
 							
 							nonMatchingCount++;				// ok, got +1 message not yet matched
@@ -56,7 +57,7 @@ class opcodes_8x {
 								var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
 								if (msg.ServiceIndex == serviceIndex){
 									nonMatchingCount--; // message matches service, so decrement count
-									winston.info({message: 'MERGLCB: Matching service found '});
+									winston.debug({message: 'MERGLCB: Matching service found '});
 
 									// ok, matches a service, so store values if they don't already exist
 									if (retrieved_values["Services"][key]["diagnostics"] == null) {
@@ -77,8 +78,14 @@ class opcodes_8x {
 					if ( nonMatchingCount == 0) {this.hasTestPassed = true;}
 				}
 				
+				var testType = "";
+				if(ServiceIndex == 0) {
+					testType = "\'all services\'";
+				} else {
+					testType = "\'service " + ServiceIndex + "\'";
+				}
                 if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RDGN passed'}); 
+					winston.info({message: 'MERGLCB: RDGN ' + testType + ' passed'}); 
 					retrieved_values.TestsPassed++;
 				}else{
 					winston.info({message: 'MERGLCB: RDGN failed'});
