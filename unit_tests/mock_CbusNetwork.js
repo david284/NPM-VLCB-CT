@@ -59,6 +59,23 @@ class mock_CbusNetwork {
 						new CANSERVO8C (1),
 						new CANMIO (65535)
 						]
+						
+/*						
+		// values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
+		this.DGN_Outputs = {
+				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, 
+				"2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 2 },  
+				"3": { "ServiceIndex": 2, "DiagnosticCode": 1, "DiagnosticValue": 3 },  
+				"4": { "ServiceIndex": 3, "DiagnosticCode": 1, "DiagnosticValue": 4 }, 
+				"4": { "ServiceIndex": 4, "DiagnosticCode": 1, "DiagnosticValue": 5 }
+				};
+*/
+		// values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
+		// bare minimum to do something - we expect the test will update this array using set_DGN_Outputs()
+		this.DGN_Outputs = {
+				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }
+				};
+
 
 		this.server = net.createServer(function (socket) {
 			this.socket=socket;
@@ -242,10 +259,14 @@ class mock_CbusNetwork {
             case '87': 
                 winston.debug({message: 'Mock CBUS Network: received RDGN'});
                 // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-				if (cbusMsg.ServiceIndex == 0) {
-					this.outputDGN(cbusMsg.nodeNumber, 1, 1, 65535);
-					this.outputDGN(cbusMsg.nodeNumber, 1, 255, 0);
-					this.outputDGN(cbusMsg.nodeNumber, 255, 0, 1);
+				for (var key in this.DGN_Outputs) {
+					winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
+					if (cbusMsg.ServiceIndex == 0) {
+						this.outputDGN(cbusMsg.nodeNumber, 
+							this.DGN_Outputs[key].ServiceIndex, 
+							this.DGN_Outputs[key].DiagnosticCode, 
+							this.DGN_Outputs[key].DiagnosticValue);
+					}
 				}
 				break;
             case '90':
@@ -323,6 +344,11 @@ class mock_CbusNetwork {
 		winston.debug({message: 'Mock CBUS Network: node ' + nodeNumber + ' request exit setup'});
 		module.endSetupMode();
 	}
+	
+	set_DGN_Outputs(DGN_Outputs){ 
+		this.DGN_Outputs = DGN_Outputs;
+		winston.debug({message: 'Mock CBUS Network: DGN_Outputs updated'});		
+	};
 
 
 	// 00 ACK

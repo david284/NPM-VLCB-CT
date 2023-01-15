@@ -71,13 +71,37 @@ describe('opcodes_8x tests', function(){
 //
 
 
+	// 0x87
+	//
+	// what we want to test
+	// Service index	Service type	Service Version		Diagnostic Code
+	//		1				1				1					1				//
+	//		1				1				1					2				// change of code
+	//		2				1				1					1				// change of index - same type
+	//		3				2				1					1				// change of index, change of type
+	//		4				1				2					1				// change of index, change of version
+
+	// values to output from mockCbus - ServiceIndex, DiagnosticCode, DiagnosticValue
+	var DGN_Outputs = {
+				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, 
+				"2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 2 },  
+				"3": { "ServiceIndex": 2, "DiagnosticCode": 1, "DiagnosticValue": 3 },  
+				"4": { "ServiceIndex": 3, "DiagnosticCode": 1, "DiagnosticValue": 4 }, 
+				"5": { "ServiceIndex": 4, "DiagnosticCode": 1, "DiagnosticValue": 5 }
+				};
 
 
     // 0x87 - RDGN
 	it("RDGN test", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
 		// storage for values retrieved from module under test	
-		var retrieved_values = { "Services": { "1": { "ServiceIndex": 1 }, "2": { "ServiceIndex": 2 },  "3": { "ServiceIndex": 255 } } };
+		var retrieved_values = { "Services": { 
+				"1": { "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": "1" }, 
+				"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
+				"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
+				"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
+				};
+		mock_Cbus.set_DGN_Outputs(DGN_Outputs);
         var result = tests.test_RDGN(retrieved_values, 0, 0, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RDGN ended'});
@@ -91,3 +115,4 @@ describe('opcodes_8x tests', function(){
 
 
 })
+
