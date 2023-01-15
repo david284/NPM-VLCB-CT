@@ -8,6 +8,8 @@ const MNS_tests = require('./Tests_MinimumNodeService.js');
 const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
+const NVS_tests = require('./Tests_NodeVariableService.js');
+const CS_tests = require('./Tests_CANService.js');
 
 
 
@@ -38,6 +40,8 @@ const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 // create instances of tests
 const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
 const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
+const NVS = new NVS_tests.NodeVariableServiceTests(Network);
+const CS = new CS_tests.CANServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 
 // Block to call tests to ensure they run in sequence
@@ -70,16 +74,17 @@ async function runtests() {
 		
 		// now do tests dependant on the retrieved service types the nodule supports
 		for (var key in retrieved_values["Services"]) {
+			var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
 			var serviceType = retrieved_values["Services"][key]["ServiceType"];
 			switch (serviceType) {
 				case 1:
-					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[1].name});
+					// already run MNS tests, so can ignore this case
 					break;
 				case 2:
-					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[2].name});
+					retrieved_values = await (NVS.runTests(retrieved_values, module_descriptor, serviceIndex));
 					break;
 				case 3:
-					winston.info({message: 'MERGLCB: add tests for ' + Service_Definitions[3].name});
+					retrieved_values = await (CS.runTests(retrieved_values, module_descriptor, serviceIndex));
 					break;
 				//
 				// add more types...
