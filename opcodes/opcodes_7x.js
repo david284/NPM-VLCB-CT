@@ -2,7 +2,8 @@
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
-const ServiceTypeNames = require('./../Definitions/Text_ServiceTypeNames.js');
+const Service_Definitions = require('./../Definitions/Service_Definitions.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -172,7 +173,7 @@ class opcodes_7x {
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
 								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = ServiceTypeNames[msg.ServiceType];
+								retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
 							}
 							else{
 								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
