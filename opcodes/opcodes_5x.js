@@ -42,15 +42,26 @@ class opcodes_5x {
 
 	// 0x50 RQNN
 	checkForRQNN(retrieved_values){
+		this.hasTestPassed = false;
 		var message = this.getMessage('RQNN');
 			if (message != null) {
             if (message.mnemonic == "RQNN"){
                 this.test_nodeNumber = message.nodeNumber;
 				retrieved_values ["nodeNumber"] = message.nodeNumber;
                 this.inSetupMode = true;
+				this.hasTestPassed = true;
                 winston.info({message: 'MERGLCB: module ' + this.test_nodeNumber + ' in setup mode '});
 			}
 		}
+
+		if (this.hasTestPassed){ 
+			winston.info({message: 'MERGLCB: RQNN passed'}); 
+			retrieved_values.TestsPassed++;
+		}else{
+			winston.info({message: 'MERGLCB: RQNN failed'});
+			retrieved_values.TestsFailed++;
+		}
+		winston.debug({message: '-'});
 	}
 
 }

@@ -162,10 +162,9 @@ class opcodes_7x {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						winston.info({message: msg.text});
+						winston.debug({message: msg.text});
 						if (msg.mnemonic == "GRSP"){
 							if (msg.nodeNumber == retrieved_values.nodeNumber){
-								winston.info({message: 'MERGLCB: MODE passed'});
 								this.hasTestPassed = true;
 							}
 						}
