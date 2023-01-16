@@ -80,7 +80,7 @@ describe('opcodes_5x tests', function(){
 
 
     // 0x50 RQNN
-    itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
+    itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_RQNN(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
         mock_Cbus.enterSetup(value.nodeNumber);
 		var retrieved_values = {};

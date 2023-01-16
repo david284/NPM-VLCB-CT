@@ -87,12 +87,38 @@ describe('opcodes_7x tests', function(){
 
 
     // 0x73 - RQNPN
-    itParam("RQNPN test parameterIndex ${value.parameterIndex}", GetTestCase_RQNPN(), function (done, value) {
+    itParam("RQNPN test ${JSON.stringify(value)}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
 		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
         var result = tests.test_RQNPN(value.parameterIndex, retrieved_values, test_module_descriptor);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQNPN ended'});
+            expect(tests.hasTestPassed).to.equal(true);
+			done();
+		}, test_timeout);
+	})
+
+
+
+    function GetTestCase_MODE() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 2;
+			testCases.push({'MODE':arg1});
+		}
+		return testCases;
+	}
+
+
+    // 0x76 - MODE
+    itParam("MODE test ${JSON.stringify(value)}", GetTestCase_MODE(), function (done, value) {
+		winston.info({message: 'UNIT TEST:: BEGIN MODE test'});
+		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
+        var result = tests.test_MODE(retrieved_values, test_module_descriptor, value.MODE);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: MODE ended'});
             expect(tests.hasTestPassed).to.equal(true);
 			done();
 		}, test_timeout);

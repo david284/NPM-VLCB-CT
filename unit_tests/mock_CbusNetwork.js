@@ -244,8 +244,13 @@ class mock_CbusNetwork {
                 this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
                 break;
             case '75':
-                // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><CANID>
+                // Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CANID>
                 winston.debug({message: 'Mock CBUS Network: received CANID'});
+                break;
+            case '76':
+                // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
+                winston.debug({message: 'Mock CBUS Network: received MODE'});
+				this.outputGRSP(cbusMsg.nodeNumber, 0x76, 1, 0);
                 break;
             case '78':
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});
@@ -301,11 +306,15 @@ class mock_CbusNetwork {
 
 
     broadcast(msgData) {
-        this.clients.forEach(function (client) {
-			winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
-            client.write(msgData);
-            winston.debug({message: 'Mock CBUS Network: Transmit >>>> Port: ' + client.remotePort + ' Data: ' + msgData});
-        });
+		if (msgData != null){
+			this.clients.forEach(function (client) {
+				winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+				client.write(msgData);
+				winston.debug({message: 'Mock CBUS Network: Transmit >>>> Port: ' + client.remotePort + ' Data: ' + msgData});
+			});
+		} else {
+				winston.debug({message: 'Mock CBUS Network: null data sent to Broadcast() '});			
+		}
     }
 
 
@@ -493,6 +502,14 @@ class mock_CbusNetwork {
 	outputPARAN(nodeNumber, parameterIndex, parameterValue) {
 		// Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
 		var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, parameterValue);
+        this.broadcast(msgData)
+	}
+
+	
+	// AF - GRSP
+	outputGRSP(nodeNumber, OpCode, ServiceType, Result) {
+		// Format: [<MjPri><MinPri=3><CANID>]<AF><NN hi><NN lo><OpCode><ServiceType><Result>
+		var msgData = cbusLib.encodeGRSP(nodeNumber, OpCode, ServiceType,Result);
         this.broadcast(msgData)
 	}
 

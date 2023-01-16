@@ -150,6 +150,43 @@ class opcodes_7x {
     }
 	
 	
+    // 0x76 - MODE
+    test_MODE(retrieved_values, MODE) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN MODE test'});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeMODE(retrieved_values.nodeNumber, MODE);
+            this.network.write(msgData);
+            setTimeout(()=>{
+                if (this.network.messagesIn.length > 0){
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						winston.info({message: msg.text});
+						if (msg.mnemonic == "GRSP"){
+							if (msg.nodeNumber == retrieved_values.nodeNumber){
+								winston.info({message: 'MERGLCB: MODE passed'});
+								this.hasTestPassed = true;
+							}
+						}
+					});
+				}
+				
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: MODE passed'}); 
+					retrieved_values.TestsPassed++;
+				}else{
+					winston.info({message: 'MERGLCB: MODE failed'});
+					retrieved_values.TestsFailed++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , this.response_time
+            );
+        }.bind(this));
+    }
+	
+	
 	// 0x78 - RQSD
     test_RQSD(retrieved_values, ServiceIndex) {
         return new Promise(function (resolve, reject) {

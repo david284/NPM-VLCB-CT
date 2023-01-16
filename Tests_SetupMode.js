@@ -4,6 +4,7 @@ const cbusLib = require('cbuslibrary');
 const opcodes_1x = require('./opcodes/opcodes_1x.js');
 const opcodes_4x = require('./opcodes/opcodes_4x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
+const opcodes_7x = require('./opcodes/opcodes_7x.js');
 
 
 // Scope:
@@ -28,6 +29,7 @@ class SetupMode_tests {
 		this.opcodes_1x = new opcodes_1x.opcodes_1x(this.network);
 		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
+		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
     }
 
 
@@ -38,13 +40,23 @@ class SetupMode_tests {
 		winston.info({message:  '-------------------- Setup Mode tests ---------------------'});
 		winston.debug({message: '==========================================================='});
 		winston.debug({message: ' '});
+
+        await this.sleep(100);	//small delay to allow conenction to be established
 		
+		// we need the module in setup mode
+		// try to put the module into setup using the MODE command
+		// but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
+		
+		retrieved_values["nodeNumber"] = 300;
+		this.opcodes_7x.test_MODE(retrieved_values, 0)		// 0 - setup mode
+
         winston.info({message: 'MERGLCB: put module into setup'});
 		retrieved_values["setup_completed"]= false;
         var setup_tries = 0;
 		
+        await this.sleep(500);		// delay to allow the MODE command to work
+		
         while (1){
-            await this.sleep(1000);
             setup_tries++;
 			this.opcodes_5x.checkForRQNN(retrieved_values);
 			this.inSetupMode = this.opcodes_5x.inSetupMode;
@@ -52,6 +64,7 @@ class SetupMode_tests {
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
             winston.info({message: 'MERGLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
+            await this.sleep(1000);
         }
 		
 		// need module to be in setup mode to start the tests
