@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('./config/winston.js');
 const fs = require('fs');
+var pjson = require('./package.json');
 
 const IP_Network = require('./ip_network.js')
 const SetupMode_tests = require('./Tests_SetupMode.js');
@@ -27,11 +28,11 @@ winston.info({message: ' '});
 winston.info({message: '================================================================================'});
 //                      01234567890123456789012345678901234567899876543210987654321098765432109876543210
 winston.info({message: '--------------------------- MERGLCB Compliance Test ----------------------------'});
-winston.info({message: '------------------------------- Version 0.0.0.0 --------------------------------'});
+winston.info({message: '--------------------------------------------------------------------------------'});
+winston.info({message: '- Test Version : ' + pjson.version});
+winston.info({message: '- Test Run : ' + new Date()});
 winston.info({message: '================================================================================'});
 winston.info({message: ' '});
-
-winston.info({message: 'Test Run : ' + new Date()+ '\n'});
 		
 // create network conenction for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
