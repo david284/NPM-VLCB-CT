@@ -85,7 +85,7 @@ class SetupMode_tests {
 			retrieved_values.TestsFailed++;
         }
 		
-        winston.info({message: 'Setup Mode Test run finished\n'});
+        winston.info({message: 'MERGLCB: ==== Setup Mode Test run finished\n'});
 		// update total tests counts
 		retrieved_values.TestsPassed += this.passed_count;
 		retrieved_values.TestsFailed += this.failed_count;

@@ -55,7 +55,7 @@ class NodeVariableServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'NVS Test run finished \n'});
+        winston.info({message: 'MERGLCB: ==== Node Variable Service Test run finished \n'});
 		
 //		winston.debug({message: 'MERGLCB: NVS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;

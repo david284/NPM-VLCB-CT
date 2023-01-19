@@ -9,6 +9,11 @@ const cbusLib = require('cbuslibrary');
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
+//
+//
+//
+function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
+
 
 class opcodes_5x {
 
@@ -20,6 +25,7 @@ class opcodes_5x {
         this.hasTestPassed = false;
         this.inSetupMode = false;
         this.test_nodeNumber = 0;
+        this.response_time = 100;
     }
 	
 	    //
@@ -64,6 +70,56 @@ class opcodes_5x {
 		winston.debug({message: '-'});
 	}
 
+
+    // 0x5E - NNRST
+    test_NNRST(retrieved_values) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN NNRST test'});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeNNRST(retrieved_values.nodeNumber);
+            this.network.write(msgData);
+            setTimeout(()=>{
+				var GRSPreceived = false;
+                if (this.network.messagesIn.length > 0){
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if (msg.mnemonic == "GRSP"){
+							GRSPreceived = true;
+							if (msg.nodeNumber == retrieved_values.nodeNumber) {
+								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+									this.hasTestPassed = true;
+								}else {
+									winston.info({message: 'MERGLCB: GRSP requestOpCode:'
+										+ '\n  Expected ' + cbusLib.decode(msgData).opCode
+										+ '\n  Actual ' + msg.requestOpCode}); 
+								}
+							} else {
+									winston.info({message: 'MERGLCB: GRSP nodeNumber:' +
+										+ '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
+										+ '\n  Actual ' + msg.nodeNumber}); 
+							}
+						}
+					});
+				}
+				
+				if (!GRSPreceived) { winston.info({message: 'MERGLCB: NNRST Fail: no GRSP received'}); }
+				
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: NNRST passed'}); 
+					retrieved_values.TestsPassed++;
+				}else{
+					winston.info({message: 'MERGLCB: NNRST failed'});
+					retrieved_values.TestsFailed++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , this.response_time
+            );
+        }.bind(this));
+    }
+	
+	
 }
 
 module.exports = {

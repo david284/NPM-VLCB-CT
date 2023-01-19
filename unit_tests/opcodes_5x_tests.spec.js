@@ -94,6 +94,32 @@ describe('opcodes_5x tests', function(){
 		}, 100);
 	})
 
+    function GetTestCase_NNRST() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 2;
+			testCases.push({'NNRST':arg1});
+		}
+		return testCases;
+	}
+
+
+
+
+    // 0x5E - NNRST
+    itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), function (done, value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
+		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
+        var result = tests.test_NNRST(retrieved_values);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: NNRST ended'});
+            expect(tests.hasTestPassed).to.equal(true);
+			done();
+		}, 200);
+	})
+
 
 
 

@@ -5,6 +5,7 @@ const cbusLib = require('cbuslibrary');
 //const ServiceTypeNames = require('./Text_ServiceTypeNames.js');
 
 const opcodes_0x = require('./opcodes/opcodes_0x.js');
+const opcodes_5x = require('./opcodes/opcodes_5x.js');
 const opcodes_7x = require('./opcodes/opcodes_7x.js');
 const opcodes_8x = require('./opcodes/opcodes_8x.js');
 
@@ -22,6 +23,7 @@ class MinimumNodeServiceTests {
 		this.network = NETWORK;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
+		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
     }
@@ -42,7 +44,12 @@ class MinimumNodeServiceTests {
 
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
+				
 
+				// NNRST - node reset - just check we get an acknowledge (GRSP) to this command
+				// next test will confirm if the module is still running with same nodeNumber
+				await this.opcodes_5x.test_NNRST(retrieved_values);
+				
 				// check for response to QNN from module under test
 				await this.opcodes_0x.test_QNN(retrieved_values);
 				
@@ -73,7 +80,7 @@ class MinimumNodeServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MNS Test run finished \n'});
+        winston.info({message: 'MERGLCB: ==== MNS Test run finished \n'});
 		
 //		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;

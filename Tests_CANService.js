@@ -53,7 +53,7 @@ class CANServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'CS Test run finished \n'});
+        winston.info({message: 'MERGLCB: ==== CAN Service Test run finished \n'});
 		
 //		winston.debug({message: 'MERGLCB: CS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
 		return retrieved_values;

@@ -68,7 +68,7 @@ class opcodes_8x {
 									} else {
 										var DiagnosticName = "Unknown Diagnostic Code";
 									}
-									winston.info({message: 'MERGLCB: ' + Service_Definitions[serviceType].name
+									winston.info({message: 'MERGLCB:      ' + Service_Definitions[serviceType].name
 										+ ': (' + serviceType + ') Diagnostic: (' + msg.DiagnosticCode 
 										+ ') ' + DiagnosticName});	
 								} else {

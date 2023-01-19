@@ -80,7 +80,7 @@ describe('opcodes_0x tests', function(){
             winston.info({message: 'UNIT TEST: QNN ended'});
             expect(tests.hasTestPassed).to.equal(true);
 			done();
-		}, test_timeout * 8);
+		}, 600);
 	})
 
 

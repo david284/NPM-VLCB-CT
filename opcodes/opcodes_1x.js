@@ -63,13 +63,13 @@ class opcodes_1x {
 						retrieved_values ["nodeParameters"]["5"] = message.param5;
 						retrieved_values ["nodeParameters"]["6"] = message.param6;
 						retrieved_values ["nodeParameters"]["7"] = message.param7;
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[1] + ' : ' + message.param1});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[2] + '  : ' + message.param2});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[3] + '      : ' + message.param3});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[4] + '  : ' + message.param4});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[5] + ' : ' + message.param5});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[6] + '  : ' + message.param6});
-                        winston.info({message: '      RQNP: ' + NodeParameterNames[7] + '  : ' + message.param7});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[1] + ' : ' + message.param1});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[2] + '  : ' + message.param2});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[3] + '      : ' + message.param3});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[4] + '  : ' + message.param4});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[5] + ' : ' + message.param5});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[6] + '  : ' + message.param6});
+                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[7] + '  : ' + message.param7});
                     }
                 }
                 if (this.hasTestPassed){ 
@@ -102,7 +102,7 @@ class opcodes_1x {
                         winston.info({message: 'MERGLCB: RQMN passed'});
                         this.hasTestPassed = true;
 						retrieved_values ["NAME"] = message.name;
-                        winston.info({message: '      RQMN: Name  : ' + message.name});
+                        winston.info({message: 'MERGLCB:      RQMN: Name  : ' + message.name});
                     }
                 }
                 if (this.hasTestPassed){ 

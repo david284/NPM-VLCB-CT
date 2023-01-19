@@ -77,7 +77,7 @@ class opcodes_7x {
 						} else {
 							// new value, so save it
 							retrieved_values ["nodeParameters"][parameterIndex] = message.parameterValue;
-							winston.debug({message: 'MERGLCB: Node Parameter ' + parameterIndex + ' added to retrieved_values'});
+							winston.debug({message: 'MERGLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
 						}
 						
 						// if it's in the module_descriptor, we need to check we've read the same value
@@ -165,7 +165,17 @@ class opcodes_7x {
 						winston.debug({message: msg.text});
 						if (msg.mnemonic == "GRSP"){
 							if (msg.nodeNumber == retrieved_values.nodeNumber){
-								this.hasTestPassed = true;
+								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+									this.hasTestPassed = true;
+								}else {
+									winston.info({message: 'MERGLCB: GRSP requestOpCode:'
+										+ '\n  Expected ' + cbusLib.decode(msgData).opCode
+										+ '\n  Actual ' + msg.requestOpCode}); 
+								}
+							} else {
+									winston.info({message: 'MERGLCB: GRSP nodeNumber:' +
+										+ '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
+										+ '\n  Actual ' + msg.nodeNumber}); 
 							}
 						}
 					});
@@ -214,7 +224,7 @@ class opcodes_7x {
 								} else{
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
 								}
-								winston.info({message: 'MERGLCB: Service Discovery : ServiceIndex ' + msg.ServiceIndex
+								winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
 												+ ' ServiceType ' + msg.ServiceType
 												+ ' ServiceVersion ' + msg.ServiceVersion
 												+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
