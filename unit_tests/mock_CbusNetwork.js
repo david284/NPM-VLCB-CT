@@ -199,6 +199,11 @@ class mock_CbusNetwork {
                 winston.debug({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
 				this.outputNNACK(nodeNumber);
                 break;
+            case '4F':
+                // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
+                winston.debug({message: 'Mock CBUS Network: received NNRSM'});
+				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+                break;
             case '53':
                 // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NNLRN'});
@@ -236,7 +241,7 @@ class mock_CbusNetwork {
             case '5E':
                 // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NNRST'});
-				this.outputGRSP(cbusMsg.nodeNumber, '5E', 1, 0);
+				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
             case '71':
                 // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
@@ -255,7 +260,7 @@ class mock_CbusNetwork {
             case '76':
                 // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
                 winston.debug({message: 'Mock CBUS Network: received MODE'});
-				this.outputGRSP(cbusMsg.nodeNumber, '76', 1, 0);
+				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
             case '78':
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});

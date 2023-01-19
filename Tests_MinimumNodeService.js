@@ -5,6 +5,7 @@ const cbusLib = require('cbuslibrary');
 //const ServiceTypeNames = require('./Text_ServiceTypeNames.js');
 
 const opcodes_0x = require('./opcodes/opcodes_0x.js');
+const opcodes_4x = require('./opcodes/opcodes_4x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
 const opcodes_7x = require('./opcodes/opcodes_7x.js');
 const opcodes_8x = require('./opcodes/opcodes_8x.js');
@@ -23,6 +24,7 @@ class MinimumNodeServiceTests {
 		this.network = NETWORK;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
+		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
@@ -47,8 +49,10 @@ class MinimumNodeServiceTests {
 				
 
 				// NNRST - node reset - just check we get an acknowledge (GRSP) to this command
-				// next test will confirm if the module is still running with same nodeNumber
 				await this.opcodes_5x.test_NNRST(retrieved_values);
+				
+				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
+				await this.opcodes_4x.test_NNRSM(retrieved_values);
 				
 				// check for response to QNN from module under test
 				await this.opcodes_0x.test_QNN(retrieved_values);
