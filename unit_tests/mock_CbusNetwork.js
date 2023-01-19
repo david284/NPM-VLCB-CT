@@ -269,6 +269,9 @@ class mock_CbusNetwork {
 					this.outputSD(cbusMsg.nodeNumber, 0, 1, 5);
 					this.outputSD(cbusMsg.nodeNumber, 1, 2, 5);
 					this.outputSD(cbusMsg.nodeNumber, 255, 3, 5);
+				} else
+				{
+					this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
 				}
 				break;
             case '87': 
@@ -621,6 +624,19 @@ class mock_CbusNetwork {
 		var msgData = cbusLib.encodeNAME(name);
 		this.broadcast(msgData);
 	}
+
+
+	// E7 - ESD
+    // ESD Format: [<MjPri><MinPri=3><CANID>]<E7><NN hi><NN lo><ServiceIndex><Data1><Data2><Data3><Data4>
+	//
+	 outputESD(nodeNumber, ServiceIndex) {
+        if (this.getModule(nodeNumber) != undefined) {
+			var msgData = cbusLib.encodeESD(nodeNumber, ServiceIndex, 1, 2, 3, 4);
+			this.broadcast(msgData);
+			winston.info({message: 'CBUS Network Sim:  OUT>>  ' + msgData + " " + cbusLib.decode(msgData).text});
+		}
+	}
+
 
 	// EF
 	outputPARAMS(nodeNumber) {

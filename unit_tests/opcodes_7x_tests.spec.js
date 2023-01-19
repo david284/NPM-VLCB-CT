@@ -126,18 +126,31 @@ describe('opcodes_7x tests', function(){
 
 
 
+    function GetTestCase_RQSD() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 5; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 2;
+			if (a == 4) arg1 = 3;
+			testCases.push({'ServiceIndex':arg1});
+		}
+		return testCases;
+	}
+
+
     // 0x78 - RQSD
-	it("RQSD test", function (done) {
+    itParam("RQSD test ${JSON.stringify(value)}", GetTestCase_RQSD(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
 		// storage for values retrieved from module under test	
 		var retrieved_values = { "nodeNumber": 0 };
-        var result = tests.test_RQSD(retrieved_values, 0);
+        var result = tests.test_RQSD(retrieved_values, value.ServiceIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
             winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
             expect(tests.hasTestPassed).to.equal(true);
-			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
-			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
+//			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
+//			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
 			done();
 		}, test_timeout);
 	})

@@ -56,7 +56,7 @@ class opcodes_5x {
 				retrieved_values ["nodeNumber"] = message.nodeNumber;
                 this.inSetupMode = true;
 				this.hasTestPassed = true;
-                winston.info({message: 'MERGLCB: module ' + this.test_nodeNumber + ' in setup mode '});
+                winston.info({message: 'MERGLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
 			}
 		}
 

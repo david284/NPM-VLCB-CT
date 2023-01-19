@@ -208,45 +208,71 @@ class opcodes_7x {
 				retrieved_values["Services"] = {};
 			}
             setTimeout(()=>{
-					
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (msg.mnemonic == "SD"){
-							if (msg.nodeNumber == retrieved_values.nodeNumber){
-								this.hasTestPassed = true;
-								retrieved_values["Services"][msg.ServiceIndex] = {};
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
-								retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-								if(Service_Definitions[msg.ServiceType] != null) {
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
-								} else{
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
+						if (ServiceIndex == 0) {
+							// service index is 0, so expecting one or more 'SD' messages
+							if (msg.mnemonic == "SD"){
+								if (msg.nodeNumber == retrieved_values.nodeNumber){
+									this.hasTestPassed = true;
+									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
+										retrieved_values["Services"][msg.ServiceIndex] = {};
+									}
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
+									retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
+									if(Service_Definitions[msg.ServiceType] != null) {
+										retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
+									} else{
+										retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
+									}
+									winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
+													+ ' ServiceType ' + msg.ServiceType
+													+ ' ServiceVersion ' + msg.ServiceVersion
+													+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
 								}
-								winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
-												+ ' ServiceType ' + msg.ServiceType
-												+ ' ServiceVersion ' + msg.ServiceVersion
-												+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
-
+								else{
+									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+								}
 							}
-							else{
-								winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+						} else {
+							// Service Index is non-zero, so expecting a single 'ESD' message for the service specified
+							if (msg.mnemonic == "ESD"){
+								if (msg.nodeNumber == retrieved_values.nodeNumber){
+									this.hasTestPassed = true;
+									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
+										retrieved_values["Services"][msg.ServiceIndex] = {};
+									}
+									retrieved_values["Services"][msg.ServiceIndex]["Data1"] = msg.Data1;
+									retrieved_values["Services"][msg.ServiceIndex]["Data2"] = msg.Data2;
+									retrieved_values["Services"][msg.ServiceIndex]["Data3"] = msg.Data3;
+									retrieved_values["Services"][msg.ServiceIndex]["Data4"] = msg.Data4;
+									winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
+													+ ' Data1 ' + msg.Data1
+													+ ' Data2 ' + msg.Data2
+													+ ' Data3 ' + msg.Data3
+													+ ' Data4 ' + msg.Data4
+													+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
+								}
+								else{
+									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+								}
 							}
 						}
 					});
 				}
 				
                 if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQSD passed'}); 
+					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') passed'}); 
 					retrieved_values.TestsPassed++;
 				}else{
-					winston.info({message: 'MERGLCB: RQSD failed'});
+					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') failed'});
 					retrieved_values.TestsFailed++;
 				}
 				winston.debug({message: '-'});
                 resolve();
-                ;} , this.response_time
+				;} , this.response_time
             );
         }.bind(this));
     }

@@ -70,6 +70,9 @@ class MinimumNodeServiceTests {
 				// this will get all the services that this module supports
 				await this.opcodes_7x.test_RQSD(retrieved_values, 0);
 								
+				// this will get the extended data for this service
+				await this.opcodes_7x.test_RQSD(retrieved_values, 1);
+								
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(retrieved_values, 0, 0);
 
