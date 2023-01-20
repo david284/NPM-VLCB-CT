@@ -17,6 +17,8 @@ class IP_Network {
     constructor(NET_ADDRESS, NET_PORT) {
 		winston.info({message: '\Connecting to ' + NET_ADDRESS + ':' + NET_PORT + '\n'});
         this.messagesIn = [];
+		
+		this.callback = this.dummyFunction;
         
         this.testClient = new net.Socket()
         this.testClient.connect(NET_PORT, NET_ADDRESS, function () {
@@ -30,6 +32,7 @@ class IP_Network {
                 var decodedMsg = cbusLib.decode(msgArray[msgIndex]);
                 winston.debug({message: 'MERGLCB: Test client: data received ' + msgArray[msgIndex] + " " + decodedMsg.text});
                 this.messagesIn.push(decodedMsg)
+				this.callback(decodedMsg);
             }
         }.bind(this));
         
@@ -51,6 +54,10 @@ class IP_Network {
 	
 	closeConnection(){
 		this.testClient.end();
+	}
+	
+	dummyFunction(msg) {
+			// do nothing - this function will be replaced at runtime
 	}
 }
 

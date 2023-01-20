@@ -37,7 +37,6 @@ winston.info({message: ' '});
 // create network conenction for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
-
 // create instances of tests
 const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
 const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
@@ -97,6 +96,17 @@ async function runtests() {
 		}
 	} else {
 		winston.info({message: '\nFailed to complete setup - further tests aborted\n'});
+	}
+		
+		
+	//
+	// Now do any checks on retrieved_values
+	//	
+	if (retrieved_values.HEARTB == null) {
+		winston.info({message: '\nHEARTB failed\n'});
+		retrieved_values.TestsFailed++;
+	} else {
+		winston.info({message: '\nHEARTB passed\n'});
 	}
 		
 

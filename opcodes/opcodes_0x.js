@@ -54,17 +54,17 @@ class opcodes_0x {
 					var i=0;
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						winston.info({message: 'MERGLCB:      ' + msg.text});
-						var newModule = {
-							"nodeNumber":msg.nodeNumber,
-							"manufacturerId":msg.manufacturerId,
-							"moduleId":msg.moduleId,
-							"flags":msg.flags,
-							"CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
-						}
-						retrieved_values["modules"][i++] = newModule;
-						//
 						if (msg.mnemonic == "PNN"){
+							winston.info({message: 'MERGLCB:      ' + msg.text});
+							var newModule = {
+								"nodeNumber":msg.nodeNumber,
+								"manufacturerId":msg.manufacturerId,
+								"moduleId":msg.moduleId,
+								"flags":msg.flags,
+								"CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
+							}
+							retrieved_values["modules"][i++] = newModule;
+							//
 							if (msg.nodeNumber == retrieved_values.nodeNumber){
 								winston.info({message: 'MERGLCB: QNN passed - Node ' + msg.nodeNumber});
 								this.hasTestPassed = true;
