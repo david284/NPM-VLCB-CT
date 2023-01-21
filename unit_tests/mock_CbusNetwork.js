@@ -519,6 +519,14 @@ class mock_CbusNetwork {
 	}
 
 	
+	// AB - HEARTB
+	outputHEARTB(nodeNumber) {
+		// Format: [<MjPri><MinPri=3><CANID>]<AB><NN hi><NN lo><Sequence><StatusByte1><StatusByte2>
+		var msgData = cbusLib.encodeHEARTB(nodeNumber, 1, 2, 3);
+        this.broadcast(msgData)
+	}
+
+	
 	// AF - GRSP
 	outputGRSP(nodeNumber, OpCode, ServiceType, Result) {
 		// Format: [<MjPri><MinPri=3><CANID>]<AF><NN hi><NN lo><OpCode><ServiceType><Result>

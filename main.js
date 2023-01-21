@@ -11,6 +11,7 @@ const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
 const NVS_tests = require('./Tests_NodeVariableService.js');
 const CS_tests = require('./Tests_CANService.js');
+const callback_tests = require('./Tests_callback.js');
 
 
 
@@ -43,6 +44,7 @@ const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
 const NVS = new NVS_tests.NodeVariableServiceTests(Network);
 const CS = new CS_tests.CANServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
+const callback = new callback_tests.callbackTests(Network);
 
 // Block to call tests to ensure they run in sequence
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
@@ -53,7 +55,11 @@ async function runtests() {
 	var retrieved_values = { "DateTime" : new Date(),	// include datetime of test run start
 							"TestsPassed": 0,
 							"TestsFailed": 0};	
+							
+	// attach callback tests to network, to manage unsolicited messages from modules
+	callback.attach(retrieved_values);
 
+	// now run setup mode tests
 	retrieved_values = await (SetupMode.runTests(retrieved_values));
 	
 	if (retrieved_values.setup_completed){
@@ -102,7 +108,7 @@ async function runtests() {
 	//
 	// Now do any checks on retrieved_values
 	//	
-	if (retrieved_values.HEARTB == null) {
+	if (retrieved_values.HEARTB == 'failed') {
 		winston.info({message: '\nHEARTB failed\n'});
 		retrieved_values.TestsFailed++;
 	} else {

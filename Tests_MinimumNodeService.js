@@ -22,7 +22,6 @@ class MinimumNodeServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
-		this.retrieved_values;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
 		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
@@ -31,17 +30,6 @@ class MinimumNodeServiceTests {
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
     }
 
-	dummyFunction(msg) {
-		if (msg.mnemonic == 'HEARTB') {
-			if (msg.nodeNumber == this.retrieved_values.nodeNumber) {
-				this.retrieved_values["HEARTB"] = 'passed';
-				this.retrieved_values.TestsPassed++;
-				winston.debug({message: 'MERGLCB: ' + msg.text});		
-				winston.info({message: 'MERGLCB: HEARTB received'});
-			}
-		}
-	}
-	
 
 
     async runTests(retrieved_values, module_descriptor) {
@@ -51,11 +39,7 @@ class MinimumNodeServiceTests {
 		winston.info({message:  '--------------- Minimum Node Service tests ----------------'});
 		winston.debug({message: '==========================================================='});
 		winston.debug({message: ' '});
-		
-		this.retrieved_values = retrieved_values;
-		this.network.callback = this.dummyFunction.bind(this);
-
-		
+			
 //		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
 //		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 
