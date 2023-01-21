@@ -108,11 +108,12 @@ async function runtests() {
 	//
 	// Now do any checks on retrieved_values
 	//	
-	if (retrieved_values.HEARTB == 'failed') {
+	if (retrieved_values.HEARTB == 'passed') {
+		winston.info({message: '\nHEARTB passed\n'});
+		retrieved_values.TestsPassed++;
+	} else {
 		winston.info({message: '\nHEARTB failed\n'});
 		retrieved_values.TestsFailed++;
-	} else {
-		winston.info({message: '\nHEARTB passed\n'});
 	}
 		
 
