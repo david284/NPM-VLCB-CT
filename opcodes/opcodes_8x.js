@@ -35,6 +35,11 @@ class opcodes_8x {
             this.network.write(msgData);
 			if (retrieved_values["Services"] == null){
 				retrieved_values["Services"] = {};
+				retrieved_values.Services["ServiceCount"] = 0;
+			}
+			var RDGN_timeout = 100;
+			if ( ServiceIndex == 0) {		// 0 = request all diagnostics, so extend timeout
+				if (retrieved_values.Services.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * retrieved_values.Services.ServiceCount}
 			}
             setTimeout(()=>{
 				var nonMatchingCount = 0;
@@ -68,7 +73,8 @@ class opcodes_8x {
 									} else {
 										var DiagnosticName = "Unknown Diagnostic Code";
 									}
-									winston.info({message: 'MERGLCB:      ' + Service_Definitions[serviceType].name
+									winston.info({message: 'MERGLCB:      Index ' + msg.ServiceIndex 
+										+ " " + Service_Definitions[serviceType].name
 										+ ': (' + serviceType + ') Diagnostic: (' + msg.DiagnosticCode 
 										+ ') ' + DiagnosticName});	
 								} else {
@@ -124,7 +130,7 @@ class opcodes_8x {
 				}
 				winston.debug({message: '-'});
                 resolve();
-                ;} , this.response_time
+                ;} , RDGN_timeout
             );
         }.bind(this));
     }
