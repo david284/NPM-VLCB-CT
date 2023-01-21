@@ -35,11 +35,12 @@ class opcodes_8x {
             this.network.write(msgData);
 			if (retrieved_values["Services"] == null){
 				retrieved_values["Services"] = {};
-				retrieved_values.Services["ServiceCount"] = 0;
+				retrieved_values["ServiceCount"] = 0;
 			}
 			var RDGN_timeout = 100;
 			if ( ServiceIndex == 0) {		// 0 = request all diagnostics, so extend timeout
-				if (retrieved_values.Services.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * retrieved_values.Services.ServiceCount}
+				if (retrieved_values.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * retrieved_values.ServiceCount}
+				winston.debug({message: 'MERGLCB: RDGN - ServiceCount ' + retrieved_values.ServiceCount});
 			}
             setTimeout(()=>{
 				var nonMatchingCount = 0;

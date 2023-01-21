@@ -206,9 +206,9 @@ class opcodes_7x {
             this.network.write(msgData);
 			if (retrieved_values["Services"] == null){
 				retrieved_values["Services"] = {};
-				retrieved_values.Services["ServiceCount"] = 0;
+				retrieved_values["ServiceCount"] = 0;
 			}
-			if (ServiceIndex == 0) {retrieved_values.Services.ServiceCount = 0; }	// request all services, so reset count
+			if (ServiceIndex == 0) {retrieved_values.ServiceCount = 0; }	// request all services, so reset count
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
@@ -221,7 +221,7 @@ class opcodes_7x {
 									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
 										retrieved_values["Services"][msg.ServiceIndex] = {};
 									}
-									retrieved_values.Services.ServiceCount++;	// add to count
+									retrieved_values.ServiceCount++;	// add to count
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
 									retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
