@@ -15,7 +15,7 @@ const cbusLib = require('cbuslibrary');
 class IP_Network {
 
     constructor(NET_ADDRESS, NET_PORT) {
-		winston.info({message: '\Connecting to ' + NET_ADDRESS + ':' + NET_PORT + '\n'});
+		winston.debug({message: '\Connecting to ' + NET_ADDRESS + ':' + NET_PORT + '\n'});
         this.messagesIn = [];
 		
 		this.callback = this.dummyFunction;

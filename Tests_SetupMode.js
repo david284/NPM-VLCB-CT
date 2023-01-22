@@ -47,7 +47,7 @@ class SetupMode_tests {
 		// try to put the module into setup using the MODE command
 		// but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
 		
-		retrieved_values["nodeNumber"] = 300;
+//		retrieved_values["nodeNumber"] = 300;
 		this.opcodes_7x.test_MODE(retrieved_values, 0)		// 0 - setup mode
 
         winston.info({message: 'MERGLCB: put module into setup'});

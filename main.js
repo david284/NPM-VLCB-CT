@@ -34,8 +34,26 @@ winston.info({message: '- Test Version : ' + pjson.version});
 winston.info({message: '- Test Run : ' + new Date()});
 winston.info({message: '================================================================================'});
 winston.info({message: ' '});
+
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+winston.info({message: '\n     enter node number to be tested, followed by enter'});
+winston.info({message: '\n     or just enter if putting module into setup using the button'});
+
+var nodeNumber;
+
+rl.question('\n Node number ', function(answer) {
+	nodeNumber = parseInt(answer)
+	console.log('\n node number is ' + nodeNumber);
+	runtests();
+});
+
 		
-// create network conenction for tests to use
+// create network connection for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
 // create instances of tests
@@ -46,6 +64,7 @@ const CS = new CS_tests.CANServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
 
+
 // Block to call tests to ensure they run in sequence
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
@@ -54,7 +73,8 @@ async function runtests() {
 	// and is shared with, & updated by, all tests
 	var retrieved_values = { "DateTime" : new Date(),	// include datetime of test run start
 							"TestsPassed": 0,
-							"TestsFailed": 0};	
+							"TestsFailed": 0,
+							"nodeNumber": nodeNumber};	
 							
 	// attach callback tests to network, to manage unsolicited messages from modules
 	callback.attach(retrieved_values);
@@ -132,12 +152,13 @@ async function runtests() {
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
 	winston.info({message: '\nMERGLCB: a copy of these results has been saved as TestReport.txt\n'});
 	winston.info({message: 'MERGLCB: a copy of the values retrieved from the module under test has been saved as Retrieved Values.txt\n'});
-
+	rl.close();
+	process.stdin.destroy();
 }
 
 // actually invoke block of tests
 // (can't use async on top level code)
-runtests();
+//runtests();
 
 
 
