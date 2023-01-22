@@ -38,7 +38,6 @@ class callbackTests {
 		if (msg.mnemonic == 'HEARTB') {
 			if (msg.nodeNumber == this.retrieved_values.nodeNumber) {
 				this.retrieved_values["HEARTB"] = 'passed';
-				this.retrieved_values.TestsPassed++;
 				winston.debug({message: 'MERGLCB: ' + msg.text});		
 				winston.info({message: 'MERGLCB: HEARTB received'});
 			}

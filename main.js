@@ -41,14 +41,16 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-winston.info({message: '\n     enter node number to be tested, followed by enter'});
-winston.info({message: '\n     or just enter if putting module into setup using the button'});
+winston.info({message: ' ==== enter node number to be tested, followed by enter'});
+winston.info({message: ' ==== or just enter if putting module into setup using the button'});
 
 var nodeNumber;
 
-rl.question('\n Node number ', function(answer) {
+rl.question('\n Enter Node number > ', function(answer) {
 	nodeNumber = parseInt(answer)
-	console.log('\n node number is ' + nodeNumber);
+	winston.info({message: ' '});
+	winston.info({message: 'MERGLCB: ==== Node number entered - ' + nodeNumber});
+	winston.info({message: ' '});
 	runtests();
 });
 
