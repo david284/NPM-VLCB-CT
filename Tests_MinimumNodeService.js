@@ -69,14 +69,23 @@ class MinimumNodeServiceTests {
 				// this will get all the services that this module supports
 				await this.opcodes_7x.test_RQSD(retrieved_values, 0);
 								
-				// this will get the extended data for this service
-				await this.opcodes_7x.test_RQSD(retrieved_values, 1);
-								
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(retrieved_values, 0, 0);
 
-				// now request diagnostics just for MNS
-				await this.opcodes_8x.test_RDGN(retrieved_values, 1, 0);
+				// now do MNS specific service tests, that rely on the serviceIndex value
+				for (var key in retrieved_values["Services"]) {
+					var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
+					var serviceType = retrieved_values["Services"][key]["ServiceType"];
+					if (serviceType == 1) {
+						
+						// this will get the extended data for this service
+						await this.opcodes_7x.test_RQSD(retrieved_values, 1);
+								
+						// now request diagnostics just for MNS
+						await this.opcodes_8x.test_RDGN(retrieved_values, 1, 0);
+				
+					}
+				}
 
 				//
 				// Add more tests.......

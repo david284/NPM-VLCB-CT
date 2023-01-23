@@ -63,16 +63,17 @@ class opcodes_8x {
 								
 								// lets see if we have a definition for this service type & display
 								// some user friendly names
+								var DiagnosticName = "Unknown Diagnostic Code";	//assume unknown to start with
 								if ( Service_Definitions[serviceType] != null) {
 									//lets see if we have a name this diagnostic code for this service type
 									if ((Service_Definitions[serviceType].version!= null) 
 										&& (Service_Definitions[serviceType].version[serviceVersion]!= null)
 										&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics != null)
 										&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics[msg.DiagnosticCode] != null) ) {
-										var DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[msg.DiagnosticCode].name;
+										DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[msg.DiagnosticCode].name;
 										//winston.info({message: 'MERGLCB: ***** service ' + DiagnosticName });
 									} else {
-										var DiagnosticName = "Unknown Diagnostic Code";
+										
 									}
 									winston.info({message: 'MERGLCB:      Index ' + msg.ServiceIndex 
 										+ " " + Service_Definitions[serviceType].name
@@ -100,6 +101,7 @@ class opcodes_8x {
 										}
 										if (retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode]== null) {
 											retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode] = {
+												"DiagnosticName": DiagnosticName,
 												"DiagnosticCode": msg.DiagnosticCode,
 												"DiagnosticeValue" : msg.DiagnosticValue
 											};
