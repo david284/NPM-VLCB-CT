@@ -199,7 +199,7 @@ class opcodes_7x {
 	// 0x78 - RQSD
     test_RQSD(retrieved_values, ServiceIndex) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RQSD test'});
+            winston.debug({message: 'MERGLCB: BEGIN RQSD test - serviceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRQSD(retrieved_values.nodeNumber, ServiceIndex);

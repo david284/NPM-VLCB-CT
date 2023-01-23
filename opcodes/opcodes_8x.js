@@ -28,7 +28,7 @@ class opcodes_8x {
 	// 0x87 - RDGN
     test_RDGN(retrieved_values, ServiceIndex, DiagnosticCode) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RDGN test'});
+            winston.debug({message: 'MERGLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRDGN(retrieved_values.nodeNumber, ServiceIndex, DiagnosticCode);
