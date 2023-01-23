@@ -64,8 +64,9 @@ class opcodes_5x {
 			winston.info({message: 'MERGLCB: RQNN passed'}); 
 			retrieved_values.TestsPassed++;
 		}else{
-			winston.info({message: 'MERGLCB: RQNN failed'});
-			retrieved_values.TestsFailed++;
+			// in this instance, we're calling this method multiple times until we get an RQNN,
+			// so don't mark each try as a fail - the upper layer will timeout and fail if didn't get a pass
+			winston.info({message: 'MERGLCB: no RQNN received....'});
 		}
 		winston.debug({message: '-'});
 	}
