@@ -79,10 +79,10 @@ class MinimumNodeServiceTests {
 					if (serviceType == 1) {
 						
 						// this will get the extended data for this service
-						await this.opcodes_7x.test_RQSD(retrieved_values, 1);
+						await this.opcodes_7x.test_RQSD(retrieved_values, serviceIndex);
 								
 						// now request diagnostics just for MNS
-						await this.opcodes_8x.test_RDGN(retrieved_values, 1, 0);
+						await this.opcodes_8x.test_RDGN(retrieved_values, serviceIndex, 0);
 				
 					}
 				}
