@@ -15,13 +15,13 @@ const callback_tests = require('./Tests_callback.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
 
-
 // Scope:
 // variables declared outside of the class are 'global' to this module only
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
 // const has block scope (like let), but can't be changed through reassigment or redeclared
+
 
 const NET_ADDRESS = "127.0.0.1"
 const NET_PORT = 5550;
@@ -42,17 +42,15 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
+
 winston.info({message: ' ==== enter node number to be tested, followed by enter'});
 winston.info({message: ' ==== or just enter if putting module into setup using the button'});
 
-var nodeNumber;
-
 rl.question('\n Enter Node number > ', function(answer) {
-	nodeNumber = parseInt(answer)
+	RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
 	winston.info({message: ' '});
-	winston.info({message: 'MERGLCB: ==== Node number entered - ' + nodeNumber});
+	winston.info({message: 'MERGLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
 	winston.info({message: ' '});
-	RetrievedValues.setNodeNumber(nodeNumber);	// need to store nodeNumber so tests can use it
 	runtests();
 });
 
@@ -73,7 +71,7 @@ const callback = new callback_tests.callbackTests(Network);
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
 async function runtests() {
-	// retrieved_values is used to store information gleaned from the module under test
+	// RetrievedValues is used to store information gleaned from the module under test
 	// and is shared with, & updated by, all tests
 							
 	// attach callback tests to network, to manage unsolicited messages from modules
@@ -87,8 +85,8 @@ async function runtests() {
 		// so fetch matching module descriptor file
 		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', RetrievedValues); 			
 		
-		// now do all the other tests - passing in retrieved_values & module_descriptor
-		// capture returned retrieved_values as it may be updated
+		// now do all the other tests - passing in RetrievedValues & module_descriptor
+		// capture returned RetrievedValues as it may be updated
 		RetrievedValues = await (MNS.runTests(RetrievedValues, module_descriptor));
 		
 
@@ -101,10 +99,10 @@ async function runtests() {
 					// already run MNS tests, so can ignore this case
 					break;
 				case 2:
-					RetrievedValues.retrieved_values = await (NVS.runTests(RetrievedValues.retrieved_values, module_descriptor, serviceIndex));
+					RetrievedValues = await (NVS.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				case 3:
-					RetrievedValues.retrieved_values = await (CS.runTests(RetrievedValues.retrieved_values, module_descriptor, serviceIndex));
+					RetrievedValues = await (CS.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				//
 				// add more types...
@@ -120,7 +118,7 @@ async function runtests() {
 		
 		
 	//
-	// Now do any checks on retrieved_values
+	// Now do any checks on RetrievedValues
 	//	
 	if (RetrievedValues.data.HEARTB == 'passed') {
 		winston.info({message: '\nHEARTB passed\n'});
@@ -139,7 +137,7 @@ async function runtests() {
 				+ '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
 
 	
-	// now write retrieved_values to disk
+	// now write RetrievedValues to disk
 	RetrievedValues.writeToDisk('./Retrieved Values 2.txt');
 
 	Network.closeConnection()

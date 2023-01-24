@@ -25,7 +25,7 @@ class NodeVariableServiceTests {
     }
 
 
-    async runTests(retrieved_values, module_descriptor, serviceIndex) {
+    async runTests(RetrievedValues, module_descriptor, serviceIndex) {
 		winston.debug({message: ' '});
 		//                      012345678901234567890123456789987654321098765432109876543210
 		winston.debug({message: '==========================================================='});
@@ -35,17 +35,17 @@ class NodeVariableServiceTests {
 		
 
 		
-//		winston.debug({message: 'MERGLCB: NVS : retrieved_values ' + JSON.stringify(retrieved_values)});
+//		winston.debug({message: 'MERGLCB: NVS : RetrievedValues ' + JSON.stringify(RetrievedValues.data)});
 //		winston.debug({message: 'MERGLCB: NVS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 
 			// only do tests if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 
 				// this will get all the services that this module supports
-				await this.opcodes_7x.test_RQSD(retrieved_values, serviceIndex);
+				await this.opcodes_7x.test_RQSD(RetrievedValues.data, serviceIndex);
 								
 				// now request diagnostics just for this service
-				await this.opcodes_8x.test_RDGN(retrieved_values, serviceIndex, 0);
+				await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
 
 				//
 				// Add more tests.......
@@ -57,8 +57,8 @@ class NodeVariableServiceTests {
 		
         winston.info({message: 'MERGLCB: ==== Node Variable Service Test run finished \n'});
 		
-//		winston.debug({message: 'MERGLCB: NVS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
-		return retrieved_values;
+//		winston.debug({message: 'MERGLCB: NVS : RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		return RetrievedValues;
     }
 
     sleep(timeout) {
