@@ -47,6 +47,16 @@ var options = {
     maxFiles: 5,
 	format: timeStampFirst
   },
+    file3: {
+    level: 'info',
+    filename: `./unit_tests/logs/unit_test_info.log`,
+	options: { flags: 'w' },
+    handleExceptions: true,
+    maxsize: 5242880, // 5MB
+    maxFiles: 5,
+	format: timeStampFirst
+  },
+
   console: {
     level: 'warn',
     handleExceptions: true,
@@ -64,6 +74,7 @@ var options = {
 
 winston.add(new winston.transports.File(options.file1));
 winston.add(new winston.transports.File(options.file2));
+winston.add(new winston.transports.File(options.file3));
 winston.add(new winston.transports.Console(options.console));
 
 
