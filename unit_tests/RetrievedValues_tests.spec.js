@@ -59,5 +59,10 @@ describe('RetrievedValues tests', function(){
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);
     })
 
+    //
+	it("RetrievedValues Write test", function () {
+        RetrievedValues.writeToDisk('./unit_tests/Retrieved Values unit test.txt');
+    })
+
 
 })

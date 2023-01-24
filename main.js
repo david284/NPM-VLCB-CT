@@ -12,6 +12,7 @@ const Service_Definitions = require('./Definitions/Service_Definitions.js');
 const NVS_tests = require('./Tests_NodeVariableService.js');
 const CS_tests = require('./Tests_CANService.js');
 const callback_tests = require('./Tests_callback.js');
+const RetrievedValues = require('./RetrievedValues.js');
 
 
 
@@ -51,6 +52,7 @@ rl.question('\n Enter Node number > ', function(answer) {
 	winston.info({message: ' '});
 	winston.info({message: 'MERGLCB: ==== Node number entered - ' + nodeNumber});
 	winston.info({message: ' '});
+	RetrievedValues.setNodeNumber(nodeNumber);	// need to store nodeNumber so tests can use it
 	runtests();
 });
 
@@ -73,46 +75,42 @@ const callback = new callback_tests.callbackTests(Network);
 async function runtests() {
 	// retrieved_values is used to store information gleaned from the module under test
 	// and is shared with, & updated by, all tests
-	var retrieved_values = { "DateTime" : new Date(),	// include datetime of test run start
-							"TestsPassed": 0,
-							"TestsFailed": 0,
-							"nodeNumber": nodeNumber};	
 							
 	// attach callback tests to network, to manage unsolicited messages from modules
-	callback.attach(retrieved_values);
+	callback.attach(RetrievedValues.retrieved_values);
 
 	// now run setup mode tests
-	retrieved_values = await (SetupMode.runTests(retrieved_values));
+	RetrievedValues.retrieved_values = await (SetupMode.runTests(RetrievedValues.retrieved_values));
 	
-	if (retrieved_values.setup_completed){
+	if (RetrievedValues.retrieved_values.setup_completed){
 		// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 		// so fetch matching module descriptor file
-		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', retrieved_values); 			
+		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', RetrievedValues.retrieved_values); 			
 		
 		// now do all the other tests - passing in retrieved_values & module_descriptor
 		// capture returned retrieved_values as it may be updated
-		retrieved_values = await (MNS.runTests(retrieved_values, module_descriptor));
+		RetrievedValues.retrieved_values = await (MNS.runTests(RetrievedValues.retrieved_values, module_descriptor));
 //		retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
 		
 
 		// check that retrieved_values is still defined, and not lost by one of the tests
-		if (retrieved_values == null) {
+		if (RetrievedValues.retrieved_values == null) {
 			winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
 		}	
 		
 		// now do tests dependant on the retrieved service types the nodule supports
-		for (var key in retrieved_values["Services"]) {
-			var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
-			var serviceType = retrieved_values["Services"][key]["ServiceType"];
+		for (var key in RetrievedValues.retrieved_values["Services"]) {
+			var serviceIndex = RetrievedValues.retrieved_values["Services"][key]["ServiceIndex"];
+			var serviceType = RetrievedValues.retrieved_values["Services"][key]["ServiceType"];
 			switch (serviceType) {
 				case 1:
 					// already run MNS tests, so can ignore this case
 					break;
 				case 2:
-					retrieved_values = await (NVS.runTests(retrieved_values, module_descriptor, serviceIndex));
+					RetrievedValues.retrieved_values = await (NVS.runTests(RetrievedValues.retrieved_values, module_descriptor, serviceIndex));
 					break;
 				case 3:
-					retrieved_values = await (CS.runTests(retrieved_values, module_descriptor, serviceIndex));
+					RetrievedValues.retrieved_values = await (CS.runTests(RetrievedValues.retrieved_values, module_descriptor, serviceIndex));
 					break;
 				//
 				// add more types...
@@ -130,25 +128,25 @@ async function runtests() {
 	//
 	// Now do any checks on retrieved_values
 	//	
-	if (retrieved_values.HEARTB == 'passed') {
+	if (RetrievedValues.retrieved_values.HEARTB == 'passed') {
 		winston.info({message: '\nHEARTB passed\n'});
-		retrieved_values.TestsPassed++;
+		RetrievedValues.retrieved_values.TestsPassed++;
 	} else {
 		winston.info({message: '\nHEARTB failed\n'});
-		retrieved_values.TestsFailed++;
+		RetrievedValues.retrieved_values.TestsFailed++;
 	}
 		
 
 	//
 	// all tests done, so do final items
 	//
-	winston.info({message: '\n\nAll Tests finished \n Passed count : ' + retrieved_values.TestsPassed + '\n Failed count : ' + retrieved_values.TestsFailed + '\n'});
+	winston.info({message: '\n\nAll Tests finished' 
+				+ '\n Passed count : ' + RetrievedValues.retrieved_values.TestsPassed 
+				+ '\n Failed count : ' + RetrievedValues.retrieved_values.TestsFailed + '\n'});
 
 	
 	// now write retrieved_values to disk
-	var text = JSON.stringify(retrieved_values, null, '    ');
-	fs.writeFileSync('./Retrieved Values.txt', text);
-	winston.debug({message: 'MERGLCB: Write to disk: retrieved_values \n' + text});
+	RetrievedValues.writeToDisk('./Retrieved Values 2.txt');
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
