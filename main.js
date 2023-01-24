@@ -2,6 +2,8 @@
 const winston = require('./config/winston.js');
 const fs = require('fs');
 var pjson = require('./package.json');
+const readline = require('readline');
+		
 
 const IP_Network = require('./ip_network.js')
 const SetupMode_tests = require('./Tests_SetupMode.js');
@@ -36,25 +38,6 @@ winston.info({message: '- Test Run : ' + new Date()});
 winston.info({message: '================================================================================'});
 winston.info({message: ' '});
 
-const readline = require('readline');
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-winston.info({message: ' ==== enter node number to be tested, followed by enter'});
-winston.info({message: ' ==== or just enter if putting module into setup using the button'});
-
-rl.question('\n Enter Node number > ', function(answer) {
-	RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
-	winston.info({message: ' '});
-	winston.info({message: 'MERGLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
-	winston.info({message: ' '});
-	runtests();
-});
-
-		
 // create network connection for tests to use
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
@@ -65,6 +48,27 @@ const NVS = new NVS_tests.NodeVariableServiceTests(Network);
 const CS = new CS_tests.CANServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
+
+
+// Now setup for console input to get the node number of the module we're testing
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+winston.info({message: ' ==== enter node number to be tested, followed by enter'});
+winston.info({message: ' ==== or just enter if putting module into setup using the button'});
+
+// This will prompt for the node number, and then run the tests
+rl.question('\n Enter Node number > ', function(answer) {
+	RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
+	winston.info({message: ' '});
+	winston.info({message: 'MERGLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+	winston.info({message: ' '});
+	runtests();
+});
+
 
 
 // Block to call tests to ensure they run in sequence
@@ -138,7 +142,7 @@ async function runtests() {
 
 	
 	// now write RetrievedValues to disk
-	RetrievedValues.writeToDisk('./Retrieved Values 2.txt');
+	RetrievedValues.writeToDisk('./Retrieved Values.txt');
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
@@ -148,9 +152,6 @@ async function runtests() {
 	process.stdin.destroy();
 }
 
-// actually invoke block of tests
-// (can't use async on top level code)
-//runtests();
 
 
 

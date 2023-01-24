@@ -50,7 +50,7 @@ describe('RetrievedValues tests', function(){
     //
 	it("RetrievedValues Constructor test", function () {
         winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});        
-//		expect(RetrievedValues.getNodeNumber()).to.equal(300);
+		expect(RetrievedValues.getNodeNumber()).to.be.null;
     })
 
     //

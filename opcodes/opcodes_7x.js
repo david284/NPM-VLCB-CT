@@ -204,12 +204,8 @@ class opcodes_7x {
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRQSD(retrieved_values.nodeNumber, ServiceIndex);
             this.network.write(msgData);
-			if (retrieved_values["Services"] == null){
-				retrieved_values["Services"] = {};
-				retrieved_values["ServiceCount"] = 0;
-			}
-			if (ServiceIndex == 0) {retrieved_values.ServiceCount = 0; }	// request all services, so reset count
             setTimeout(()=>{
+				var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
@@ -221,19 +217,27 @@ class opcodes_7x {
 									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
 										retrieved_values["Services"][msg.ServiceIndex] = {};
 									}
-									retrieved_values.ServiceCount++;	// add to count
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
-									retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-									if(Service_Definitions[msg.ServiceType] != null) {
-										retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
-									} else{
-										retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
+									if (msg.ServiceIndex == 0){
+										// special case that SD message with serviceIndex 0 has the service count in ther version field
+										retrieved_values.ServiceCount = msg.ServiceVersion;
+										this.hasTestPassed = true;	// accept test has passed if we get this one message
+										winston.info({message: 'MERGLCB:      Service Discovery : Service count ' 
+													+ msg.ServiceVersion });
+									} else {
+										msg_count++;	// add to count
+										retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
+										retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
+										retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
+										if(Service_Definitions[msg.ServiceType] != null) {
+											retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
+										} else{
+											retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
+										}
+										winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
+														+ ' ServiceType ' + msg.ServiceType
+														+ ' ServiceVersion ' + msg.ServiceVersion
+														+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
 									}
-									winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
-													+ ' ServiceType ' + msg.ServiceType
-													+ ' ServiceVersion ' + msg.ServiceVersion
-													+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
 								}
 								else{
 									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
@@ -264,6 +268,12 @@ class opcodes_7x {
 							}
 						}
 					});
+				}
+				
+				// we can check we received SD messages for all the expected services if the requested serviceIndex was 0
+				if ((ServiceIndex == 0) & (msg_count != retrieved_values.ServiceCount)) {
+					winston.info({message: 'MERGLCB: RQSD failed - service count doesn\'t match'});
+					this.hasTestPassed - false;
 				}
 				
                 if (this.hasTestPassed){ 

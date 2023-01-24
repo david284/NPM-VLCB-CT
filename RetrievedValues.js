@@ -18,16 +18,19 @@ class RetrievedValues {
 		winston.debug({message:  '------------ RetrievedValues Constructor'});
 		
 		this.data = { "DateTime" : new Date(),	// include datetime of test run start
+								"NAME": null,
+								"nodeNumber": null,
 								"TestsPassed": 0,
 								"TestsFailed": 0,
-								"nodeNumber": null,
-								"HEARTB": 'failed',			// assume HEARTB not recived to begin with
-								"modules": {},
+								"setup_completed": null,
+								"HEARTB": 'failed',			// assume HEARTB not received to begin with
 								"nodeParameters": {},
-								"Services": {}
-								};	
+								"ServiceCount":null,
+								"Services": {},
+								"modules": {}
+		};	
 		this.retrieved_values = this.data;
-		}
+	}
 
 	getNodeNumber(){ return this.data.nodeNumber; };
 	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
