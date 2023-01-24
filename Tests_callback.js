@@ -27,7 +27,7 @@ class callbackTests {
 
 	attach(RetrievedValues){
 		this.RetrievedValues = RetrievedValues;
-		this.RetrievedValues.retrieved_values["HEARTB"] = 'failed';				// assume we never receive a HEARTB to begin with
+		this.RetrievedValues.data["HEARTB"] = 'failed';				// assume we never receive a HEARTB to begin with
 		this.network.callback = this.callbackFunction.bind(this);		
 	}
 
@@ -36,8 +36,8 @@ class callbackTests {
 		
 		// test for heartbeat message, but only interested in ones from node under test
 		if (msg.mnemonic == 'HEARTB') {
-			if (msg.nodeNumber == this.RetrievedValues.retrieved_values.nodeNumber) {
-				this.RetrievedValues.retrieved_values["HEARTB"] = 'passed';
+			if (msg.nodeNumber == this.RetrievedValues.getNodeNumber()) {
+				this.RetrievedValues.data["HEARTB"] = 'passed';
 				winston.debug({message: 'MERGLCB: ' + msg.text});		
 				winston.info({message: 'MERGLCB: HEARTB received'});
 			}

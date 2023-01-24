@@ -32,7 +32,7 @@ class MinimumNodeServiceTests {
 
 
 
-    async runTests(retrieved_values, module_descriptor) {
+    async runTests(RetrievedValues, module_descriptor) {
 		winston.debug({message: ' '});
 		//                      012345678901234567890123456789987654321098765432109876543210
 		winston.debug({message: '==========================================================='});
@@ -40,7 +40,7 @@ class MinimumNodeServiceTests {
 		winston.debug({message: '==========================================================='});
 		winston.debug({message: ' '});
 			
-//		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values)});
+//		winston.debug({message: 'MERGLCB: MNS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data)});
 //		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
 
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
@@ -48,41 +48,41 @@ class MinimumNodeServiceTests {
 				
 
 				// NNRST - node reset - just check we get an acknowledge (GRSP) to this command
-				await this.opcodes_5x.test_NNRST(retrieved_values);
+				await this.opcodes_5x.test_NNRST(RetrievedValues.data);
 				
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
-				await this.opcodes_4x.test_NNRSM(retrieved_values);
+				await this.opcodes_4x.test_NNRSM(RetrievedValues.data);
 				
 				// check for response to QNN from module under test
-				await this.opcodes_0x.test_QNN(retrieved_values);
+				await this.opcodes_0x.test_QNN(RetrievedValues.data);
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command unfortunately
-				await this.opcodes_7x.test_RQNPN(0, retrieved_values, module_descriptor);
+				await this.opcodes_7x.test_RQNPN(0, RetrievedValues.data, module_descriptor);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				//using value now stored in parameter 0
-				for (var i=1; i<retrieved_values["nodeParameters"]["0"]+1; i++) {
-					await this.opcodes_7x.test_RQNPN(i, retrieved_values, module_descriptor);
+				for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"]+1; i++) {
+					await this.opcodes_7x.test_RQNPN(i, RetrievedValues.data, module_descriptor);
 				}
 				
 				// this will get all the services that this module supports
-				await this.opcodes_7x.test_RQSD(retrieved_values, 0);
+				await this.opcodes_7x.test_RQSD(RetrievedValues.data, 0);
 								
 				// request all the diagnostics, for all services, not just MNS
-				await this.opcodes_8x.test_RDGN(retrieved_values, 0, 0);
+				await this.opcodes_8x.test_RDGN(RetrievedValues.data, 0, 0);
 
 				// now do MNS specific service tests, that rely on the serviceIndex value
-				for (var key in retrieved_values["Services"]) {
-					var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
-					var serviceType = retrieved_values["Services"][key]["ServiceType"];
+				for (var key in RetrievedValues.data["Services"]) {
+					var serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
+					var serviceType = RetrievedValues.data["Services"][key]["ServiceType"];
 					if (serviceType == 1) {
 						
 						// this will get the extended data for this service
-						await this.opcodes_7x.test_RQSD(retrieved_values, serviceIndex);
+						await this.opcodes_7x.test_RQSD(RetrievedValues.data, serviceIndex);
 								
 						// now request diagnostics just for MNS
-						await this.opcodes_8x.test_RDGN(retrieved_values, serviceIndex, 0);
+						await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
 				
 					}
 				}
@@ -97,8 +97,8 @@ class MinimumNodeServiceTests {
 		
         winston.info({message: 'MERGLCB: ==== MNS Test run finished \n'});
 		
-//		winston.debug({message: 'MERGLCB: MNS : retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
-		return retrieved_values;
+//		winston.debug({message: 'MERGLCB: MNS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		return RetrievedValues;
     }
 
     sleep(timeout) {

@@ -12,7 +12,7 @@ const Service_Definitions = require('./Definitions/Service_Definitions.js');
 const NVS_tests = require('./Tests_NodeVariableService.js');
 const CS_tests = require('./Tests_CANService.js');
 const callback_tests = require('./Tests_callback.js');
-const RetrievedValues = require('./RetrievedValues.js');
+let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
 
 
@@ -80,28 +80,22 @@ async function runtests() {
 	callback.attach(RetrievedValues);
 
 	// now run setup mode tests
-	RetrievedValues.retrieved_values = await (SetupMode.runTests(RetrievedValues.retrieved_values));
+	RetrievedValues = await (SetupMode.runTests(RetrievedValues));
 	
-	if (RetrievedValues.retrieved_values.setup_completed){
+	if (RetrievedValues.data.setup_completed){
 		// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 		// so fetch matching module descriptor file
-		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', RetrievedValues.retrieved_values); 			
+		var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', RetrievedValues); 			
 		
 		// now do all the other tests - passing in retrieved_values & module_descriptor
 		// capture returned retrieved_values as it may be updated
-		RetrievedValues.retrieved_values = await (MNS.runTests(RetrievedValues.retrieved_values, module_descriptor));
-//		retrieved_values = await (examples.runTests(retrieved_values, module_descriptor));
+		RetrievedValues = await (MNS.runTests(RetrievedValues, module_descriptor));
 		
 
-		// check that retrieved_values is still defined, and not lost by one of the tests
-		if (RetrievedValues.retrieved_values == null) {
-			winston.info({message: 'MERGLCB: ****** ERROR - retrieved_values is invalid'});
-		}	
-		
 		// now do tests dependant on the retrieved service types the nodule supports
-		for (var key in RetrievedValues.retrieved_values["Services"]) {
-			var serviceIndex = RetrievedValues.retrieved_values["Services"][key]["ServiceIndex"];
-			var serviceType = RetrievedValues.retrieved_values["Services"][key]["ServiceType"];
+		for (var key in RetrievedValues.data["Services"]) {
+			var serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
+			var serviceType = RetrievedValues.data["Services"][key]["ServiceType"];
 			switch (serviceType) {
 				case 1:
 					// already run MNS tests, so can ignore this case
@@ -128,12 +122,12 @@ async function runtests() {
 	//
 	// Now do any checks on retrieved_values
 	//	
-	if (RetrievedValues.retrieved_values.HEARTB == 'passed') {
+	if (RetrievedValues.data.HEARTB == 'passed') {
 		winston.info({message: '\nHEARTB passed\n'});
-		RetrievedValues.retrieved_values.TestsPassed++;
+		RetrievedValues.data.TestsPassed++;
 	} else {
 		winston.info({message: '\nHEARTB failed\n'});
-		RetrievedValues.retrieved_values.TestsFailed++;
+		RetrievedValues.data.TestsFailed++;
 	}
 		
 
@@ -141,8 +135,8 @@ async function runtests() {
 	// all tests done, so do final items
 	//
 	winston.info({message: '\n\nAll Tests finished' 
-				+ '\n Passed count : ' + RetrievedValues.retrieved_values.TestsPassed 
-				+ '\n Failed count : ' + RetrievedValues.retrieved_values.TestsFailed + '\n'});
+				+ '\n Passed count : ' + RetrievedValues.data.TestsPassed 
+				+ '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
 
 	
 	// now write retrieved_values to disk

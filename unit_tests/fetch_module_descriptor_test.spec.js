@@ -6,6 +6,8 @@ const winston = require('./config/winston_test.js');
 
 const fs = require('fs')
 const fetch_file = require('./../fetch_module_descriptor.js')
+const RetrievedValues = require('./../RetrievedValues.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -51,14 +53,12 @@ describe('fetch_module_descriptor tests', function(){
 	it("test_module_descriptor_read_pass", function () {
 		
 		// setup module variables
-		var retrieved_values = {};
-		retrieved_values["NAME"] = 'CANTEST'; 
-		retrieved_values["nodeParameters"] = { };
-		retrieved_values["nodeParameters"]["1"] = '165'; 
-		retrieved_values["nodeParameters"]["7"] = '2';
-		retrieved_values["nodeParameters"]["2"]  = '117';
+		RetrievedValues.data["NAME"] = 'CANTEST'; 
+		RetrievedValues.data["nodeParameters"]["1"] = '165'; 
+		RetrievedValues.data["nodeParameters"]["7"] = '2';
+		RetrievedValues.data["nodeParameters"]["2"]  = '117';
 		
-        var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
+        var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
         assert.exists(module_descriptor, 'test module_descriptor exists');
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor.nodeParameters["0"].name)}`});
@@ -67,13 +67,10 @@ describe('fetch_module_descriptor tests', function(){
 
 	it("test_module_descriptor_read_fail", function () {
 		// setup module variables
-
-		var retrieved_values = {};
-		retrieved_values["NAME"] = 'UNKNOWN'; 
-		retrieved_values["nodeParameters"] = { };
-		retrieved_values["nodeParameters"]["1"] = '165'; 
-		retrieved_values["nodeParameters"]["7"] = '2';
-		retrieved_values["nodeParameters"]["2"]  = '117';
+		RetrievedValues.data["NAME"] = 'UNKNOWN'; 
+		RetrievedValues.data["nodeParameters"]["1"] = '165'; 
+		RetrievedValues.data["nodeParameters"]["7"] = '2';
+		RetrievedValues.data["nodeParameters"]["2"]  = '117';
 		
 		// delete existing file if there
 		try {
@@ -81,7 +78,7 @@ describe('fetch_module_descriptor tests', function(){
 		} catch (err) {
 		}
 
-        var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', retrieved_values);
+        var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
 		
         assert.exists(module_descriptor, 'test module_descriptor exists');

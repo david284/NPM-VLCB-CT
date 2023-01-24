@@ -52,7 +52,7 @@ var Template =
 // param 1 - file path to use
 // param 2 - json array with values retrieved from module under test
 //
-exports.module_descriptor = function module_descriptor(file_path, retrieved_values)
+exports.module_descriptor = function module_descriptor(file_path, RetrievedValues)
 {
 	var module_descriptor;
 	
@@ -65,13 +65,14 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 	
 	try {
 		
-		winston.debug({message: `MERGLCB: Fetch_Module_descriptor: retrieved_values : ${JSON.stringify(retrieved_values, null, "    ")}`});
+		winston.debug({message: `MERGLCB: Fetch_Module_descriptor: RetrievedValues : ${JSON.stringify(RetrievedValues.data, null, "    ")}`});
 		// use values retrieved from module to create filename
-		var filename = retrieved_values["NAME"] + '_' + 
-		retrieved_values["nodeParameters"]["1"] + '_' + 
-		retrieved_values["nodeParameters"]["7"] + '_' + 
-		retrieved_values["nodeParameters"]["2"] +
+		var filename = RetrievedValues.data["NAME"] + '_' + 
+		RetrievedValues.data["nodeParameters"]["1"] + '_' + 
+		RetrievedValues.data["nodeParameters"]["7"] + '_' + 
+		RetrievedValues.data["nodeParameters"]["2"] +
 		'.json';
+		winston.info({message: `MERGLCB: module descriptor filename : ` + filename +'\n'});
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)
 		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename +'\n'});
@@ -80,11 +81,11 @@ exports.module_descriptor = function module_descriptor(file_path, retrieved_valu
 		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
 		winston.debug({message: `MERGLCB: Building new module_descriptor : `});
 		module_descriptor = Template;
-		module_descriptor.NAME = retrieved_values["NAME"];
+		module_descriptor.NAME = RetrievedValues.data["NAME"];
 		
-		for (var key in retrieved_values["nodeParameters"]) {
-			winston.debug({message: `MERGLCB: Key ` + JSON.stringify(key) + " " + retrieved_values["nodeParameters"][key]});
-			module_descriptor["nodeParameters"][key]["value"] = retrieved_values["nodeParameters"][key];
+		for (var key in RetrievedValues.data["nodeParameters"]) {
+			winston.debug({message: `MERGLCB: Key ` + JSON.stringify(key) + " " + RetrievedValues.data["nodeParameters"][key]});
+			module_descriptor["nodeParameters"][key]["value"] = RetrievedValues.data["nodeParameters"][key];
 		}
 		
 		// now write it to disk

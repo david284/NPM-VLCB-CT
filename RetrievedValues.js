@@ -17,7 +17,7 @@ class RetrievedValues {
 		//                        0123456789012345678901234567890123456789
 		winston.debug({message:  '------------ RetrievedValues Constructor'});
 		
-		this.retrieved_values = { "DateTime" : new Date(),	// include datetime of test run start
+		this.data = { "DateTime" : new Date(),	// include datetime of test run start
 								"TestsPassed": 0,
 								"TestsFailed": 0,
 								"nodeNumber": null,
@@ -26,15 +26,16 @@ class RetrievedValues {
 								"nodeParameters": {},
 								"Services": {}
 								};	
+		this.retrieved_values = this.data;
 		}
 
-	getNodeNumber(){ return this.retrieved_values.nodeNumber; };
-	setNodeNumber(nodeNumber) { this.retrieved_values.nodeNumber = nodeNumber; };
+	getNodeNumber(){ return this.data.nodeNumber; };
+	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
 	
 	
 	writeToDisk(path) {
 		// now write retrieved_values to disk
-		var text = JSON.stringify(this.retrieved_values, null, '    ');
+		var text = JSON.stringify(this.data, null, '    ');
 		fs.writeFileSync(path, text);
 		winston.debug({message: 'MERGLCB: Write to disk: retrieved_values \n' + text});
 	}

@@ -79,7 +79,7 @@ describe('callback tests', function(){
     //
     itParam("HEARTB test ${JSON.stringify(value)}", GetTestCase_HEARTB(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN HEARTB test'});
-		RetrievedValues.retrieved_values.nodeNumber = value.expectedNumber;
+		RetrievedValues.setNodeNumber(value.expectedNumber);
 		callback.attach(RetrievedValues);					// attach callback to receive HEARTB
         mock_Cbus.outputHEARTB(value.nodeNumber);			// transmit HEARTB
 		setTimeout(function(){
