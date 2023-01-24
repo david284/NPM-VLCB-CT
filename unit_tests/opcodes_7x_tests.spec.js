@@ -8,6 +8,7 @@ const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTEST_165_2_117.json');
+const RetrievedValues = require('./../RetrievedValues.js');
 
 
 // Scope:
@@ -137,17 +138,38 @@ describe('opcodes_7x tests', function(){
 		}
 		return testCases;
 	}
+	
+	const Services = {
+		"1": {
+			"ServiceIndex": 3, "ServiceType": 1, "ServiceVersion": 0,
+			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+		},
+		"2": {
+			"ServiceIndex": 4, "ServiceType": 2, "ServiceVersion": 0,
+			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+		},
+		"3": {
+			"ServiceIndex": 5, "ServiceType": 3, "ServiceVersion": 0,
+			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+		},
+		"4": {
+			"ServiceIndex": 6, "ServiceType": 2, "ServiceVersion": 0,
+			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+		}
+	}
+
 
 
     // 0x78 - RQSD
     itParam("RQSD test ${JSON.stringify(value)}", GetTestCase_RQSD(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
+		mock_Cbus.Services = Services;
 		// storage for values retrieved from module under test	
-		var retrieved_values = { "nodeNumber": 0 };
-        var result = tests.test_RQSD(retrieved_values, value.ServiceIndex);
+		RetrievedValues.setNodeNumber(0);
+        var result = tests.test_RQSD(RetrievedValues.data, value.ServiceIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
-            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(retrieved_values, null, "    ")});
+            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(RetrievedValues.data, null, "    ")});
             expect(tests.hasTestPassed).to.equal(true);
 //			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 //			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1

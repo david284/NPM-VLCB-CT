@@ -76,6 +76,12 @@ class mock_CbusNetwork {
 				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }
 				};
 
+		this.Services = {
+			"1": {
+				"ServiceIndex": 3, "ServiceType": 1, "ServiceVersion": 0,
+				"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+			}
+		}
 
 		this.server = net.createServer(function (socket) {
 			this.socket=socket;
@@ -266,9 +272,17 @@ class mock_CbusNetwork {
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});
                 // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
 				if (cbusMsg.ServiceIndex == 0) {
-					this.outputSD(cbusMsg.nodeNumber, 0, 1, 5);
-					this.outputSD(cbusMsg.nodeNumber, 1, 2, 5);
-					this.outputSD(cbusMsg.nodeNumber, 255, 3, 5);
+					// send count of service entries first
+					var count = 0;
+					for (var index in this.Services) { count++; }
+					this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
+					// now send a message for each actual service entry
+					for (var index in this.Services) {
+						this.outputSD(cbusMsg.nodeNumber, 
+							this.Services[index].ServiceIndex,
+							this.Services[index].ServiceType,
+							this.Services[index].ServiceVersion);
+					}
 				} else
 				{
 					this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
@@ -464,13 +478,6 @@ class mock_CbusNetwork {
         this.broadcast(msgData)
 	}
 
-	// 8C
-	outputSD(nodeNumber, ServiceIndex, ServiceType, ServiceVersion) {
-		// SD Format: [<MjPri><MinPri=3><CANID>]<8C><NN hi><NN lo><ServiceIndex><ServiceType><ServiceVersion>
-		var msgData = cbusLib.encodeSD(nodeNumber, ServiceIndex, ServiceType, ServiceVersion);
-        this.broadcast(msgData)
-	}
-
 	// 90
 	outputACON(nodeNumber, eventNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
@@ -527,6 +534,13 @@ class mock_CbusNetwork {
 	}
 
 	
+	// AC - SD
+	outputSD(nodeNumber, ServiceIndex, ServiceType, ServiceVersion) {
+		// SD Format: [<MjPri><MinPri=3><CANID>]<AC><NN hi><NN lo><ServiceIndex><ServiceType><ServiceVersion>
+		var msgData = cbusLib.encodeSD(nodeNumber, ServiceIndex, ServiceType, ServiceVersion);
+        this.broadcast(msgData)
+	}
+
 	// AF - GRSP
 	outputGRSP(nodeNumber, OpCode, ServiceType, Result) {
 		// Format: [<MjPri><MinPri=3><CANID>]<AF><NN hi><NN lo><OpCode><ServiceType><Result>
@@ -756,20 +770,18 @@ class CbusModule {
 //		winston.info({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' ended setup mode'});
 	}
 
-
-		// Node Number
-		getNodeNumber(){return this.nodeNumber}
-		getNodeNumberHex(){return decToHex(this.nodeNumber, 4)}
-		setNodeNumber(newNodeNumber) { 
-			// can only accept new node number if in setup mode
-			if (this.inSetupMode()){
-				this.nodeNumber = newNodeNumber;
-				this.endSetupMode();
-				winston.info({message: 'CBUS Network Sim: Module has new node number ' + newNodeNumber});
-			}
+	// Node Number
+	getNodeNumber(){return this.nodeNumber}
+	getNodeNumberHex(){return decToHex(this.nodeNumber, 4)}
+	setNodeNumber(newNodeNumber) { 
+		// can only accept new node number if in setup mode
+		if (this.inSetupMode()){
+			this.nodeNumber = newNodeNumber;
+			this.endSetupMode();
+			winston.info({message: 'CBUS Network Sim: Module has new node number ' + newNodeNumber});
 		}
-			
-	
+	}
+				
 	getModuleId() {return this.parameters[3]}
 	getModuleIdHex() {return decToHex(this.parameters[3], 2)}
 	setModuleId(Id) {this.parameters[3] = Id}
