@@ -7,6 +7,7 @@ const cbusLib = require('cbuslibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const callback_tests = require('./../Tests_callback.js');
+const RetrievedValues = require('./../RetrievedValues.js');
 
 
 // Assert style
@@ -78,16 +79,16 @@ describe('callback tests', function(){
     //
     itParam("HEARTB test ${JSON.stringify(value)}", GetTestCase_HEARTB(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN HEARTB test'});
-		var retrieved_values = { "nodeNumber": value.expectedNumber };
-		callback.attach(retrieved_values);					// attach callback to receive HEARTB
+		RetrievedValues.retrieved_values.nodeNumber = value.expectedNumber;
+		callback.attach(RetrievedValues);					// attach callback to receive HEARTB
         mock_Cbus.outputHEARTB(value.nodeNumber);			// transmit HEARTB
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: HEARTB ended'});
-            winston.debug({message: 'UNIT TEST: HEARTB \n      ' + JSON.stringify(retrieved_values)});
+            winston.debug({message: 'UNIT TEST: HEARTB \n      ' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});
 			if (value.nodeNumber == value.expectedNumber){
-				expect(retrieved_values.HEARTB).to.equal('passed');
+				expect(RetrievedValues.retrieved_values.HEARTB).to.equal('passed');
 			} else {
-				expect(retrieved_values.HEARTB).to.equal('failed');
+				expect(RetrievedValues.retrieved_values.HEARTB).to.equal('failed');
 			}
 			done();
 		}, 100);

@@ -77,7 +77,7 @@ async function runtests() {
 	// and is shared with, & updated by, all tests
 							
 	// attach callback tests to network, to manage unsolicited messages from modules
-	callback.attach(RetrievedValues.retrieved_values);
+	callback.attach(RetrievedValues);
 
 	// now run setup mode tests
 	RetrievedValues.retrieved_values = await (SetupMode.runTests(RetrievedValues.retrieved_values));

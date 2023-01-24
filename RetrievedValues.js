@@ -21,6 +21,7 @@ class RetrievedValues {
 								"TestsPassed": 0,
 								"TestsFailed": 0,
 								"nodeNumber": null,
+								"HEARTB": 'failed',			// assume HEARTB not recived to begin with
 								"modules": {},
 								"nodeParameters": {},
 								"Services": {}
