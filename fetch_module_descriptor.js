@@ -1,48 +1,15 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const jsonfile = require('jsonfile')
+const fs = require('fs');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
-// const has block sscope (like let), and can't be changed through reassigment or redeclared
-
-var Template = 
-{
-	"NAME" : "",
-	"nodeParameters": {
-		"0": {
-			"name" : "Number of parameters",
-		},
-		"1": {
-			"name" : "Manufacturer’s Id",
-		},
-		"2": {
-			"name" : "Minor Version",
-		},
-		"3": {
-			"name" : "Module Type",
-		},
-		"4": {
-			"name" : "No. of events supported",
-		},
-		"5": {
-			"name" : "No. of Event Variables per event",
-		},
-		"6": {
-			"name" : "No. of Node Variables",
-		},
-		"7": {
-			"name" : "Major Version",
-		}
-	},
-	"services": {
-	}
-}
-
-
+// const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
 //
@@ -80,17 +47,22 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 	} catch (err) {
 		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
 		winston.debug({message: `MERGLCB: Building new module_descriptor : `});
-		module_descriptor = Template;
-		module_descriptor.NAME = RetrievedValues.data["NAME"];
+		// build the module_descriptor json
+		module_descriptor = {};
+		module_descriptor["NAME"] = RetrievedValues.data["NAME"];
+		module_descriptor["nodeParameters"] = {};
 		
 		for (var key in RetrievedValues.data["nodeParameters"]) {
 			winston.debug({message: `MERGLCB: Key ` + JSON.stringify(key) + " " + RetrievedValues.data["nodeParameters"][key].value});
+			module_descriptor["nodeParameters"][key] = {};
+			module_descriptor["nodeParameters"][key]["name"] = RetrievedValues.data["nodeParameters"][key].name;
 			module_descriptor["nodeParameters"][key]["value"] = RetrievedValues.data["nodeParameters"][key].value;
 		}
 		
 		// now write it to disk
-		jsonfile.writeFile(file_path + filename, module_descriptor);
-		
+		var text = JSON.stringify(module_descriptor, null, '    ');
+		fs.writeFileSync(file_path + filename, text);
+				
 		winston.info({message: `MERGLCB: New module descriptor file created : ` + filename +'\n'});
 		return module_descriptor;
 	}

@@ -7,6 +7,8 @@ const winston = require('./config/winston_test.js');
 const fs = require('fs')
 const fetch_file = require('./../fetch_module_descriptor.js')
 const RetrievedValues = require('./../RetrievedValues.js');
+const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
+
 
 
 // Scope:
@@ -54,9 +56,9 @@ describe('fetch_module_descriptor tests', function(){
 		
 		// setup module variables
 		RetrievedValues.data["NAME"] = 'CANTEST'; 
-		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165' };
-		RetrievedValues.data["nodeParameters"]["7"] = { "value": '2' };
-		RetrievedValues.data["nodeParameters"]["2"]  = { "value": '117' };
+		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165', "name": NodeParameterNames[1] };
+		RetrievedValues.data["nodeParameters"]["7"] = { "value": '2', "name": NodeParameterNames[7] };
+		RetrievedValues.data["nodeParameters"]["2"]  = { "value": '117', "name": NodeParameterNames[2] };
 		
         var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
         assert.exists(module_descriptor, 'test module_descriptor exists');
@@ -68,9 +70,9 @@ describe('fetch_module_descriptor tests', function(){
 	it("test_module_descriptor_read_fail", function () {
 		// setup module variables
 		RetrievedValues.data["NAME"] = 'UNKNOWN'; 
-		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165' };
-		RetrievedValues.data["nodeParameters"]["7"] = { "value": '2' };
-		RetrievedValues.data["nodeParameters"]["2"]  = { "value": '117' };
+		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165', "name": NodeParameterNames[1]};
+		RetrievedValues.data["nodeParameters"]["7"] = { "value": '2' , "name": NodeParameterNames[7]};
+		RetrievedValues.data["nodeParameters"]["2"]  = { "value": '117' , "name": NodeParameterNames[2]};
 		
 		// delete existing file if there
 		try {
