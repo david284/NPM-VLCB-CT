@@ -75,6 +75,33 @@ describe('opcodes_7x tests', function(){
 
 
 
+    function GetTestCase_NVRD() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 20;
+			testCases.push({'nodeVariableIndex':arg1});
+		}
+		return testCases;
+	}
+
+
+    // 0x71 - NVRD
+    itParam("NVRD test ${JSON.stringify(value)}", GetTestCase_NVRD(), function (done, value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
+		RetrievedValues.setNodeNumber(0);
+		RetrievedValues.data.Services[1] = {};
+        var result = tests.test_NVRD(1, value.nodeVariableIndex, RetrievedValues, test_module_descriptor);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: NVRD ended'});
+			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+            expect(tests.hasTestPassed).to.equal(true);
+			done();
+		}, test_timeout);
+	})
+
+
     function GetTestCase_RQNPN() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {

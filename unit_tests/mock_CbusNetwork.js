@@ -252,6 +252,10 @@ class mock_CbusNetwork {
             case '71':
                 // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
                 winston.debug({message: 'Mock CBUS Network: received NVRD'});
+				var variables = this.modules[0].variables;
+				for (var i=0; i< variables.length; i++){
+					this.outputNVANS(cbusMsg.nodeNumber, i, variables[i]);
+				}
                 break;
             case '73':
                 // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
@@ -749,6 +753,7 @@ class CbusModule {
 								//	Bit 3	: The module supports bootloading		
 							]
         this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
+		this.variables = [ 8, 1, 2, 3, 4, 5, 6, 7, 8 ];
 	}
 
 	getStoredEvents() { return this.events}

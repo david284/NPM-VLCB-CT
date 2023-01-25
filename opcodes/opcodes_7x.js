@@ -44,6 +44,50 @@ class opcodes_7x {
 
             
 
+    // 0x71 - NVRD
+    test_NVRD(ServiceIndex, NodeVariableIndex, RetrievedValues, module_descriptor) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN NVRD test'});
+			if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
+				RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
+			}
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
+            this.network.write(msgData);
+            setTimeout(()=>{
+                if (this.network.messagesIn.length > 0){
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						winston.info({message: msg.text});
+						if (msg.mnemonic == "NVANS"){
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+								this.hasTestPassed = true;
+								/*								
+								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex] = {};
+								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex]["value"] = msg.nodeVariableValue;
+								*/
+								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
+							}
+						}
+					});
+				}
+				
+                if (this.hasTestPassed){ 
+					winston.info({message: 'MERGLCB: NVRD passed'}); 
+					RetrievedValues.data.TestsPassed++;
+				}else{
+					winston.info({message: 'MERGLCB: NVRD failed'});
+					RetrievedValues.data.TestsFailed++;
+				}
+				winston.debug({message: '-'});
+                resolve();
+                ;} , this.response_time
+            );
+        }.bind(this));
+    }
+	
+	
 
 
 	// 0x73 - RQNPN
