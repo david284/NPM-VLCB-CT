@@ -63,29 +63,32 @@ class opcodes_7x {
 						this.hasTestPassed = true;
 						
 						//start building an ouput string in case it fails
-						var fail_output = ' - parameter index : ' + parameterIndex +'\n';
-						fail_output += '  actual value : ' + message.parameterValue +'\n';
+						var fail_output = '\n      parameter index : ' + parameterIndex;
+						fail_output += '\n      actual value : ' + message.parameterValue;
 						// and a warning outputstring also
 						var warning_output = "";
 						
 						if (retrieved_values["nodeParameters"][parameterIndex] != null){
-							fail_output += '  retrieved_value : ' + retrieved_values ["nodeParameters"][parameterIndex] +'\n';
+							fail_output += '\n      retrieved_value : ' + retrieved_values ["nodeParameters"][parameterIndex].value;
 							// we have previously read this value, so check it's still the same
-							if ( retrieved_values ["nodeParameters"][parameterIndex] != message.parameterValue){
+							if ( retrieved_values ["nodeParameters"][parameterIndex].value != message.parameterValue){
 								this.hasTestPassed = false;
+								winston.debug({message: 'MERGLCB:      Failed Node - RetrievedValues value mismatch' + fail_output});  
 							}
 						} else {
 							// new value, so save it
-							retrieved_values ["nodeParameters"][parameterIndex] = message.parameterValue;
+							retrieved_values.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex] };
+							retrieved_values.nodeParameters[parameterIndex]["value"] = message.parameterValue;
 							winston.debug({message: 'MERGLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
 						}
 						
 						// if it's in the module_descriptor, we need to check we've read the same value
 						if (module_descriptor.nodeParameters[parameterIndex] != null) {
 							if (module_descriptor.nodeParameters[parameterIndex].value != null) {
-								fail_output += '  module_descriptor : ' + module_descriptor.nodeParameters[parameterIndex].value +'\n';
+								fail_output += '\n      module_descriptor : ' + module_descriptor.nodeParameters[parameterIndex].value;
 								if ( module_descriptor.nodeParameters[parameterIndex].value != message.parameterValue) {
 									this.hasTestPassed = false;
+									winston.debug({message: 'MERGLCB:      Failed module descriptor mismatch' + fail_output});
 								}
 							} else {
 								warning_output = ' :: Warning: No matching module_descriptor value entry';

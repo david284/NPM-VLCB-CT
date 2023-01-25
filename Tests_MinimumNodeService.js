@@ -62,7 +62,7 @@ class MinimumNodeServiceTests {
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				//using value now stored in parameter 0
-				for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"]+1; i++) {
+				for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
 					await this.opcodes_7x.test_RQNPN(i, RetrievedValues.data, module_descriptor);
 				}
 				

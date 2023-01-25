@@ -5,7 +5,8 @@ const itParam = require('mocha-param');
 const net = require('net')
 const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
-const IP_Network = require('./../ip_network.js')
+const IP_Network = require('./../ip_network.js');
+const RetrievedValues = require('./../RetrievedValues.js');
 const opcodes_1x = require('./../opcodes/opcodes_1x.js');
 
 
@@ -74,13 +75,13 @@ describe('opcodes_1x tests', function(){
 	//
 	it("RQNP test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
-		var retrieved_values = {};
         mock_Cbus.enterSetup(0);
-        var result = tests.test_RQNP(retrieved_values);
+        var result = tests.test_RQNP(RetrievedValues.data);
 		setTimeout(function(){
             expect(tests.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQNP ended'});
             mock_Cbus.exitSetup(0);
+			winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
 			done();
 		}, 200);
 	})

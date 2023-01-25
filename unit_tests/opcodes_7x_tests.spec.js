@@ -80,7 +80,7 @@ describe('opcodes_7x tests', function(){
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
 			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 7;
+			if (a == 3) arg1 = 20;
 			testCases.push({'parameterIndex':arg1});
 		}
 		return testCases;
@@ -90,11 +90,12 @@ describe('opcodes_7x tests', function(){
     // 0x73 - RQNPN
     itParam("RQNPN test ${JSON.stringify(value)}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
-		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
-        var result = tests.test_RQNPN(value.parameterIndex, retrieved_values, test_module_descriptor);
+		RetrievedValues.setNodeNumber(0);
+        var result = tests.test_RQNPN(value.parameterIndex, RetrievedValues.data, test_module_descriptor);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQNPN ended'});
             expect(tests.hasTestPassed).to.equal(true);
+			winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
 			done();
 		}, test_timeout);
 	})

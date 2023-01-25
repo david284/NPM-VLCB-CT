@@ -56,13 +56,13 @@ class opcodes_1x {
                     if (message.mnemonic == "PARAMS"){
                         winston.info({message: 'MERGLCB: RQNP passed'});
                         this.hasTestPassed = true;
-						retrieved_values ["nodeParameters"]["1"] = message.param1;
-						retrieved_values ["nodeParameters"]["2"] = message.param2;
-						retrieved_values ["nodeParameters"]["3"] = message.param3;
-						retrieved_values ["nodeParameters"]["4"] = message.param4;
-						retrieved_values ["nodeParameters"]["5"] = message.param5;
-						retrieved_values ["nodeParameters"]["6"] = message.param6;
-						retrieved_values ["nodeParameters"]["7"] = message.param7;
+						retrieved_values ["nodeParameters"]["1"] = { "name":NodeParameterNames[1], "value": message.param1 };
+						retrieved_values ["nodeParameters"]["2"] = { "name":NodeParameterNames[2], "value": message.param2 };
+						retrieved_values ["nodeParameters"]["3"] = { "name":NodeParameterNames[3], "value": message.param3 };
+						retrieved_values ["nodeParameters"]["4"] = { "name":NodeParameterNames[4], "value": message.param4 };
+						retrieved_values ["nodeParameters"]["5"] = { "name":NodeParameterNames[5], "value": message.param5 };
+						retrieved_values ["nodeParameters"]["6"] = { "name":NodeParameterNames[6], "value": message.param6 };
+						retrieved_values ["nodeParameters"]["7"] = { "name":NodeParameterNames[7], "value": message.param7 };
                         winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[1] + ' : ' + message.param1});
                         winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[2] + '  : ' + message.param2});
                         winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[3] + '      : ' + message.param3});
