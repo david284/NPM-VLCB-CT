@@ -45,9 +45,9 @@ class opcodes_7x {
             
 
     // 0x71 - NVRD
-    test_NVRD(ServiceIndex, NodeVariableIndex, RetrievedValues, module_descriptor) {
+    test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN NVRD test'});
+            winston.debug({message: 'MERGLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
 			if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
 				RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
 			}
@@ -59,7 +59,6 @@ class opcodes_7x {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						winston.info({message: msg.text});
 						if (msg.mnemonic == "NVANS"){
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								this.hasTestPassed = true;
@@ -68,6 +67,7 @@ class opcodes_7x {
 								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex]["value"] = msg.nodeVariableValue;
 								*/
 								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
+								winston.info({message: 'MERGLCB:      Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
 							}
 						}
 					});

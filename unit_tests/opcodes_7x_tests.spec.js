@@ -92,7 +92,8 @@ describe('opcodes_7x tests', function(){
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
-        var result = tests.test_NVRD(1, value.nodeVariableIndex, RetrievedValues, test_module_descriptor);
+//        var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex, test_module_descriptor);
+        var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NVRD ended'});
 			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        

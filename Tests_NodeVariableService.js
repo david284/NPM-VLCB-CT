@@ -41,8 +41,11 @@ class NodeVariableServiceTests {
 			// only do tests if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 
-				// this will get all the services that this module supports
+				// this will get the service data that this module supports
 				await this.opcodes_7x.test_RQSD(RetrievedValues.data, serviceIndex);
+								
+				// this will read all the node variables
+				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, 0);
 								
 				// now request diagnostics just for this service
 				await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
