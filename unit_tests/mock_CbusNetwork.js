@@ -385,11 +385,6 @@ class mock_CbusNetwork {
 		module.endSetupMode();
 	}
 	
-	set_DGN_Outputs(DGN_Outputs){ 
-		this.DGN_Outputs = DGN_Outputs;
-		winston.debug({message: 'Mock CBUS Network: DGN_Outputs updated'});		
-	};
-
 
 	// 00 ACK
 	outputACK() {

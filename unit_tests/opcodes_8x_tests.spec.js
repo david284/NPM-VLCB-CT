@@ -101,7 +101,8 @@ describe('opcodes_8x tests', function(){
 				"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
 				"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
 				};
-		mock_Cbus.set_DGN_Outputs(DGN_Outputs);
+		// set mock CBUS with diagnostic values to be sent in response to query
+		mock_Cbus.DGN_Outputs = DGN_Outputs;
         var result = tests.test_RDGN(retrieved_values, 0, 0, 0);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RDGN ended'});
