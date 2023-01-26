@@ -76,12 +76,12 @@ describe('opcodes_7x tests', function(){
 
 
     function GetTestCase_NVRD() {
-		var arg1, testCases = [];
+		var arg1, arg2, testCases = [];
 		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 20;
-			testCases.push({'nodeVariableIndex':arg1});
+			if (a == 1) {arg1 = 0; arg2 = 1100;}
+			if (a == 2) {arg1 = 1; arg2 = 100;}
+			if (a == 3) {arg1 = 20; arg2 = 100;}
+			testCases.push({'nodeVariableIndex':arg1, 'timeout': arg2});
 		}
 		return testCases;
 	}
@@ -92,14 +92,14 @@ describe('opcodes_7x tests', function(){
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
-//        var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex, test_module_descriptor);
+		RetrievedValues.data.nodeParameters = { "6":{ "value":20 } };
         var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NVRD ended'});
 			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
             expect(tests.hasTestPassed).to.equal(true);
 			done();
-		}, test_timeout);
+		}, value.timeout);
 	})
 
 

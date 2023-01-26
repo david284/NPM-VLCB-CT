@@ -48,8 +48,14 @@ class opcodes_7x {
     test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
-			var timeout = 100;
-			if (NodeVariableIndex == 0){ timeout = timeout * RetrievedValues.data.nodeParameters[6].value; }
+			var timeout = 50;
+			if (NodeVariableIndex == 0){ 
+				if (RetrievedValues.data.nodeParameters[6] != null) { 
+					timeout = timeout * RetrievedValues.data.nodeParameters[6].value; 
+				} else {
+					winston.info({message: 'MERGLCB: FAILURE:  Node Parameter[6] - number of node variables not found '});
+				}
+			}
 			if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
 				RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
 			}
