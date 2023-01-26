@@ -35,6 +35,18 @@ class RetrievedValues {
 	getNodeNumber(){ return this.data.nodeNumber; };
 	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
 	
+	getNodeVariableCount(serviceIndex) {
+		var count = 0;
+		if (this.data.Services[serviceIndex] != null) {
+			if (this.data.Services[serviceIndex].nodeVariables != null) {
+				for (var item in this.data.Services[serviceIndex].nodeVariables) {
+					count++;
+				}
+			}
+		}		
+		return count;
+	}
+	
 	
 	writeToDisk(path) {
 		// now write retrieved_values to disk

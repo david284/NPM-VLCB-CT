@@ -18,6 +18,7 @@ class NodeVariableServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+        this.hasTestPassed = false;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
@@ -46,6 +47,9 @@ class NodeVariableServiceTests {
 								
 				// this will read all the node variables
 				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, 0);
+				
+				// test that the number of node Variables matches published count in nodeParameters
+				this.test_NodeVariableCount(RetrievedValues, serviceIndex);
 								
 				// now request diagnostics just for this service
 				await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
@@ -73,8 +77,34 @@ class NodeVariableServiceTests {
             );
         });
     }
+	
+	
+	test_NodeVariableCount(RetrievedValues, serviceIndex) {
+		var nodeVariableCount = RetrievedValues.getNodeVariableCount(serviceIndex);
+		winston.debug({message: 'MERGLCB: NVRD Node Variable Count test '
+						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
+						+ '\n      actual   ' + nodeVariableCount 
+						});
+		
+		if (RetrievedValues.data.nodeParameters[6].value = nodeVariableCount){
+			winston.info({message: 'MERGLCB: NVRD Node Variable Count passed '});
+			this.hasTestPassed = true;
+			RetrievedValues.data.TestsPassed++;
+		} else {
+			winston.info({message: 'MERGLCB: NVRD Node Variable Count failed '
+						+ '\n      expected ' + RetrievedValues.nodeParameters[6].value
+						+ '\n      actual   ' + nodeVariableCount 
+						});
+			RetrievedValues.data.TestsFailed++;
+		}
+	}
 
 }
+
+
+
+
+
 
 module.exports = {
     NodeVariableServiceTests: NodeVariableServiceTests
