@@ -75,14 +75,16 @@ describe('opcodes_7x tests', function(){
 
 	// directly set the mock node variables for the test, so we can reliably adjust the timeout for teh variable count
 	// could add lots more but only adds to the time needed to wait for completion of test
+	// NOTE: node variable count doesn't include variable [0] - so one less than length of array
 	var nodeVariables = [ 5, 1, 2, 3, 4, 5 ];
+	var nodeVariableCount = nodeVariables.length-1
 
     function GetTestCase_NVRD() {
 		var arg1, arg2, testCases = [];
 		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0; arg2 = 50 + (100 * nodeVariables.length);}	// need to adjust timeout for variable count
+			if (a == 1) {arg1 = 0; arg2 = 50 + (100 * nodeVariables.length);}	// need to adjust timeout for all variables, inc [0]
 			if (a == 2) {arg1 = 1; arg2 = 100;}
-			if (a == 3) {arg1 = nodeVariables.length - 1; arg2 = 100;}		// actual node index starts from 1, not zero, so subtract 1 from length
+			if (a == 3) {arg1 = nodeVariableCount; arg2 = 100;}
 			testCases.push({'nodeVariableIndex':arg1, 'timeout': arg2});
 		}
 		return testCases;
@@ -95,7 +97,7 @@ describe('opcodes_7x tests', function(){
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
-		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariables.length } };	// set node variable count
+		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
         var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NVRD ended'});
@@ -103,6 +105,23 @@ describe('opcodes_7x tests', function(){
             expect(tests.hasTestPassed).to.equal(true);
 			done();
 		}, value.timeout);
+	})
+
+
+    // 0x71 - NVRD_ERROR
+	it("NVRD_ERROR test", function (done) {
+		winston.info({message: 'UNIT TEST:: BEGIN NVRD_ERROR test'});
+		mock_Cbus.modules[0].nodeVariables = nodeVariables;
+		RetrievedValues.setNodeNumber(0);
+		RetrievedValues.data.Services[1] = {};
+		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
+        var result = tests.test_NVRD_ERROR(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: NVRD_ERROR ended'});
+//			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+            expect(tests.hasTestPassed).to.equal(true);
+			done();
+		}, 100);
 	})
 
 

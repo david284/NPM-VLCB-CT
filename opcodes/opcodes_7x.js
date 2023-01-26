@@ -48,6 +48,7 @@ class opcodes_7x {
     test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
 			var timeout = 50;
 			if (NodeVariableIndex == 0){ 
 				if (RetrievedValues.data.nodeParameters[6] != null) { 
@@ -75,7 +76,7 @@ class opcodes_7x {
 								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex]["value"] = msg.nodeVariableValue;
 								*/
 								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
-								winston.info({message: 'MERGLCB:      Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
+								winston.info({message: 'MERGLCB:      ' + ServiceIndex + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
 							}
 						}
 					});
@@ -92,6 +93,57 @@ class opcodes_7x {
                 resolve();
                 ;} , timeout
             );
+        }.bind(this));
+    }
+	
+	
+    // 0x71 - NVRD_ERROR
+	// request a node variable index that doesn't exist, should get a CMDERR & GRSP back
+    test_NVRD_ERROR(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'MERGLCB: BEGIN NVRD_ERROR test - serviceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
+			var timeout = 100;
+			var msgBitField = 0;	// bit field to capture when each message has been received
+			// An index of 0 is invalid for this test...
+			if (NodeVariableIndex != 0){ 
+				this.hasTestPassed = false;
+				this.network.messagesIn = [];
+				var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
+				this.network.write(msgData);
+				setTimeout(()=>{
+					if (this.network.messagesIn.length > 0){
+						this.network.messagesIn.forEach(element => {
+							var msg = cbusLib.decode(element);
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+								if (msg.mnemonic == "CMDERR"){
+									msgBitField |= 1;			// set bit 0
+								}
+								if (msg.mnemonic == "GRSP"){
+									msgBitField |= 2;			// set bit 1
+								}
+							}
+						});
+					}
+					if (msgBitField == 3) {
+						// both messages have been received
+						this.hasTestPassed = true;
+					}
+
+					if (this.hasTestPassed){ 
+						winston.info({message: 'MERGLCB: NVRD_ERROR passed'}); 
+						RetrievedValues.data.TestsPassed++;
+					}else{
+						winston.info({message: 'MERGLCB: NVRD_ERROR failed'});
+						RetrievedValues.data.TestsFailed++;
+					}
+					winston.debug({message: '-'});
+					resolve();
+					;} , timeout
+				);
+			} else {
+				winston.info({message: 'MERGLCB: **** NVRD_ERROR Test Aborted **** Node Variable Index 0 requested'});				
+			}
         }.bind(this));
     }
 	

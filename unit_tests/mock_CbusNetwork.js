@@ -254,7 +254,13 @@ class mock_CbusNetwork {
                 winston.debug({message: 'Mock CBUS Network: received NVRD'});
 				var nodeVariables = this.modules[0].nodeVariables;
 				for (var i=0; i< nodeVariables.length; i++){
-					this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
+					if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
+						this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
+					}
+				}
+				if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
+					this.outputCMDERR(cbusMsg.nodeNumber, 10);
+					this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 10);
 				}
                 break;
             case '73':
