@@ -40,7 +40,9 @@ class RetrievedValues {
 		if (this.data.Services[serviceIndex] != null) {
 			if (this.data.Services[serviceIndex].nodeVariables != null) {
 				for (var item in this.data.Services[serviceIndex].nodeVariables) {
-					count++;
+					if (item != 0) {	// ignore node variable 0 from count
+						count++;
+					}
 				}
 			}
 		}		
