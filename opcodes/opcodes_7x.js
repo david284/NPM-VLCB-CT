@@ -48,6 +48,8 @@ class opcodes_7x {
     test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
+			var timeout = 100;
+			if (NodeVariableIndex == 0){ timeout = timeout * RetrievedValues.data.nodeParameters[6].value; }
 			if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
 				RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
 			}
@@ -82,7 +84,7 @@ class opcodes_7x {
 				}
 				winston.debug({message: '-'});
                 resolve();
-                ;} , this.response_time
+                ;} , timeout
             );
         }.bind(this));
     }
