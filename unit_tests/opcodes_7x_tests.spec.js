@@ -82,7 +82,7 @@ describe('opcodes_7x tests', function(){
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) {arg1 = 0; arg2 = 50 + (100 * nodeVariables.length);}	// need to adjust timeout for variable count
 			if (a == 2) {arg1 = 1; arg2 = 100;}
-			if (a == 3) {arg1 = 20; arg2 = 100;}
+			if (a == 3) {arg1 = nodeVariables.length - 1; arg2 = 100;}		// actual node index starts from 1, not zero, so subtract 1 from length
 			testCases.push({'nodeVariableIndex':arg1, 'timeout': arg2});
 		}
 		return testCases;
