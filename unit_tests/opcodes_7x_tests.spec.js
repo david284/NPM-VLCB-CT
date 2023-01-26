@@ -73,12 +73,14 @@ describe('opcodes_7x tests', function(){
 //
 
 
-
+	// directly set the mock node variables for the test, so we can reliably adjust the timeout for teh variable count
+	// could add lots more but only adds to the time needed to wait for completion of test
+	var nodeVariables = [ 5, 1, 2, 3, 4, 5 ];
 
     function GetTestCase_NVRD() {
 		var arg1, arg2, testCases = [];
 		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0; arg2 = 1100;}
+			if (a == 1) {arg1 = 0; arg2 = 50 + (100 * nodeVariables.length);}	// need to adjust timeout for variable count
 			if (a == 2) {arg1 = 1; arg2 = 100;}
 			if (a == 3) {arg1 = 20; arg2 = 100;}
 			testCases.push({'nodeVariableIndex':arg1, 'timeout': arg2});
@@ -90,9 +92,10 @@ describe('opcodes_7x tests', function(){
     // 0x71 - NVRD
     itParam("NVRD test ${JSON.stringify(value)}", GetTestCase_NVRD(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
+		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
-		RetrievedValues.data.nodeParameters = { "6":{ "value":20 } };
+		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariables.length } };	// set node variable count
         var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NVRD ended'});
