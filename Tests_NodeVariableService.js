@@ -80,19 +80,20 @@ class NodeVariableServiceTests {
 	
 	
 	test_NodeVariableCount(RetrievedValues, serviceIndex) {
+		this.hasTestPassed = false;
 		var nodeVariableCount = RetrievedValues.getNodeVariableCount(serviceIndex);
 		winston.debug({message: 'MERGLCB: NVRD Node Variable Count test '
 						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 
 						});
 		
-		if (RetrievedValues.data.nodeParameters[6].value = nodeVariableCount){
+		if (RetrievedValues.data.nodeParameters[6].value == nodeVariableCount){
 			winston.info({message: 'MERGLCB: NVRD Node Variable Count passed '});
 			this.hasTestPassed = true;
 			RetrievedValues.data.TestsPassed++;
 		} else {
 			winston.info({message: 'MERGLCB: NVRD Node Variable Count failed '
-						+ '\n      expected ' + RetrievedValues.nodeParameters[6].value
+						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 
 						});
 			RetrievedValues.data.TestsFailed++;

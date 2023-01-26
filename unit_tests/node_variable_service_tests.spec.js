@@ -69,17 +69,41 @@ describe('Node variable Service tests', function(){
 //
 
     // 
-	it("Node Variable Count test", function (done) {
+	it("Node Variable Count test - pass", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN Node Variable Count test'});
 		// setup data	
 		RetrievedValues.data.Services = { "1": { "nodeVariables": {"1": 1, "2":2 } } };
 		RetrievedValues.data.nodeParameters = {"6": { "value": 2 } };
-		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		RetrievedValues.data.TestsPassed = 0;
+		RetrievedValues.data.TestsFailed = 0;
 		// now run test
         var result = tests.test_NodeVariableCount(RetrievedValues, 1);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: Node Variable Count ended'});
+			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
             expect(tests.hasTestPassed).to.equal(true);
+            expect(RetrievedValues.data.TestsPassed).to.equal(1);
+            expect(RetrievedValues.data.TestsFailed).to.equal(0);
+			done();
+		}, test_timeout);
+	})
+
+    // 
+	it("Node Variable Count test - fail", function (done) {
+		winston.info({message: 'UNIT TEST:: BEGIN Node Variable Count test'});
+		// setup data	
+		RetrievedValues.data.Services = { "1": { "nodeVariables": {"1": 1, "2":2 } } };
+		RetrievedValues.data.nodeParameters = {"6": { "value": 3 } };
+		RetrievedValues.data.TestsPassed = 0;
+		RetrievedValues.data.TestsFailed = 0;
+		// now run test
+        var result = tests.test_NodeVariableCount(RetrievedValues, 1);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: Node Variable Count ended'});
+			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
+            expect(tests.hasTestPassed).to.equal(false);
+            expect(RetrievedValues.data.TestsPassed).to.equal(0);
+            expect(RetrievedValues.data.TestsFailed).to.equal(1);
 			done();
 		}, test_timeout);
 	})
