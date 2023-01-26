@@ -117,10 +117,18 @@ class opcodes_7x {
 							var msg = cbusLib.decode(element);
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								if (msg.mnemonic == "CMDERR"){
-									msgBitField |= 1;			// set bit 0
+									if (msg.errorNumber == 10) {
+										msgBitField |= 1;			// set bit 0
+									} else {
+										winston.info({message: 'MERGLCB: NVRD_ERROR: CMDERR wrong error number'}); 
+									}
 								}
 								if (msg.mnemonic == "GRSP"){
-									msgBitField |= 2;			// set bit 1
+									if (msg.result == 10) {
+										msgBitField |= 2;			// set bit 1
+									} else {
+										winston.info({message: 'MERGLCB: NVRD_ERROR: GRSP wrong result number'}); 
+									}
 								}
 							}
 						});
