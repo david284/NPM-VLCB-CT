@@ -3,6 +3,7 @@ const winston = require('./config/winston.js');
 const fs = require('fs');
 var pjson = require('./package.json');
 const readline = require('readline');
+const files = require('./copy_files.js');
 		
 
 const IP_Network = require('./ip_network.js')
@@ -142,14 +143,18 @@ async function runtests() {
 
 	
 	// now write RetrievedValues to disk
-	RetrievedValues.writeToDisk('./Retrieved Values.txt');
+	RetrievedValues.writeToDisk('./Test_Results/Retrieved Values.txt');
+	
+	
+	
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
-	winston.info({message: '\nMERGLCB: a copy of these results has been saved as TestReport.txt\n'});
-	winston.info({message: 'MERGLCB: a copy of the values retrieved from the module under test has been saved as Retrieved Values.txt\n'});
+	winston.info({message: '\nMERGLCB: a copy of these results has been saved in folder \Test_Results\n'});
 	rl.close();
 	process.stdin.destroy();
+	
+	files.copyFiles();
 }
 
 
