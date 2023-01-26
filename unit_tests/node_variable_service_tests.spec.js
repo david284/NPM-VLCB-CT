@@ -1,0 +1,87 @@
+'use strict';
+const expect = require('chai').expect;
+const winston = require('./config/winston_test.js');
+const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTEST_165_2_117.json');
+const itParam = require('mocha-param');
+const net = require('net')
+const cbusLib = require('cbusLibrary');
+const Mock_Cbus = require('./mock_CbusNetwork.js')
+const IP_Network = require('./../ip_network.js')
+const RetrievedValues = require('./../RetrievedValues.js');
+const NVS_tests = require('./../Tests_NodeVariableService.js');
+
+
+// Scope:
+// variables declared outside of the class are 'global' to this module only
+// callbacks need a bind(this) option to allow access to the class members
+// let has block scope (or global if top level)
+// var has function scope (or global if top level)
+// const has block sscope (like let), and can't be changed through reassigment or redeclared
+
+
+// Assert style
+const assert = require('chai').assert;
+
+const NET_PORT = 5557;				// 5555 + service type offset
+const NET_ADDRESS = "127.0.0.1"
+
+
+describe('Node variable Service tests', function(){
+	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
+	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+	const tests = new NVS_tests.NodeVariableServiceTests(Network);
+
+    const test_timeout = 100;
+
+	before(function() {
+		winston.info({message: ' '});
+		//                      012345678901234567890123456789987654321098765432109876543210
+		winston.info({message: '============================================================'});
+		winston.info({message: '------------- Node Variable Service unit tests -------------'});
+		winston.info({message: '============================================================'});
+		winston.info({message: ' '});
+
+
+	})
+    
+    beforeEach (function() {
+   		winston.info({message: ' '});   // blank line to separate tests
+		Network.messagesIn = [];
+    })
+
+	after(function(done) {
+        // bit of timing to ensure all winston messages get sent before closing tests completely
+		setTimeout(function(){
+            // timeout to allow tests to print
+            winston.info({message: ' '});   // blank line to separate tests
+            winston.info({message: 'UNIT TEST: tests finished '});
+            setTimeout(function(){
+                    // timeout to allow the finish text above to print
+                     done();
+            }, 100);
+		}, 100);
+    });
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// 				Testing Minimum Node Services (MNS) 
+//
+
+    // 
+	it("Node Variable Count test", function (done) {
+		winston.info({message: 'UNIT TEST:: BEGIN Node Variable Count test'});
+		// setup data	
+		RetrievedValues.data.Services = { "1": { "nodeVariables": {"1": 1, "2":2 } } };
+		RetrievedValues.data.nodeParameters = {"6": { "value": 2 } };
+		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		// now run test
+        var result = tests.test_NodeVariableCount(RetrievedValues, 1);
+		setTimeout(function(){
+            winston.info({message: 'UNIT TEST: Node Variable Count ended'});
+            expect(tests.hasTestPassed).to.equal(true);
+			done();
+		}, test_timeout);
+	})
+
+})
