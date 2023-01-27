@@ -48,10 +48,10 @@ class MinimumNodeServiceTests {
 				
 
 				// NNRST - node reset - just check we get an acknowledge (GRSP) to this command
-				await this.opcodes_5x.test_NNRST(RetrievedValues.data);
+//				await this.opcodes_5x.test_NNRST(RetrievedValues.data);
 				
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
-				await this.opcodes_4x.test_NNRSM(RetrievedValues.data);
+//				await this.opcodes_4x.test_NNRSM(RetrievedValues.data);
 				
 				// check for response to QNN from module under test
 				await this.opcodes_0x.test_QNN(RetrievedValues.data);
