@@ -40,7 +40,7 @@ class CANServiceTests {
 			if (module_descriptor != null){
 
 				// this will get all the services that this module supports
-				await this.opcodes_7x.test_RQSD(RetrievedValues.data, serviceIndex);
+				await this.opcodes_7x.test_RQSD(RetrievedValues, serviceIndex);
 								
 				// now request diagnostics just for this service
 				await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);

@@ -94,7 +94,19 @@ module.exports = {
 		}
 	},
 	"4":{
-		"name":"Teaching Service"
+		"name":"Teaching Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Events taught count"},
+				}
+			},
+			"1": {
+				"diagnostics":{
+					"1":{"name":"Events taught count"},
+				}
+			}
+		}
 	},
 	"5":{
 		"name":"Producer Service"

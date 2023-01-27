@@ -217,7 +217,7 @@ describe('opcodes_7x tests', function(){
 		mock_Cbus.Services = Services;
 		// storage for values retrieved from module under test	
 		RetrievedValues.setNodeNumber(0);
-        var result = tests.test_RQSD(RetrievedValues.data, value.ServiceIndex);
+        var result = tests.test_RQSD(RetrievedValues, value.ServiceIndex);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: RQSD ended'});
             winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(RetrievedValues.data, null, "    ")});

@@ -312,12 +312,12 @@ class opcodes_7x {
 	
 	
 	// 0x78 - RQSD
-    test_RQSD(retrieved_values, ServiceIndex) {
+    test_RQSD(RetrievedValues, ServiceIndex) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQSD test - serviceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQSD(retrieved_values.nodeNumber, ServiceIndex);
+            var msgData = cbusLib.encodeRQSD(RetrievedValues.getNodeNumber(), ServiceIndex);
             this.network.write(msgData);
             setTimeout(()=>{
 				var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
@@ -327,58 +327,42 @@ class opcodes_7x {
 						if (ServiceIndex == 0) {
 							// service index is 0, so expecting one or more 'SD' messages
 							if (msg.mnemonic == "SD"){
-								if (msg.nodeNumber == retrieved_values.nodeNumber){
+								if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 									this.hasTestPassed = true;
-									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
-										retrieved_values["Services"][msg.ServiceIndex] = {};
-									}
 									if (msg.ServiceIndex == 0){
 										// special case that SD message with serviceIndex 0 has the service count in ther version field
-										retrieved_values.ServiceCount = msg.ServiceVersion;
+										RetrievedValues.data.ServiceCount = msg.ServiceVersion;
 										this.hasTestPassed = true;	// accept test has passed if we get this one message
 										winston.info({message: 'MERGLCB:      Service Discovery : Service count ' 
 													+ msg.ServiceVersion });
 									} else {
 										msg_count++;	// add to count
-										retrieved_values["Services"][msg.ServiceIndex]["ServiceIndex"] = msg.ServiceIndex;
-										retrieved_values["Services"][msg.ServiceIndex]["ServiceType"] = msg.ServiceType;
-										retrieved_values["Services"][msg.ServiceIndex]["ServiceVersion"] = msg.ServiceVersion;
-										if(Service_Definitions[msg.ServiceType] != null) {
-											retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = Service_Definitions[msg.ServiceType].name;
-										} else{
-											retrieved_values["Services"][msg.ServiceIndex]["ServiceName"] = "Unknown Service"
-										}
+										RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
 										winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
 														+ ' ServiceType ' + msg.ServiceType
 														+ ' ServiceVersion ' + msg.ServiceVersion
-														+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
+														+ ' - ' + RetrievedValues.data["Services"][msg.ServiceIndex]["ServiceName"]});
 									}
 								}
 								else{
-									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
 								}
 							}
 						} else {
 							// Service Index is non-zero, so expecting a single 'ESD' message for the service specified
 							if (msg.mnemonic == "ESD"){
-								if (msg.nodeNumber == retrieved_values.nodeNumber){
+								if (msg.nodeNumber == RetrievedValues.data.nodeNumber){
 									this.hasTestPassed = true;
-									if (retrieved_values["Services"][msg.ServiceIndex] == null) {
-										retrieved_values["Services"][msg.ServiceIndex] = {};
-									}
-									retrieved_values["Services"][msg.ServiceIndex]["Data1"] = msg.Data1;
-									retrieved_values["Services"][msg.ServiceIndex]["Data2"] = msg.Data2;
-									retrieved_values["Services"][msg.ServiceIndex]["Data3"] = msg.Data3;
-									retrieved_values["Services"][msg.ServiceIndex]["Data4"] = msg.Data4;
+									RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
 									winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
 													+ ' Data1 ' + msg.Data1
 													+ ' Data2 ' + msg.Data2
 													+ ' Data3 ' + msg.Data3
 													+ ' Data4 ' + msg.Data4
-													+ ' - ' + retrieved_values["Services"][msg.ServiceIndex]["ServiceName"]});
+													+ ' - ' + RetrievedValues.data["Services"][msg.ServiceIndex]["ServiceName"]});
 								}
 								else{
-									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + retrieved_values.nodeNumber});
+									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
 								}
 							}
 						}
@@ -386,17 +370,17 @@ class opcodes_7x {
 				}
 				
 				// we can check we received SD messages for all the expected services if the requested serviceIndex was 0
-				if ((ServiceIndex == 0) & (msg_count != retrieved_values.ServiceCount)) {
+				if ((ServiceIndex == 0) & (msg_count != RetrievedValues.data.ServiceCount)) {
 					winston.info({message: 'MERGLCB: RQSD failed - service count doesn\'t match'});
 					this.hasTestPassed - false;
 				}
 				
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') passed'}); 
-					retrieved_values.TestsPassed++;
+					RetrievedValues.data.TestsPassed++;
 				}else{
 					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') failed'});
-					retrieved_values.TestsFailed++;
+					RetrievedValues.data.TestsFailed++;
 				}
 				winston.debug({message: '-'});
                 resolve();

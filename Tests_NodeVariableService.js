@@ -43,7 +43,7 @@ class NodeVariableServiceTests {
 			if (module_descriptor != null){
 
 				// this will get the service data that this module supports
-				await this.opcodes_7x.test_RQSD(RetrievedValues.data, serviceIndex);
+				await this.opcodes_7x.test_RQSD(RetrievedValues, serviceIndex);
 								
 				// this will read all the node variables
 				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, 0);

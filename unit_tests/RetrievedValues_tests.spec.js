@@ -59,6 +59,32 @@ describe('RetrievedValues tests', function(){
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);
     })
 
+
+    //
+	it("Add Service test", function () {
+        RetrievedValues.addService(1,2,3);
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
+		expect(RetrievedValues.data.Services[1].ServiceType).to.equal(2);
+		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
+    })
+
+    //
+	it("Add Service Data test", function () {
+        RetrievedValues.addService(2,2,3);
+		//
+        RetrievedValues.addServiceData(2,3,4,5,6);
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		expect(RetrievedValues.data.Services[2].ServiceIndex).to.equal(2);
+		expect(RetrievedValues.data.Services[2].Data1).to.equal(3);
+		expect(RetrievedValues.data.Services[2].Data2).to.equal(4);
+		expect(RetrievedValues.data.Services[2].Data3).to.equal(5);
+		expect(RetrievedValues.data.Services[2].Data4).to.equal(6);
+    })
+
+
+
+
     //
 	it("RetrievedValues Write test", function () {
         RetrievedValues.writeToDisk('./unit_tests/Retrieved Values unit test.txt');

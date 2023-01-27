@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const fs = require('fs');
+const Service_Definitions = require('./Definitions/Service_Definitions.js');
 
 
 // Scope:
@@ -49,6 +50,34 @@ class RetrievedValues {
 		return count;
 	}
 	
+	addService(ServiceIndex, ServiceType, ServiceVersion){
+		if (this.data["Services"][ServiceIndex] == null) {
+			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+		}
+		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
+		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
+		if (this.data.Services[ServiceIndex]["Diagnostics"] == null) {
+			this.data.Services[ServiceIndex]["Diagnostics"] = {};
+		}
+		if(Service_Definitions[ServiceType] != null) {
+			this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
+		} else{
+			this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
+		}
+
+	}
+
+	addServiceData(ServiceIndex, Data1, Data2, Data3, Data4){
+		if (this.data["Services"][ServiceIndex] == null) {
+			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+		}
+		this.data["Services"][ServiceIndex]["Data1"] = Data1;
+		this.data["Services"][ServiceIndex]["Data2"] = Data2;
+		this.data["Services"][ServiceIndex]["Data3"] = Data3;
+		this.data["Services"][ServiceIndex]["Data4"] = Data4;
+		
+	}
+
 	
 	writeToDisk(path) {
 		// now write retrieved_values to disk
