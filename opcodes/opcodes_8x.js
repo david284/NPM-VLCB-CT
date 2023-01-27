@@ -41,6 +41,8 @@ class opcodes_8x {
 			if ( ServiceIndex == 0) {		// 0 = request all diagnostics, so extend timeout
 				if (retrieved_values.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * retrieved_values.ServiceCount}
 				winston.debug({message: 'MERGLCB: RDGN - ServiceCount ' + retrieved_values.ServiceCount});
+			} else if ( DiagnosticCode == 0) {		// 0 = request all diagnostics for specific service, so extend timeout by less
+				RDGN_timeout = RDGN_timeout * 5
 			}
             setTimeout(()=>{
 				var nonMatchingCount = 0;
