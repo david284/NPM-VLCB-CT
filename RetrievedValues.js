@@ -55,6 +55,7 @@ class RetrievedValues {
 		if (this.data.Services[ServiceIndex] == null) {
 			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
 			this.data["Services"][ServiceIndex]["diagnosticActualCount"] = 0;
+			this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
 			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
 			this.data["Services"][ServiceIndex]["diagnostics"] = {};
 			this.data.ServicesActualCount++;
@@ -66,7 +67,18 @@ class RetrievedValues {
 		} else{
 			this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
 		}
+		
+		// create a bit field for expected diagnostic codes for this service 
+		// so we can check against actual received bitfield
+		if ( (ServiceType != null) && (ServiceVersion != null)
+			&& (Service_Definitions[ServiceType].version!= null) 
+			&& (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
+			&& (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
 
+			for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
+				this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
+			}
+		}
 	}
 
 	addServiceData(ServiceIndex, Data1, Data2, Data3, Data4){
