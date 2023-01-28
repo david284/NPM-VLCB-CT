@@ -55,6 +55,7 @@ class RetrievedValues {
 		if (this.data.Services[ServiceIndex] == null) {
 			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
 			this.data["Services"][ServiceIndex]["diagnosticActualCount"] = 0;
+			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
 			this.data["Services"][ServiceIndex]["diagnostics"] = {};
 			this.data.ServicesActualCount++;
 		}
@@ -94,6 +95,7 @@ class RetrievedValues {
 		if (service.diagnostics[DiagnosticCode] == null){
 			// new diagnostic code
 			service.diagnosticActualCount++;
+			service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
 			service.diagnostics[DiagnosticCode] = {};
 		}
 
@@ -115,7 +117,7 @@ class RetrievedValues {
 			}
 		}
 
-		// do tehhse in this order so name is first
+		// do these in this order so name is first (more readable)
 		service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
 		service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
 		service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;

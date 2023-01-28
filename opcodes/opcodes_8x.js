@@ -20,7 +20,6 @@ class opcodes_8x {
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;
-        this.response_time = 200;
     }
 
 
@@ -85,8 +84,6 @@ class opcodes_8x {
             );
         }.bind(this));
     }
-    
-	
 
 }
 
