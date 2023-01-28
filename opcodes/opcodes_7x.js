@@ -189,8 +189,7 @@ class opcodes_7x {
 							}
 						} else {
 							// new value, so save it
-							RetrievedValues.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex] };
-							RetrievedValues.data.nodeParameters[parameterIndex]["value"] = message.parameterValue;
+							RetrievedValues.addNodeParameter(message.parameterIndex, message.parameterValue);
 							winston.debug({message: 'MERGLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
 						}
 						

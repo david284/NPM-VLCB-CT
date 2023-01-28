@@ -46,8 +46,7 @@ class RetrievedValues {
 
 	addNodeParameter(parameterIndex, parameterValue) {
 		this.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex]};
-		this.data.nodeParameters[parameterIndex]["parameterIndex"] = parameterIndex;
-		this.data.nodeParameters[parameterIndex]["parameterValue"] = parameterValue;
+		this.data.nodeParameters[parameterIndex]["value"] = parameterValue;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////////
