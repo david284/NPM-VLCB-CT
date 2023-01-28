@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const fs = require('fs');
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
+const NodeParameterNames = require('./Definitions/Text_NodeParameterNames.js');
 
 
 // Scope:
@@ -37,6 +38,17 @@ class RetrievedValues {
 	getNodeNumber(){ return this.data.nodeNumber; };
 	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
 	
+	
+///////////////////////////////////////////////////////////////////////////////
+//
+// Node Parameter related methods
+//
+
+	addNodeParameter(parameterIndex, parameterValue) {
+		this.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex]};
+		this.data.nodeParameters[parameterIndex]["parameterIndex"] = parameterIndex;
+		this.data.nodeParameters[parameterIndex]["parameterValue"] = parameterValue;
+	}
 	
 ///////////////////////////////////////////////////////////////////////////////
 //

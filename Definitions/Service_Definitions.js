@@ -109,10 +109,35 @@ module.exports = {
 		}
 	},
 	"5":{
-		"name":"Producer Service"
+		"name":"Producer Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Events produced count"},
+				}
+			},
+			"1": {
+				"diagnostics":{
+					"1":{"name":"Events produced count"},
+				}
+			}
+		}
 	},
 	"6":{
-		"name":"Consumer Service"
+		"name":"Consumer Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Events consumed count"},
+				}
+			},
+			"1": {
+				"diagnostics":{
+					"1":{"name":"Events consumed count"},
+				}
+			}
+		}
+
 	},
 	// 7 - unassigned
 	// 8 - unassigned

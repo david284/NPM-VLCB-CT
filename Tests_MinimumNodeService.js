@@ -58,12 +58,12 @@ class MinimumNodeServiceTests {
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command unfortunately
-				await this.opcodes_7x.test_RQNPN(0, RetrievedValues.data, module_descriptor);
+				await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				//using value now stored in parameter 0
 				for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
-					await this.opcodes_7x.test_RQNPN(i, RetrievedValues.data, module_descriptor);
+					await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
 				}
 				
 				// this will get all the services that this module supports

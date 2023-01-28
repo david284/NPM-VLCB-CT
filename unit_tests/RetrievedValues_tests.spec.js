@@ -44,7 +44,7 @@ describe('RetrievedValues tests', function(){
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 						Testing examples tests
+// 						Tests
 //
 
     //
@@ -57,6 +57,24 @@ describe('RetrievedValues tests', function(){
 	it("Node Number test", function () {
         RetrievedValues.setNodeNumber(300);
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);
+    })
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Node Parameter related tests
+//
+
+
+    //
+	it("Add Node Parameter test", function () {
+		winston.info({message: 'UNIT TEST: BEGIN Add Node Parameter test'});
+        RetrievedValues.addNodeParameter(1,2);
+        winston.info({message: 'UNIT TEST: Node Parameters\n' + JSON.stringify(RetrievedValues.data.nodeParameters, null, '    ')});        
+		expect(RetrievedValues.data.nodeParameters[1].name).to.equal("Manufacturer’s Id");
+		expect(RetrievedValues.data.nodeParameters[1].parameterIndex).to.equal(1);
+		expect(RetrievedValues.data.nodeParameters[1].parameterValue).to.equal(2);
+		winston.info({message: 'UNIT TEST: END Add Node Parameter test'});
     })
 
 

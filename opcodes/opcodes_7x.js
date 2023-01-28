@@ -159,12 +159,12 @@ class opcodes_7x {
 
 
 	// 0x73 - RQNPN
-    test_RQNPN(parameterIndex, retrieved_values, module_descriptor) {
+    test_RQNPN(RetrievedValues, module_descriptor, parameterIndex) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: Get Param ' + parameterIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNPN(retrieved_values.nodeNumber, parameterIndex);
+            var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
@@ -180,17 +180,17 @@ class opcodes_7x {
 						// and a warning outputstring also
 						var warning_output = "";
 						
-						if (retrieved_values["nodeParameters"][parameterIndex] != null){
-							fail_output += '\n      retrieved_value : ' + retrieved_values ["nodeParameters"][parameterIndex].value;
+						if (RetrievedValues.data["nodeParameters"][parameterIndex] != null){
+							fail_output += '\n      retrieved_value : ' + RetrievedValues.data["nodeParameters"][parameterIndex].value;
 							// we have previously read this value, so check it's still the same
-							if ( retrieved_values ["nodeParameters"][parameterIndex].value != message.parameterValue){
+							if ( RetrievedValues.data["nodeParameters"][parameterIndex].value != message.parameterValue){
 								this.hasTestPassed = false;
 								winston.debug({message: 'MERGLCB:      Failed Node - RetrievedValues value mismatch' + fail_output});  
 							}
 						} else {
 							// new value, so save it
-							retrieved_values.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex] };
-							retrieved_values.nodeParameters[parameterIndex]["value"] = message.parameterValue;
+							RetrievedValues.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex] };
+							RetrievedValues.data.nodeParameters[parameterIndex]["value"] = message.parameterValue;
 							winston.debug({message: 'MERGLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
 						}
 						
@@ -213,10 +213,10 @@ class opcodes_7x {
 				if (this.hasTestPassed) {
                     winston.info({message: 'MERGLCB: RQNPN index ' + parameterIndex + ' passed - ' + NodeParameterNames[parameterIndex] + warning_output});
                     winston.debug({message: 'MERGLCB: RQNPN value ' + message.parameterValue});
-					retrieved_values.TestsPassed++;
+					RetrievedValues.data.TestsPassed++;
 				} else {
 					winston.info({message: 'MERGLCB: RQNPN failed - ' + NodeParameterNames[parameterIndex] + fail_output});
-					retrieved_values.TestsFailed++;
+					RetrievedValues.data.TestsFailed++;
 				}
 				winston.debug({message: '-'});
                 resolve();
