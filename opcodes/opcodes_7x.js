@@ -324,10 +324,10 @@ class opcodes_7x {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (ServiceIndex == 0) {
-							// service index is 0, so expecting one or more 'SD' messages
-							if (msg.mnemonic == "SD"){
-								if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+							if (ServiceIndex == 0) {
+								// service index is 0, so expecting one or more 'SD' messages
+								if (msg.mnemonic == "SD"){
 									this.hasTestPassed = true;
 									if (msg.ServiceIndex == 0){
 										// special case that SD message with serviceIndex 0 has the service count in ther version field
@@ -341,23 +341,17 @@ class opcodes_7x {
 														+ RetrievedValues.ServiceToString(msg.ServiceIndex)});
 									}
 								}
-								else{
-									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
-								}
-							}
-						} else {
-							// Service Index is non-zero, so expecting a single 'ESD' message for the service specified
-							if (msg.mnemonic == "ESD"){
-								if (msg.nodeNumber == RetrievedValues.data.nodeNumber){
+							} else {
+								// Service Index is non-zero, so expecting a single 'ESD' message for the service specified
+								if (msg.mnemonic == "ESD"){
 									this.hasTestPassed = true;
 									RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
 									winston.info({message: 'MERGLCB:      Service Discovery : '
 													+ RetrievedValues.ServiceDataToString(msg.ServiceIndex)});
 								}
-								else{
-									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
-								}
 							}
+						}else{
+							winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
 						}
 					});
 				}
