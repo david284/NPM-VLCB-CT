@@ -95,6 +95,7 @@ describe('opcodes_8x tests', function(){
     // 0x87 - RDGN
 	it("RDGN test", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
+		RetrievedValues.setNodeNumber(0);
 		// storage for values retrieved from module under test	
 		RetrievedValues.addService(1,1,1); // 	"1": { "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": "1" }, 
 		RetrievedValues.addService(2,1,1); //		"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
@@ -111,7 +112,7 @@ describe('opcodes_8x tests', function(){
 //			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 //			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
 			done();
-		}, test_timeout);
+		}, 2000);
 	})
 
 

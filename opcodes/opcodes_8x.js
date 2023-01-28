@@ -31,67 +31,47 @@ class opcodes_8x {
             winston.debug({message: 'MERGLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
+			//
+			// Need to calculate an extended timeout if it's a '0' command that returns multiple messages
+			var RDGN_timeout = 100;
+			if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
+			else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
+			winston.info({message: 'MERGLCB: RDGN_timeout set to ' + RDGN_timeout}); 
+			
+			// now create message and start test
             var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
             this.network.write(msgData);
-			if (RetrievedValues.data["Services"] == null){
-				RetrievedValues.data["Services"] = {};
-				RetrievedValues.data["ServiceCount"] = 0;
-			}
-			var RDGN_timeout = 100;
-			if ( ServiceIndex == 0) {		// 0 = request all diagnostics, so extend timeout
-				if (RetrievedValues.data.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * RetrievedValues.data.ServiceCount}
-				winston.debug({message: 'MERGLCB: RDGN - ServiceCount ' + RetrievedValues.data.ServiceCount});
-			} else if ( DiagnosticCode == 0) {		// 0 = request all diagnostics for specific service, so extend timeout by less
-				RDGN_timeout = RDGN_timeout * 5
-			}
             setTimeout(()=>{
 				var nonMatchingCount = 0;
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (msg.mnemonic == "DGN"){
-							winston.debug({message: 'MERGLCB: ----- Processing ServiceIndex ' + msg.ServiceIndex
-								+ ' DiagnosticCode ' + msg.DiagnosticCode});
-							
-							// ok we have a response - lets findout if we have an entry for this service
-							//we can then display some info about this diagnostic
-							if (RetrievedValues.data.Services[msg.ServiceIndex] != null)
-							{
+						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+							// ok - it's the right node
+							if (msg.mnemonic == "DGN"){
 								
-								// Now lets double check the results with info we've previously retrieved
-								// we can fail the test if there's a mismatch
-								//
-								nonMatchingCount++;				// ok, got +1 message not yet matched
-								// check for matching diagnostics to already known services
-								for (var key in RetrievedValues.data["Services"]) {
-									var serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
-									if (msg.ServiceIndex == serviceIndex){
-										nonMatchingCount--; // message matches service, so decrement count
-										winston.debug({message: 'MERGLCB: Matching service found '});
-
-										// ok, matches a service, so store values if they don't already exist
-										RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
-									}
+								// lets findout if we have an entry for this service
+								if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
+								{
+									winston.debug({message: 'MERGLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+									this.hasTestPassed = false;
+								} else {
+									// we have a matching service entry, so mark as passed
+									this.hasTestPassed = true;
 								}
-							} else {
-								winston.debug({message: 'MERGLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+								
+								// store diagnostic code anyway, even if no matching service (will create a new service entry)
+								RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
+								// display what we have
+								winston.info({message: 'MERGLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
 							}
-							
-							// display what we have
-							winston.info({message: 'MERGLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
 						}
 					});
-
-					// to pass, all diagnostic messages must match an existing service (i.e. nonMatchedCount will be zero)
-					if ( nonMatchingCount == 0) {this.hasTestPassed = true;}
 				}
 				
-				var testType = "";
-				if(ServiceIndex == 0) {
-					testType = "\'all services\'";
-				} else {
-					testType = "\'ServiceIndex " + ServiceIndex + "\'";
-				}
+				var testType = "\'ServiceIndex " + ServiceIndex + "\'";
+				if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
+				
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RDGN ' + testType + ' passed'}); 
 					RetrievedValues.data.TestsPassed++;
