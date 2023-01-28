@@ -71,7 +71,6 @@ class RetrievedValues {
 			this.data["Services"][ServiceIndex]["diagnosticActualCount"] = 0;
 			this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
 			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
-			this.data["Services"][ServiceIndex]["diagnostics"] = {};
 			this.data.ServicesActualCount++;
 		}
 		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
@@ -118,6 +117,17 @@ class RetrievedValues {
 		}
 	}
 	
+	ServiceDataToString(ServiceIndex) {
+		if (this.data.Services[ServiceIndex] != null) {
+			var service = this.data.Services[ServiceIndex];
+			return 'ServiceIndex: ' + service.ServiceIndex
+					+ ' ServiceType: ' + service.ServiceType
+					+ ' Data1: ' + service.Data1 + ' Data2: ' + service.Data2 + ' Data3: ' + service.Data3 + ' Data4: ' + service.Data4;
+		} else {
+			return 'ServiceIndex ' + ServiceIndex + ' No matching service found';
+		}
+	}
+	
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Diagnostics related methods
@@ -134,6 +144,7 @@ class RetrievedValues {
 		
 		if (service["diagnostics"] == null) { 
 			service["diagnosticReportedCount"] = null;
+			service["diagnostics"] = {};
 		}
 		
 		if (service.diagnostics[DiagnosticCode] == null){

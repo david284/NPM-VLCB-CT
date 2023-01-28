@@ -351,12 +351,8 @@ class opcodes_7x {
 								if (msg.nodeNumber == RetrievedValues.data.nodeNumber){
 									this.hasTestPassed = true;
 									RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
-									winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
-													+ ' Data1 ' + msg.Data1
-													+ ' Data2 ' + msg.Data2
-													+ ' Data3 ' + msg.Data3
-													+ ' Data4 ' + msg.Data4
-													+ ' - ' + RetrievedValues.data["Services"][msg.ServiceIndex]["ServiceName"]});
+									winston.info({message: 'MERGLCB:      Service Discovery : '
+													+ RetrievedValues.ServiceDataToString(msg.ServiceIndex)});
 								}
 								else{
 									winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});

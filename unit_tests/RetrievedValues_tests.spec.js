@@ -111,6 +111,30 @@ describe('RetrievedValues tests', function(){
     })
 
 
+    function GetTestCase_ServiceDataToString() {
+		var arg1, arg2, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) {arg1 = 888; arg2 = "ServiceIndex 888 No matching service found";}
+			if (a == 2) {arg1 = 5; arg2 = "ServiceIndex: 5 ServiceType: 1 Data1: 3 Data2: 4 Data3: 5 Data4: 6";}
+			if (a == 3) {arg1 = 6; arg2 = "ServiceIndex: 6 ServiceType: 1 Data1: undefined Data2: undefined Data3: undefined Data4: undefined";}
+			testCases.push({'ServiceIndex':arg1, 'expectedResult': arg2});
+		}
+		return testCases;
+	}
+
+	itParam("Service Data To String test ${JSON.stringify(value)}", GetTestCase_ServiceDataToString(), function (value) {
+		winston.info({message: 'UNIT TEST: BEGIN Service Data To String test'});
+        RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
+        RetrievedValues.addServiceData(5,3,4,5,6);		// add data for index 5
+        RetrievedValues.addService(6,1,1);				// add index 6
+		//
+		var result = RetrievedValues.ServiceDataToString(value.ServiceIndex);
+		winston.info({message: 'UNIT TEST: returned string: ' + result});
+		expect(result).to.equal(value.expectedResult);
+		winston.info({message: 'UNIT TEST: END Service To String test'});
+    })
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Diagnostics related tests
