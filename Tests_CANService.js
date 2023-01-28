@@ -43,7 +43,7 @@ class CANServiceTests {
 				await this.opcodes_7x.test_RQSD(RetrievedValues, serviceIndex);
 								
 				// now request diagnostics just for this service
-				await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
+				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
 				//
 				// Add more tests.......

@@ -331,12 +331,11 @@ class opcodes_7x {
 									this.hasTestPassed = true;
 									if (msg.ServiceIndex == 0){
 										// special case that SD message with serviceIndex 0 has the service count in ther version field
-										RetrievedValues.data.ServiceCount = msg.ServiceVersion;
+										RetrievedValues.data.ServicesReportedCount = msg.ServiceVersion;
 										this.hasTestPassed = true;	// accept test has passed if we get this one message
 										winston.info({message: 'MERGLCB:      Service Discovery : Service count ' 
 													+ msg.ServiceVersion });
 									} else {
-										msg_count++;	// add to count
 										RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
 										winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
 														+ ' ServiceType ' + msg.ServiceType
@@ -370,7 +369,7 @@ class opcodes_7x {
 				}
 				
 				// we can check we received SD messages for all the expected services if the requested serviceIndex was 0
-				if ((ServiceIndex == 0) & (msg_count != RetrievedValues.data.ServiceCount)) {
+				if ((ServiceIndex == 0) & (RetrievedValues.data.ServiceActualCount != RetrievedValues.data.ServiceReportedCount)) {
 					winston.info({message: 'MERGLCB: RQSD failed - service count doesn\'t match'});
 					this.hasTestPassed - false;
 				}

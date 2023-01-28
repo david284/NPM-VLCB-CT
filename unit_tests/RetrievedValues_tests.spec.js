@@ -95,7 +95,6 @@ describe('RetrievedValues tests', function(){
 	}
 
     //
-//	it("Add Diagnostic Code test", function () {
 	itParam("Add Diagnostic Code test ${JSON.stringify(value)}", GetTestCase_DiagnosticCode(), function (value) {
         RetrievedValues.addService(5,1,1);		// add index 5, type 1 (MNS), version 1
 		//
@@ -105,6 +104,30 @@ describe('RetrievedValues tests', function(){
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticName).to.equal(value.DiagnosticName);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticCode).to.equal(1);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticValue).to.equal(2);
+    })
+
+
+    function GetTestCase_DiagnosticCodeToString() {
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) {arg1 = 888; arg2 = 1; arg3 = "ServiceIndex 888 - Service not found";}
+			if (a == 2) {arg1 = 5; arg2 = 1; arg3 = "ServiceIndex 5 Minimum Node Service 1 DiagnosticCode 1 Value 2 - STATUS";}
+			if (a == 3) {arg1 = 5; arg2 = 999; arg3 = "ServiceIndex 5 Minimum Node Service 1 DiagnosticCode 999 - Diagnostic Code not found";}
+			testCases.push({'ServiceIndex':arg1, 'DiagnosticCode':arg2, 'expectedResult': arg3});
+		}
+		return testCases;
+	}
+
+    //
+	itParam("Diagnostic Code To String test ${JSON.stringify(value)}", GetTestCase_DiagnosticCodeToString(), function (value) {
+		winston.info({message: 'UNIT TEST: BEGIN Diagnostic Code To String test'});
+        RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
+        RetrievedValues.addDiagnosticCode(5, 1, 2); 	// add diagnostic code for serviceIndex 5
+		//
+		var result = RetrievedValues.DiagnosticCodeToString(value.ServiceIndex, value.DiagnosticCode);
+		winston.info({message: 'UNIT TEST: returned string: ' + result});
+		expect(result).to.equal(value.expectedResult);
+		winston.info({message: 'UNIT TEST: END Diagnostic Code To String test'});
     })
 
 

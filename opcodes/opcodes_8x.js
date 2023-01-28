@@ -26,21 +26,21 @@ class opcodes_8x {
 
 	
 	// 0x87 - RDGN
-    test_RDGN(retrieved_values, ServiceIndex, DiagnosticCode) {
+    test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRDGN(retrieved_values.nodeNumber, ServiceIndex, DiagnosticCode);
+            var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
             this.network.write(msgData);
-			if (retrieved_values["Services"] == null){
-				retrieved_values["Services"] = {};
-				retrieved_values["ServiceCount"] = 0;
+			if (RetrievedValues.data["Services"] == null){
+				RetrievedValues.data["Services"] = {};
+				RetrievedValues.data["ServiceCount"] = 0;
 			}
 			var RDGN_timeout = 100;
 			if ( ServiceIndex == 0) {		// 0 = request all diagnostics, so extend timeout
-				if (retrieved_values.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * retrieved_values.ServiceCount}
-				winston.debug({message: 'MERGLCB: RDGN - ServiceCount ' + retrieved_values.ServiceCount});
+				if (RetrievedValues.data.ServiceCount > 0) {RDGN_timeout = RDGN_timeout * RetrievedValues.data.ServiceCount}
+				winston.debug({message: 'MERGLCB: RDGN - ServiceCount ' + RetrievedValues.data.ServiceCount});
 			} else if ( DiagnosticCode == 0) {		// 0 = request all diagnostics for specific service, so extend timeout by less
 				RDGN_timeout = RDGN_timeout * 5
 			}
@@ -55,64 +55,30 @@ class opcodes_8x {
 							
 							// ok we have a response - lets findout if we have an entry for this service
 							//we can then display some info about this diagnostic
-							if (retrieved_values.Services[msg.ServiceIndex] != null)
+							if (RetrievedValues.data.Services[msg.ServiceIndex] != null)
 							{
-								//ok - we have a service entry, so lets get it's version & Type
-								var serviceVersion = retrieved_values.Services[msg.ServiceIndex].ServiceVersion;
-								var serviceType = retrieved_values.Services[msg.ServiceIndex].ServiceType;
-								winston.debug({message: 'MERGLCB: retrived_service - ServiceType ' + serviceType 
-									+ ' ServiceVersion ' + serviceVersion});
-								
-								// lets see if we have a definition for this service type & display
-								// some user friendly names
-								var DiagnosticName = "Unknown Diagnostic Code";	//assume unknown to start with
-								if ( Service_Definitions[serviceType] != null) {
-									//lets see if we have a name this diagnostic code for this service type
-									if ((Service_Definitions[serviceType].version!= null) 
-										&& (Service_Definitions[serviceType].version[serviceVersion]!= null)
-										&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics != null)
-										&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics[msg.DiagnosticCode] != null) ) {
-										DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[msg.DiagnosticCode].name;
-										//winston.info({message: 'MERGLCB: ***** service ' + DiagnosticName });
-									} else {
-										
-									}
-									winston.info({message: 'MERGLCB:      Index ' + msg.ServiceIndex 
-										+ " " + Service_Definitions[serviceType].name
-										+ ': (' + serviceType + ') Diagnostic: (' + msg.DiagnosticCode 
-										+ ') ' + DiagnosticName});	
-								} else {
-									winston.info({message: 'MERGLCB: unknown service type ' + serviceType
-									+ ' Diagnostic ' + msg.DiagnosticCode});	
-								}								
 								
 								// Now lets double check the results with info we've previously retrieved
 								// we can fail the test if there's a mismatch
 								//
 								nonMatchingCount++;				// ok, got +1 message not yet matched
 								// check for matching diagnostics to already known services
-								for (var key in retrieved_values["Services"]) {
-									var serviceIndex = retrieved_values["Services"][key]["ServiceIndex"];
+								for (var key in RetrievedValues.data["Services"]) {
+									var serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
 									if (msg.ServiceIndex == serviceIndex){
 										nonMatchingCount--; // message matches service, so decrement count
 										winston.debug({message: 'MERGLCB: Matching service found '});
 
 										// ok, matches a service, so store values if they don't already exist
-										if (retrieved_values["Services"][key]["diagnostics"] == null) {
-											retrieved_values["Services"][key]["diagnostics"] = {};
-										}
-										if (retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode]== null) {
-											retrieved_values["Services"][key]["diagnostics"][msg.DiagnosticCode] = {
-												"DiagnosticName": DiagnosticName,
-												"DiagnosticCode": msg.DiagnosticCode,
-												"DiagnosticeValue" : msg.DiagnosticValue
-											};
-										}
+										RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
 									}
 								}
 							} else {
 								winston.debug({message: 'MERGLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
 							}
+							
+							// display what we have
+							winston.info({message: 'MERGLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
 						}
 					});
 
@@ -128,10 +94,10 @@ class opcodes_8x {
 				}
                 if (this.hasTestPassed){ 
 					winston.info({message: 'MERGLCB: RDGN ' + testType + ' passed'}); 
-					retrieved_values.TestsPassed++;
+					RetrievedValues.data.TestsPassed++;
 				}else{
 					winston.info({message: 'MERGLCB: RDGN failed'});
-					retrieved_values.TestsFailed++;
+					RetrievedValues.data.TestsFailed++;
 				}
 				winston.debug({message: '-'});
                 resolve();

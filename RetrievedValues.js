@@ -26,7 +26,8 @@ class RetrievedValues {
 								"setup_completed": null,
 								"HEARTB": 'failed',			// assume HEARTB not received to begin with
 								"nodeParameters": {},
-								"ServiceCount":null,
+								"ServicesActualCount": 0,
+								"ServicesReportedCount":null,
 								"Services": {},
 								"modules": {}
 		};	
@@ -53,6 +54,9 @@ class RetrievedValues {
 	addService(ServiceIndex, ServiceType, ServiceVersion){
 		if (this.data.Services[ServiceIndex] == null) {
 			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
+			this.data["Services"][ServiceIndex]["diagnosticActualCount"] = 0;
+			this.data["Services"][ServiceIndex]["diagnostics"] = {};
+			this.data.ServicesActualCount++;
 		}
 		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
 		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
@@ -66,7 +70,7 @@ class RetrievedValues {
 
 	addServiceData(ServiceIndex, Data1, Data2, Data3, Data4){
 		if (this.data.Services[ServiceIndex] == null) {
-			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
+			this.addService(ServiceIndex, null, null);
 		}
 		this.data["Services"][ServiceIndex]["Data1"] = Data1;
 		this.data["Services"][ServiceIndex]["Data2"] = Data2;
@@ -77,13 +81,21 @@ class RetrievedValues {
 	
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
 		if (this.data["Services"][ServiceIndex] == null) {
-			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+			this.addService(ServiceIndex, null, null);
 		}
 		
 		// lets create a shorter reference to make the code a bit more readable
 		const service = this.data["Services"][ServiceIndex];
 		
-		if (service["diagnostics"] == null) { service["diagnostics"] = {}; }
+		if (service["diagnostics"] == null) { 
+			service["diagnosticReportedCount"] = null;
+		}
+		
+		if (service.diagnostics[DiagnosticCode] == null){
+			// new diagnostic code
+			service.diagnosticActualCount++;
+			service.diagnostics[DiagnosticCode] = {};
+		}
 
 		var DiagnosticName = "Unknown Diagnostic Code";	//assume diagnostic code is unknown to start with
 		
@@ -103,13 +115,36 @@ class RetrievedValues {
 			}
 		}
 
-		service.diagnostics[DiagnosticCode] = {};
+		// do tehhse in this order so name is first
 		service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
 		service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
 		service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;
-
 	}
 
+
+	DiagnosticCodeToString(ServiceIndex, DiagnosticCode) {
+		// check we have a service for this index
+		if (this.data.Services[ServiceIndex] != null) {
+			// lets create a shorter reference to make the code a bit more readable
+			const service = this.data["Services"][ServiceIndex];
+			// check we have a matching diagnostic code
+			if ((service.diagnostics != null) & (service.diagnostics[DiagnosticCode] != null)) {
+				return "ServiceIndex " + ServiceIndex
+						+ ' ' + service.ServiceName + ' ' + service.ServiceType
+						+ ' DiagnosticCode ' + DiagnosticCode
+						+ ' Value ' + service.diagnostics[DiagnosticCode].DiagnosticValue
+						+ ' - ' + service.diagnostics[DiagnosticCode].DiagnosticName;
+			} else {
+				return "ServiceIndex " + ServiceIndex
+						+ ' ' + service.ServiceName + ' ' + service.ServiceType
+						+ ' DiagnosticCode ' + DiagnosticCode
+						+ ' - Diagnostic Code not found';
+			}
+		} else {
+			return "ServiceIndex " + ServiceIndex
+					+ ' - Service not found';			
+		}
+	}
 	
 	writeToDisk(path) {
 		// now write retrieved_values to disk

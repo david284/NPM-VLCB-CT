@@ -70,7 +70,7 @@ class MinimumNodeServiceTests {
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
 								
 				// request all the diagnostics, for all services, not just MNS
-				await this.opcodes_8x.test_RDGN(RetrievedValues.data, 0, 0);
+				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
 
 				// now do MNS specific service tests, that rely on the serviceIndex value
 				for (var key in RetrievedValues.data["Services"]) {
@@ -82,7 +82,7 @@ class MinimumNodeServiceTests {
 						await this.opcodes_7x.test_RQSD(RetrievedValues, serviceIndex);
 								
 						// now request diagnostics just for MNS
-						await this.opcodes_8x.test_RDGN(RetrievedValues.data, serviceIndex, 0);
+						await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 				
 					}
 				}
