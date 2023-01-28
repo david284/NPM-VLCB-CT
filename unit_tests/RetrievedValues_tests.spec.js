@@ -69,6 +69,7 @@ describe('RetrievedValues tests', function(){
 		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
     })
 
+
     //
 	it("Add Service Data test", function () {
         RetrievedValues.addService(2,2,3);
@@ -83,6 +84,28 @@ describe('RetrievedValues tests', function(){
     })
 
 
+    function GetTestCase_DiagnosticCode() {
+		var arg1, arg2, testCases = [];
+		for (var a = 1; a< 3; a++) {
+			if (a == 1) {arg1 = 999; arg2 = "Unknown Diagnostic Code";}
+			if (a == 2) {arg1 = 5; arg2 = "STATUS";}
+			testCases.push({'ServiceIndex':arg1, 'DiagnosticName': arg2});
+		}
+		return testCases;
+	}
+
+    //
+//	it("Add Diagnostic Code test", function () {
+	itParam("Add Diagnostic Code test ${JSON.stringify(value)}", GetTestCase_DiagnosticCode(), function (value) {
+        RetrievedValues.addService(5,1,1);		// add index 5, type 1 (MNS), version 1
+		//
+        RetrievedValues.addDiagnosticCode(value.ServiceIndex, 1, 2);
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		expect(RetrievedValues.data.Services[value.ServiceIndex].ServiceIndex).to.equal(value.ServiceIndex);
+		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticName).to.equal(value.DiagnosticName);
+		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticCode).to.equal(1);
+		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticValue).to.equal(2);
+    })
 
 
     //

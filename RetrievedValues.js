@@ -51,14 +51,11 @@ class RetrievedValues {
 	}
 	
 	addService(ServiceIndex, ServiceType, ServiceVersion){
-		if (this.data["Services"][ServiceIndex] == null) {
-			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+		if (this.data.Services[ServiceIndex] == null) {
+			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
 		}
 		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
 		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
-		if (this.data.Services[ServiceIndex]["Diagnostics"] == null) {
-			this.data.Services[ServiceIndex]["Diagnostics"] = {};
-		}
 		if(Service_Definitions[ServiceType] != null) {
 			this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
 		} else{
@@ -68,14 +65,49 @@ class RetrievedValues {
 	}
 
 	addServiceData(ServiceIndex, Data1, Data2, Data3, Data4){
-		if (this.data["Services"][ServiceIndex] == null) {
-			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+		if (this.data.Services[ServiceIndex] == null) {
+			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
 		}
 		this.data["Services"][ServiceIndex]["Data1"] = Data1;
 		this.data["Services"][ServiceIndex]["Data2"] = Data2;
 		this.data["Services"][ServiceIndex]["Data3"] = Data3;
 		this.data["Services"][ServiceIndex]["Data4"] = Data4;
 		
+	}
+	
+	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
+		if (this.data["Services"][ServiceIndex] == null) {
+			this.data["Services"][ServiceIndex] = {"ServiceIndex":ServiceIndex};
+		}
+		
+		// lets create a shorter reference to make the code a bit more readable
+		const service = this.data["Services"][ServiceIndex];
+		
+		if (service["diagnostics"] == null) { service["diagnostics"] = {}; }
+
+		var DiagnosticName = "Unknown Diagnostic Code";	//assume diagnostic code is unknown to start with
+		
+		// we can't get the name unless we have the service type & version
+		if ( (service.ServiceType != null) & (service.ServiceVersion != null)) {
+			var serviceType = service.ServiceType;
+			var serviceVersion = service.ServiceVersion;
+			// have type & version, lets see if we can get a matching name
+			if ( Service_Definitions[serviceType] != null) {
+				//lets see if we have a name this diagnostic code for this service type
+				if ((Service_Definitions[serviceType].version!= null) 
+					&& (Service_Definitions[serviceType].version[serviceVersion]!= null)
+					&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics != null)
+					&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode] != null) ) {
+					DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode].name;
+				}	
+			}
+		}
+
+		service.diagnostics[DiagnosticCode] = {};
+		service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
+		service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
+		service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;
+
 	}
 
 	
