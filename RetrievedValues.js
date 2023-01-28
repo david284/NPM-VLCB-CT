@@ -37,6 +37,13 @@ class RetrievedValues {
 	getNodeNumber(){ return this.data.nodeNumber; };
 	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
 	
+	
+///////////////////////////////////////////////////////////////////////////////
+//
+// Node Variable related methods
+//
+
+	
 	getNodeVariableCount(serviceIndex) {
 		var count = 0;
 		if (this.data.Services[serviceIndex] != null) {
@@ -50,6 +57,13 @@ class RetrievedValues {
 		}		
 		return count;
 	}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Service related methods
+//
+
 	
 	addService(ServiceIndex, ServiceType, ServiceVersion){
 		if (this.data.Services[ServiceIndex] == null) {
@@ -92,6 +106,24 @@ class RetrievedValues {
 		
 	}
 	
+	ServiceToString(ServiceIndex) {
+		if (this.data.Services[ServiceIndex] != null) {
+			var service = this.data.Services[ServiceIndex];
+			return 'ServiceIndex ' + service.ServiceIndex
+					+ ' ServiceType ' + service.ServiceType
+					+ ' ServiceVersion ' + service.ServiceVersion
+					+ ' - ' + service.ServiceName;
+		} else {
+			return 'ServiceIndex ' + ServiceIndex + ' No matching service found';
+		}
+	}
+	
+///////////////////////////////////////////////////////////////////////////////
+//
+// Diagnostics related methods
+//
+
+
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
 		if (this.data["Services"][ServiceIndex] == null) {
 			this.addService(ServiceIndex, null, null);
@@ -159,6 +191,12 @@ class RetrievedValues {
 					+ ' - Service not found';			
 		}
 	}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// File related methods
+//
+
 	
 	writeToDisk(path) {
 		// now write retrieved_values to disk

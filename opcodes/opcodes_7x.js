@@ -337,10 +337,8 @@ class opcodes_7x {
 													+ msg.ServiceVersion });
 									} else {
 										RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
-										winston.info({message: 'MERGLCB:      Service Discovery : ServiceIndex ' + msg.ServiceIndex
-														+ ' ServiceType ' + msg.ServiceType
-														+ ' ServiceVersion ' + msg.ServiceVersion
-														+ ' - ' + RetrievedValues.data["Services"][msg.ServiceIndex]["ServiceName"]});
+										winston.info({message: 'MERGLCB:      Service Discovery : '
+														+ RetrievedValues.ServiceToString(msg.ServiceIndex)});
 									}
 								}
 								else{

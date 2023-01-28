@@ -60,6 +60,12 @@ describe('RetrievedValues tests', function(){
     })
 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Service related tests
+//
+
+
     //
 	it("Add Service test", function () {
         RetrievedValues.addService(1,2,3);
@@ -82,6 +88,33 @@ describe('RetrievedValues tests', function(){
 		expect(RetrievedValues.data.Services[2].Data3).to.equal(5);
 		expect(RetrievedValues.data.Services[2].Data4).to.equal(6);
     })
+
+
+    function GetTestCase_ServiceToString() {
+		var arg1, arg2, testCases = [];
+		for (var a = 1; a< 3; a++) {
+			if (a == 1) {arg1 = 888; arg2 = "ServiceIndex 888 No matching service found";}
+			if (a == 2) {arg1 = 5; arg2 = "ServiceIndex 5 ServiceType 1 ServiceVersion 1 - Minimum Node Service";}
+			testCases.push({'ServiceIndex':arg1, 'expectedResult': arg2});
+		}
+		return testCases;
+	}
+
+	itParam("Service To String test ${JSON.stringify(value)}", GetTestCase_ServiceToString(), function (value) {
+		winston.info({message: 'UNIT TEST: BEGIN Service To String test'});
+        RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
+		//
+		var result = RetrievedValues.ServiceToString(value.ServiceIndex);
+		winston.info({message: 'UNIT TEST: returned string: ' + result});
+		expect(result).to.equal(value.expectedResult);
+		winston.info({message: 'UNIT TEST: END Service To String test'});
+    })
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Diagnostics related tests
+//
 
 
     function GetTestCase_DiagnosticCode() {
