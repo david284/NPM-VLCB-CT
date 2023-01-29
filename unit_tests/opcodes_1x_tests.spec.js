@@ -76,7 +76,7 @@ describe('opcodes_1x tests', function(){
 	it("RQNP test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
         mock_Cbus.enterSetup(0);
-        var result = tests.test_RQNP(RetrievedValues.data);
+        var result = tests.test_RQNP(RetrievedValues);
 		setTimeout(function(){
             expect(tests.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQNP ended'});

@@ -72,7 +72,7 @@ class opcodes_7x {
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								this.hasTestPassed = true;
 								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
-								winston.info({message: 'MERGLCB:      ' + ServiceIndex + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
+								winston.info({message: 'MERGLCB:      ' + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
 							}
 						}
 					});
@@ -336,8 +336,6 @@ class opcodes_7x {
 													+ RetrievedValues.ServiceDataToString(msg.ServiceIndex)});
 								}
 							}
-						}else{
-							winston.info({message: 'MERGLCB: RQSD - node number - received : ' + msg.nodeNumber + " expected : " + RetrievedValues.data.nodeNumber});
 						}
 					});
 				}

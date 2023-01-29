@@ -71,7 +71,7 @@ class SetupMode_tests {
             this.passed_count=1;     // passed first test if in setup
             // do opcodes only possible in setup mode
             await this.opcodes_1x.test_RQMN(RetrievedValues.data);
-            await this.opcodes_1x.test_RQNP(RetrievedValues.data);
+            await this.opcodes_1x.test_RQNP(RetrievedValues);
             await this.opcodes_4x.test_SNN(RetrievedValues.data);      // takes module out of setup mode
 			
 			RetrievedValues.data.setup_completed = true;

@@ -54,7 +54,7 @@ class opcodes_4x {
                     var message = this.getMessage('NNACK');
                     if (message.mnemonic == "NNACK"){
                         if (message.nodeNumber == retrieved_values.nodeNumber) {
-                            winston.info({message: 'MERGLCB: SNN passed'});
+                            winston.debug({message: 'MERGLCB: SNN valid'});
                             this.hasTestPassed = true;
                         }
                     }

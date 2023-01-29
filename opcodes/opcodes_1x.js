@@ -42,10 +42,10 @@ class opcodes_1x {
 	
 	
 	// 10 - RQNP
-	test_RQNP(retrieved_values) {
+	test_RQNP(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
-			retrieved_values["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
+			RetrievedValues.data["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRQNP();
@@ -54,22 +54,20 @@ class opcodes_1x {
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('PARAMS');
                     if (message.mnemonic == "PARAMS"){
-                        winston.info({message: 'MERGLCB: RQNP passed'});
+                        winston.debug({message: 'MERGLCB: RQNP valid'});
                         this.hasTestPassed = true;
-						retrieved_values ["nodeParameters"]["1"] = { "name":NodeParameterNames[1], "value": message.param1 };
-						retrieved_values ["nodeParameters"]["2"] = { "name":NodeParameterNames[2], "value": message.param2 };
-						retrieved_values ["nodeParameters"]["3"] = { "name":NodeParameterNames[3], "value": message.param3 };
-						retrieved_values ["nodeParameters"]["4"] = { "name":NodeParameterNames[4], "value": message.param4 };
-						retrieved_values ["nodeParameters"]["5"] = { "name":NodeParameterNames[5], "value": message.param5 };
-						retrieved_values ["nodeParameters"]["6"] = { "name":NodeParameterNames[6], "value": message.param6 };
-						retrieved_values ["nodeParameters"]["7"] = { "name":NodeParameterNames[7], "value": message.param7 };
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[1] + ' : ' + message.param1});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[2] + '  : ' + message.param2});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[3] + '      : ' + message.param3});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[4] + '  : ' + message.param4});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[5] + ' : ' + message.param5});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[6] + '  : ' + message.param6});
-                        winston.info({message: 'MERGLCB:      RQNP: ' + NodeParameterNames[7] + '  : ' + message.param7});
+						RetrievedValues.addNodeParameter(1, message.param1);
+						RetrievedValues.addNodeParameter(2, message.param2);
+						RetrievedValues.addNodeParameter(3, message.param3);
+						RetrievedValues.addNodeParameter(4, message.param4);
+						RetrievedValues.addNodeParameter(5, message.param5);
+						RetrievedValues.addNodeParameter(6, message.param6);
+						RetrievedValues.addNodeParameter(7, message.param7);
+						for (var i = 1 ; i< 8; i++){
+							winston.info({message: 'MERGLCB:      RQNP: ' 
+								+ NodeParameterNames[i] + ' : ' 
+								+ RetrievedValues.data.nodeParameters[i].value});
+						}
                     }
                 }
                 if (this.hasTestPassed){ 

@@ -35,7 +35,7 @@ class opcodes_8x {
 			var RDGN_timeout = 100;
 			if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
 			else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
-			winston.info({message: 'MERGLCB: RDGN_timeout set to ' + RDGN_timeout}); 
+			winston.debug({message: 'MERGLCB: RDGN_timeout set to ' + RDGN_timeout}); 
 			
 			// now create message and start test
             var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
