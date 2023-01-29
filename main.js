@@ -17,6 +17,8 @@ const CAN_tests = require('./Tests_CANService.js');
 const Teaching_tests = require('./Tests_TeachingService.js');
 const Producer_tests = require('./Tests_ProducerService.js');
 const Consumer_tests = require('./Tests_ConsumerService.js');
+const EventAck_tests = require('./Tests_EventAcknowledgeService.js');
+const Bootloader_tests = require('./Tests_BootloaderService.js');
 const callback_tests = require('./Tests_callback.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
@@ -53,6 +55,8 @@ const CAN = new CAN_tests.CANServiceTests(Network);
 const Teaching = new Teaching_tests.TeachingServiceTests(Network);
 const Producer = new Producer_tests.ProducerServiceTests(Network);
 const Consumer = new Consumer_tests.ConsumerServiceTests(Network);
+const EventAck = new EventAck_tests.EventAcknowledgeServiceTests(Network);
+const Bootloader = new Bootloader_tests.BootloaderServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
 
@@ -124,9 +128,15 @@ async function runtests() {
 				case 6:
 					RetrievedValues = await (Consumer.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
-				//
-				// add more types...
-				//
+				// service types 7 & 8 currently unused
+				case 9:
+					RetrievedValues = await (EventAck.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 10:
+					RetrievedValues = await (Bootloader.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+
+
 				default:
 					winston.info({message: 'MERGLCB: unknown ServiceType ' + serviceType});
 			}
