@@ -25,6 +25,11 @@ const Type9_EventAck = require('./Services/Type9_EventAcknowledgeService.js');
 const Type10_Bootloader = require('./Services/Type10_BootloaderService.js');
 const Type11_Bootloader2 = require('./Services/Type11_Bootloader2Service.js');
 const Type12_FastClock = require('./Services/Type12_FastClockService.js');
+const Type13_DCC_CAB = require('./Services/Type13_DCC_CAB_Service.js');
+const Type14_DCC_CMD = require('./Services/Type14_DCC_CMD_Service.js');
+const Type15_CANBridge = require('./Services/Type15_CANBridgeService.js');
+const Type16_SLiM = require('./Services/Type16_SLiMService.js');
+const Type17_LongMessage = require('./Services/Type17_LongMessageService.js');
 
 
 // Scope:
@@ -66,6 +71,11 @@ const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(Network);
 const Bootloader = new Type10_Bootloader.BootloaderServiceTests(Network);
 const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(Network);
 const FastClock = new Type12_FastClock.FastClockServiceTests(Network);
+const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(Network);
+const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(Network);
+const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(Network);
+const SLiM = new Type16_SLiM.SLiMServiceTests(Network);
+const LongMessage = new Type17_LongMessage.LongMessageServiceTests(Network);
 
 
 // Now setup for console input to get the node number of the module we're testing
@@ -147,6 +157,21 @@ async function runtests() {
 					break;
 				case 12:
 					RetrievedValues = await (FastClock.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 13:
+					RetrievedValues = await (DCC_CAB.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 14:
+					RetrievedValues = await (DCC_CMD.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 15:
+					RetrievedValues = await (CANBridge.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 16:
+					RetrievedValues = await (SLiM.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 17:
+					RetrievedValues = await (LongMessage.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 
 
