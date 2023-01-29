@@ -13,7 +13,10 @@ const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
 const NVS_tests = require('./Tests_NodeVariableService.js');
-const CS_tests = require('./Tests_CANService.js');
+const CAN_tests = require('./Tests_CANService.js');
+const Teaching_tests = require('./Tests_TeachingService.js');
+const Producer_tests = require('./Tests_ProducerService.js');
+const Consumer_tests = require('./Tests_ConsumerService.js');
 const callback_tests = require('./Tests_callback.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
@@ -46,7 +49,10 @@ const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
 const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
 const NVS = new NVS_tests.NodeVariableServiceTests(Network);
-const CS = new CS_tests.CANServiceTests(Network);
+const CAN = new CAN_tests.CANServiceTests(Network);
+const Teaching = new Teaching_tests.TeachingServiceTests(Network);
+const Producer = new Producer_tests.ProducerServiceTests(Network);
+const Consumer = new Consumer_tests.ConsumerServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
 
@@ -107,7 +113,16 @@ async function runtests() {
 					RetrievedValues = await (NVS.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				case 3:
-					RetrievedValues = await (CS.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					RetrievedValues = await (CAN.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 4:
+					RetrievedValues = await (Teaching.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 5:
+					RetrievedValues = await (Producer.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 6:
+					RetrievedValues = await (Consumer.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				//
 				// add more types...
