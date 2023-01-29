@@ -19,6 +19,8 @@ const Producer_tests = require('./Tests_ProducerService.js');
 const Consumer_tests = require('./Tests_ConsumerService.js');
 const EventAck_tests = require('./Tests_EventAcknowledgeService.js');
 const Bootloader_tests = require('./Tests_BootloaderService.js');
+const Type11_Bootloader2 = require('./Services/Type11_Bootloader2Service.js');
+const Type12_FastClock = require('./Services/Type12_FastClockService.js');
 const callback_tests = require('./Tests_callback.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
@@ -57,6 +59,8 @@ const Producer = new Producer_tests.ProducerServiceTests(Network);
 const Consumer = new Consumer_tests.ConsumerServiceTests(Network);
 const EventAck = new EventAck_tests.EventAcknowledgeServiceTests(Network);
 const Bootloader = new Bootloader_tests.BootloaderServiceTests(Network);
+const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(Network);
+const FastClock = new Type12_FastClock.FastClockServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
 
@@ -134,6 +138,12 @@ async function runtests() {
 					break;
 				case 10:
 					RetrievedValues = await (Bootloader.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 11:
+					RetrievedValues = await (Bootloader2.runTests(RetrievedValues, module_descriptor, serviceIndex));
+					break;
+				case 12:
+					RetrievedValues = await (FastClock.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 
 

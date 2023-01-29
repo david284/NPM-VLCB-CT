@@ -2,8 +2,8 @@
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 
-const opcodes_7x = require('./opcodes/opcodes_7x.js');
-const opcodes_8x = require('./opcodes/opcodes_8x.js');
+const opcodes_7x = require('./../opcodes/opcodes_7x.js');
+const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
