@@ -7,22 +7,24 @@ const files = require('./copy_files.js');
 		
 
 const IP_Network = require('./ip_network.js')
-const SetupMode_tests = require('./Tests_SetupMode.js');
-const MNS_tests = require('./Tests_MinimumNodeService.js');
-const example_tests = require('./Tests_examples.js');
 const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
-const NVS_tests = require('./Tests_NodeVariableService.js');
-const CAN_tests = require('./Tests_CANService.js');
-const Teaching_tests = require('./Tests_TeachingService.js');
-const Producer_tests = require('./Tests_ProducerService.js');
-const Consumer_tests = require('./Tests_ConsumerService.js');
-const EventAck_tests = require('./Tests_EventAcknowledgeService.js');
-const Bootloader_tests = require('./Tests_BootloaderService.js');
+let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
+
+const example_tests = require('./Tests_examples.js');
+const callback_tests = require('./Tests_callback.js');
+const SetupMode_tests = require('./Tests_SetupMode.js');
+
+const Type1_MNS = require('./Services/Type1_MinimumNodeService.js');
+const Type2_NVS = require('./Services/Type2_NodeVariableService.js');
+const Type3_CAN = require('./Services/Type3_CANService.js');
+const Type4_Teaching = require('./Services/Type4_TeachingService.js');
+const Type5_Producer = require('./Services/Type5_ProducerService.js');
+const Type6_Consumer = require('./Services/Type6_ConsumerService.js');
+const Type9_EventAck = require('./Services/Type9_EventAcknowledgeService.js');
+const Type10_Bootloader = require('./Services/Type10_BootloaderService.js');
 const Type11_Bootloader2 = require('./Services/Type11_Bootloader2Service.js');
 const Type12_FastClock = require('./Services/Type12_FastClockService.js');
-const callback_tests = require('./Tests_callback.js');
-let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
 
 // Scope:
@@ -50,19 +52,20 @@ winston.info({message: ' '});
 const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
 
 // create instances of tests
-const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
-const MNS = new MNS_tests.MinimumNodeServiceTests(Network);
-const NVS = new NVS_tests.NodeVariableServiceTests(Network);
-const CAN = new CAN_tests.CANServiceTests(Network);
-const Teaching = new Teaching_tests.TeachingServiceTests(Network);
-const Producer = new Producer_tests.ProducerServiceTests(Network);
-const Consumer = new Consumer_tests.ConsumerServiceTests(Network);
-const EventAck = new EventAck_tests.EventAcknowledgeServiceTests(Network);
-const Bootloader = new Bootloader_tests.BootloaderServiceTests(Network);
-const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(Network);
-const FastClock = new Type12_FastClock.FastClockServiceTests(Network);
 const examples = new example_tests.ExampleTests(Network);
 const callback = new callback_tests.callbackTests(Network);
+const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
+//
+const MNS = new Type1_MNS.MinimumNodeServiceTests(Network);
+const NVS = new Type2_NVS.NodeVariableServiceTests(Network);
+const CAN = new Type3_CAN.CANServiceTests(Network);
+const Teaching = new Type4_Teaching.TeachingServiceTests(Network);
+const Producer = new Type5_Producer.ProducerServiceTests(Network);
+const Consumer = new Type6_Consumer.ConsumerServiceTests(Network);
+const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(Network);
+const Bootloader = new Type10_Bootloader.BootloaderServiceTests(Network);
+const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(Network);
+const FastClock = new Type12_FastClock.FastClockServiceTests(Network);
 
 
 // Now setup for console input to get the node number of the module we're testing

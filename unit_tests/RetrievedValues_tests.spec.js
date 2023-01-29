@@ -72,8 +72,7 @@ describe('RetrievedValues tests', function(){
         RetrievedValues.addNodeParameter(1,2);
         winston.info({message: 'UNIT TEST: Node Parameters\n' + JSON.stringify(RetrievedValues.data.nodeParameters, null, '    ')});        
 		expect(RetrievedValues.data.nodeParameters[1].name).to.equal("Manufacturer’s Id");
-		expect(RetrievedValues.data.nodeParameters[1].parameterIndex).to.equal(1);
-		expect(RetrievedValues.data.nodeParameters[1].parameterValue).to.equal(2);
+		expect(RetrievedValues.data.nodeParameters[1].value).to.equal(2);
 		winston.info({message: 'UNIT TEST: END Add Node Parameter test'});
     })
 
