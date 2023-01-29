@@ -71,10 +71,6 @@ class opcodes_7x {
 						if (msg.mnemonic == "NVANS"){
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								this.hasTestPassed = true;
-								/*								
-								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex] = {};
-								RetrievedValues.data.nodeVariables[msg.nodeVariableIndex]["value"] = msg.nodeVariableValue;
-								*/
 								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
 								winston.info({message: 'MERGLCB:      ' + ServiceIndex + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
 							}
@@ -125,7 +121,7 @@ class opcodes_7x {
 								}
 								if (msg.mnemonic == "GRSP"){
 									if (msg.result == 10) {
-										msgBitField |= 2;			// set bit 1
+										msgBitField |= 1;			// set bit 0
 									} else {
 										winston.info({message: 'MERGLCB: NVRD_ERROR: GRSP wrong result number'}); 
 									}
@@ -133,8 +129,9 @@ class opcodes_7x {
 							}
 						});
 					}
-					if (msgBitField == 3) {
-						// both messages have been received
+//					if (msgBitField == 3) {
+					if (msgBitField == 1) {
+						// either message has been received
 						this.hasTestPassed = true;
 					}
 
@@ -226,6 +223,7 @@ class opcodes_7x {
  
     
     // 0x75 - CANID
+	// ******* not fully implemented as depricated for MERGLCB *****
     test_CANID(retrieved_values, CANID) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN CANID test'});
@@ -235,18 +233,7 @@ class opcodes_7x {
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
-					/*
-		            this.network.messagesIn.forEach(element => {
-						var msg = cbusLib.decode(element);
-						winston.info({message: msg.text});
-						if (msg.mnemonic == "PNN"){
-							if (msg.nodeNumber == test_node_number){
-								winston.info({message: 'MERGLCB: QNN passed'});
-								this.hasTestPassed = true;
-							}
-						}
-					});
-					*/
+					// not implemented yet
 				}
 				
                 if (this.hasTestPassed){ 
