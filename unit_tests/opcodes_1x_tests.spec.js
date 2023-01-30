@@ -92,8 +92,7 @@ describe('opcodes_1x tests', function(){
     //
 	it("RQMN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
-		var retrieved_values = {};
-        var result = tests.test_RQMN(retrieved_values);
+        var result = tests.test_RQMN(RetrievedValues);
 		setTimeout(function(){
             expect(tests.hasTestPassed).to.equal(true);
             winston.info({message: 'UNIT TEST: RQMN ended'});

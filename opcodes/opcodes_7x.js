@@ -79,7 +79,7 @@ class opcodes_7x {
 					});
 				}
 
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD ');
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD');
 
 				resolve();
                 ;} , timeout

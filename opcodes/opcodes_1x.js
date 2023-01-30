@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
+const utils = require('./../utilities.js');
 
 
 // Scope:
@@ -70,14 +71,9 @@ class opcodes_1x {
 						}
                     }
                 }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQNP passed'}); 
-					this.passed_count++;
-				}else{
-					winston.info({message: 'MERGLCB: RQNP failed'});
-					this.failed_count++;
-				}
-				winston.debug({message: '-'});
+				
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
+				
                 resolve();
                 ;} , 100
             );
@@ -86,7 +82,7 @@ class opcodes_1x {
     
 
 	// 11 - RQMN
-    test_RQMN(retrieved_values) {
+    test_RQMN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
             this.hasTestPassed = false;
@@ -99,18 +95,13 @@ class opcodes_1x {
                     if (message.mnemonic == "NAME"){
                         winston.info({message: 'MERGLCB: RQMN passed'});
                         this.hasTestPassed = true;
-						retrieved_values ["NAME"] = message.name;
+						RetrievedValues.data["NAME"] = message.name;
                         winston.info({message: 'MERGLCB:      RQMN: Name  : ' + message.name});
                     }
                 }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQMN passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: RQMN failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
+
                 resolve();
                 ;} , 100
             );
