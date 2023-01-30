@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 
 const opcodes_0x = require('./../opcodes/opcodes_0x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
@@ -11,13 +12,14 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
-// const has block sscope (like let), and can't be changed through reassigment or redeclared
+// const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
 class NodeVariableServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+		this.Title = 'Minimum Node Service';
         this.hasTestPassed = false;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
@@ -27,18 +29,8 @@ class NodeVariableServiceTests {
 
 
     async runTests(RetrievedValues, module_descriptor, serviceIndex) {
-		winston.debug({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '==========================================================='});
-		winston.info({message:  '-------------- Node Variable Service tests ----------------'});
-		winston.debug({message: '==========================================================='});
-		winston.debug({message: ' '});
+		utils.DisplayStartDivider(this.Title + ' tests');
 		
-
-		
-//		winston.debug({message: 'MERGLCB: NVS : RetrievedValues ' + JSON.stringify(RetrievedValues.data)});
-//		winston.debug({message: 'MERGLCB: NVS : Module Descriptor ' + JSON.stringify(module_descriptor)});
-
 			// only do tests if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 
@@ -70,9 +62,7 @@ class NodeVariableServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MERGLCB: ==== Node Variable Service Test run finished \n'});
-		
-//		winston.debug({message: 'MERGLCB: NVS : RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		utils.DisplayEndDivider(this.Title + ' tests finished');
 		return RetrievedValues;
     }
 
@@ -96,16 +86,16 @@ class NodeVariableServiceTests {
 						});
 		
 		if (RetrievedValues.data.nodeParameters[6].value == nodeVariableCount){
-			winston.info({message: 'MERGLCB: NVRD Node Variable Count passed '});
 			this.hasTestPassed = true;
-			RetrievedValues.data.TestsPassed++;
 		} else {
-			winston.info({message: 'MERGLCB: NVRD Node Variable Count failed '
+			winston.info({message: 'MERGLCB:       NVRD Node Variable Count '
 						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 
 						});
-			RetrievedValues.data.TestsFailed++;
 		}
+		
+		utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD Node Variable Count');
+		
 	}
 
 }

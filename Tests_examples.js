@@ -1,19 +1,22 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const BaseService = require('./Services/Baseservice.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
-// const has block sscope (like let), and can't be changed through reassigment or redeclared
+// const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
+// extends base class as example of how to do it - but not used
 
-class ExampleTests {
+class ExampleTests extends BaseService{
 
     constructor(NETWORK) {
+		super();
 		this.network = NETWORK;
         this.hasTestPassed = false;
         this.passed_count = 0;

@@ -6,6 +6,7 @@ const readline = require('readline');
 const files = require('./copy_files.js');
 		
 
+const utils = require('./utilities.js');
 const IP_Network = require('./ip_network.js')
 const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
@@ -189,12 +190,11 @@ async function runtests() {
 	// Now do any checks on RetrievedValues
 	//	
 	if (RetrievedValues.data.HEARTB == 'passed') {
-		winston.info({message: '\nHEARTB passed\n'});
-		RetrievedValues.data.TestsPassed++;
+		utils.processResult(RetrievedValues, true, 'HEARTB');
 	} else {
-		winston.info({message: '\nHEARTB failed\n'});
-		RetrievedValues.data.TestsFailed++;
+		utils.processResult(RetrievedValues, false, 'HEARTB');
 	}
+
 		
 
 	//

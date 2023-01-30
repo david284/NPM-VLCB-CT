@@ -49,13 +49,13 @@ class opcodes_5x {
     }
 
 	// 0x50 RQNN
-	checkForRQNN(retrieved_values){
+	checkForRQNN(RetrievedValues){
 		this.hasTestPassed = false;
 		var message = this.getMessage('RQNN');
 			if (message != null) {
             if (message.mnemonic == "RQNN"){
                 this.test_nodeNumber = message.nodeNumber;
-				retrieved_values ["nodeNumber"] = message.nodeNumber;
+				RetrievedValues.setNodeNumber( message.nodeNumber);
                 this.inSetupMode = true;
 				this.hasTestPassed = true;
                 winston.info({message: 'MERGLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
@@ -63,8 +63,7 @@ class opcodes_5x {
 		}
 
 		if (this.hasTestPassed){ 
-			winston.info({message: 'MERGLCB: RQNN passed'}); 
-			retrieved_values.TestsPassed++;
+			utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNN');
 		}else{
 			// in this instance, we're calling this method multiple times until we get an RQNN,
 			// so don't mark each try as a fail - the upper layer will timeout and fail if didn't get a pass

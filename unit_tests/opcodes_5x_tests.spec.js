@@ -86,7 +86,7 @@ describe('opcodes_5x tests', function(){
         mock_Cbus.enterSetup(value.nodeNumber);
 		var retrieved_values = {};
 		setTimeout(function(){
-			tests.checkForRQNN(retrieved_values);
+			tests.checkForRQNN(RetrievedValues);
             expect(tests.inSetupMode).to.equal(true);
             expect(tests.test_nodeNumber).to.equal(value.nodeNumber);
             winston.info({message: 'UNIT TEST: RQNN ended'});

@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
@@ -17,6 +18,7 @@ class DCC_CAB_ServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+		this.Title = 'DCC_CAB Service';
 		
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
@@ -24,12 +26,7 @@ class DCC_CAB_ServiceTests {
 
 
     async runTests(RetrievedValues, module_descriptor, serviceIndex) {
-		winston.debug({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '==========================================================='});
-		winston.info({message:  '----------------- DCC_CAB Service tests -------------------'});
-		winston.debug({message: '==========================================================='});
-		winston.debug({message: ' '});
+		utils.DisplayStartDivider(this.Title + ' tests');
 		
 		// DCC_CAB service - Type 13
 
@@ -51,9 +48,7 @@ class DCC_CAB_ServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MERGLCB: ==== DCC_CAB Service Test run finished \n'});
-		
-//		winston.debug({message: 'MERGLCB: RetrievedValues.data ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		utils.DisplayEndDivider(this.Title + ' tests finished');
 		return RetrievedValues;
     }
 

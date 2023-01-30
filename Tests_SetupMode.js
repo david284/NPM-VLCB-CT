@@ -1,6 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./utilities.js');
+
 const opcodes_1x = require('./opcodes/opcodes_1x.js');
 const opcodes_4x = require('./opcodes/opcodes_4x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
@@ -19,6 +21,7 @@ class SetupMode_tests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+		this.Title = 'Setup Mode';
         this.hasTestPassed = false;
         this.inSetupMode = false;
         this.test_nodeNumber = 0;
@@ -34,12 +37,7 @@ class SetupMode_tests {
 
 
     async runTests(RetrievedValues) {
-		winston.debug({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '==========================================================='});
-		winston.info({message:  '-------------------- Setup Mode tests ---------------------'});
-		winston.debug({message: '==========================================================='});
-		winston.debug({message: ' '});
+		utils.DisplayStartDivider(this.Title + ' tests');
 
         await this.sleep(100);	//small delay to allow conenction to be established
 		
@@ -57,7 +55,7 @@ class SetupMode_tests {
 		
         while (1){
             setup_tries++;
-			this.opcodes_5x.checkForRQNN(RetrievedValues.data);
+			this.opcodes_5x.checkForRQNN(RetrievedValues);
 			this.inSetupMode = this.opcodes_5x.inSetupMode;
             this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
             if (this.inSetupMode) break;
@@ -84,7 +82,7 @@ class SetupMode_tests {
 			RetrievedValues.data.TestsFailed++;
         }
 		
-        winston.info({message: 'MERGLCB: ==== Setup Mode Test run finished\n'});
+		utils.DisplayEndDivider(this.Title + ' tests finished');
 		// update total tests counts
 		RetrievedValues.data.TestsPassed += this.passed_count;
 		RetrievedValues.data.TestsFailed += this.failed_count;

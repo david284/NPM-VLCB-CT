@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const jsonfile = require('jsonfile')
 const fs = require('fs');
+const utils = require('./utilities.js');
 
 
 // Scope:
@@ -22,13 +23,9 @@ const fs = require('fs');
 exports.module_descriptor = function module_descriptor(file_path, RetrievedValues)
 {
 	var module_descriptor;
+		var Title = 'Fetch Module Descriptor';
 	
-		winston.debug({message: ' '});
-		//                       012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '============================================================'});
-		winston.info({message:  '----------------- Fetch_Module_descriptor ------------------'});
-		winston.debug({message: '============================================================'});
-		winston.debug({message: ' '});
+		utils.DisplayStartDivider(Title);
 	
 	try {
 		
@@ -64,6 +61,8 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		fs.writeFileSync(file_path + filename, text);
 				
 		winston.info({message: `MERGLCB: New module descriptor file created : ` + filename +'\n'});
+
+		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;
 	}
 }

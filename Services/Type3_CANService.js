@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
@@ -17,6 +18,7 @@ class CANServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+		this.Title = 'CAN Service';
 		
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
@@ -24,18 +26,8 @@ class CANServiceTests {
 
 
     async runTests(RetrievedValues, module_descriptor, serviceIndex) {
-		winston.debug({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '==========================================================='});
-		winston.info({message:  '------------------- CAN Service tests ---------------------'});
-		winston.debug({message: '==========================================================='});
-		winston.debug({message: ' '});
+		utils.DisplayStartDivider(this.Title + ' tests');
 		
-
-		
-//		winston.debug({message: 'MERGLCB: CS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data)});
-//		winston.debug({message: 'MERGLCB: CS : Module Descriptor ' + JSON.stringify(module_descriptor)});
-
 			// only do tests if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 
@@ -53,9 +45,7 @@ class CANServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MERGLCB: ==== CAN Service Test run finished \n'});
-		
-//		winston.debug({message: 'MERGLCB: CS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		utils.DisplayEndDivider(this.Title + ' tests finished');
 		return RetrievedValues;
     }
 

@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 
 const opcodes_0x = require('./../opcodes/opcodes_0x.js');
 const opcodes_4x = require('./../opcodes/opcodes_4x.js');
@@ -16,10 +17,11 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
-class MinimumNodeServiceTests {
+class MinimumNodeServiceTests{
 
     constructor(NETWORK) {
 		this.network = NETWORK;
+		this.Title = 'Minimum Node Service';
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
 		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
@@ -30,17 +32,9 @@ class MinimumNodeServiceTests {
 
 
 
-    async runTests(RetrievedValues, module_descriptor) {
-		winston.debug({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.debug({message: '==========================================================='});
-		winston.info({message:  '--------------- Minimum Node Service tests ----------------'});
-		winston.debug({message: '==========================================================='});
-		winston.debug({message: ' '});
+    async runTests(RetrievedValues, module_descriptor){
+		utils.DisplayStartDivider(this.Title + ' tests');
 			
-//		winston.debug({message: 'MERGLCB: MNS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data)});
-//		winston.debug({message: 'MERGLCB: MNS : Module Descriptor ' + JSON.stringify(module_descriptor)});
-
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 				
@@ -94,9 +88,7 @@ class MinimumNodeServiceTests {
 				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
 			}
 		
-        winston.info({message: 'MERGLCB: ==== MNS Test run finished \n'});
-		
-//		winston.debug({message: 'MERGLCB: MNS : RetrievedValues.data ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		utils.DisplayEndDivider(this.Title + ' tests finished');
 		return RetrievedValues;
     }
 

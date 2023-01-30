@@ -93,7 +93,6 @@ class opcodes_1x {
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('NAME');
                     if (message.mnemonic == "NAME"){
-                        winston.info({message: 'MERGLCB: RQMN passed'});
                         this.hasTestPassed = true;
 						RetrievedValues.data["NAME"] = message.name;
                         winston.info({message: 'MERGLCB:      RQMN: Name  : ' + message.name});

@@ -39,7 +39,7 @@ class callbackTests {
 			if (msg.nodeNumber == this.RetrievedValues.getNodeNumber()) {
 				this.RetrievedValues.data["HEARTB"] = 'passed';
 				winston.debug({message: 'MERGLCB: ' + msg.text});		
-				winston.info({message: 'MERGLCB: HEARTB received'});
+				winston.info({message: 'MERGLCB: >>>> HEARTB received'});
 			}
 		}
 	}
