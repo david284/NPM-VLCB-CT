@@ -7,6 +7,7 @@ const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_5x = require('./../opcodes/opcodes_5x.js');
+const RetrievedValues = require('./../RetrievedValues.js');
 
 
 // Scope:
@@ -111,8 +112,8 @@ describe('opcodes_5x tests', function(){
     // 0x5E - NNRST
     itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
-		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
-        var result = tests.test_NNRST(retrieved_values);
+		RetrievedValues.setNodeNumber(0);
+        var result = tests.test_NNRST(RetrievedValues);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NNRST ended'});
             expect(tests.hasTestPassed).to.equal(true);

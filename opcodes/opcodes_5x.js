@@ -1,6 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -73,19 +75,19 @@ class opcodes_5x {
 
 
     // 0x5E - NNRST
-    test_NNRST(retrieved_values) {
+    test_NNRST(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN NNRST test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeNNRST(retrieved_values.nodeNumber);
+            var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
 				var GRSPreceived = false;
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (msg.nodeNumber == retrieved_values.nodeNumber) {
+						if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							if (msg.mnemonic == "GRSP"){
 								GRSPreceived = true;
 								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
@@ -102,14 +104,8 @@ class opcodes_5x {
 				
 				if (!GRSPreceived) { winston.info({message: 'MERGLCB: NNRST Fail: no GRSP received'}); }
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: NNRST passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: NNRST failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
+
                 resolve();
                 ;} , 500
             );
