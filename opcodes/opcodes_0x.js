@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -41,11 +42,10 @@ class opcodes_0x {
 
             
     // 0x0D - QNN
-    test_QNN(retrieved_values) {
+    test_QNN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN QNN test'});
             this.hasTestPassed = false;
-			retrieved_values["modules"] = {}; 	// ensure theres an element for 'modules'
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeQNN();
             this.network.write(msgData);
@@ -55,6 +55,7 @@ class opcodes_0x {
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						if (msg.mnemonic == "PNN"){
+							// allow messages from all nodes as we can build up an array of all the modules
 							winston.info({message: 'MERGLCB:      ' + msg.text});
 							var newModule = {
 								"nodeNumber":msg.nodeNumber,
@@ -63,9 +64,11 @@ class opcodes_0x {
 								"flags":msg.flags,
 								"CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
 							}
-							retrieved_values["modules"][i++] = newModule;
-							//
-							if (msg.nodeNumber == retrieved_values.nodeNumber){
+							RetrievedValues.data.modules[i++] = newModule;
+							
+							// we check matching node number here, as we're expecting all the nodes to respond to QNN
+							// and we'll only pass the test if we get a response from the node under test
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								winston.info({message: 'MERGLCB: QNN passed - Node ' + msg.nodeNumber});
 								this.hasTestPassed = true;
 							}
@@ -73,14 +76,8 @@ class opcodes_0x {
 					});
 				}
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: QNN passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: QNN failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
+				
                 resolve();
                 ;} , 500
             );

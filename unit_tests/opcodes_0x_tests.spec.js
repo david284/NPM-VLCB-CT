@@ -7,6 +7,7 @@ const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_0x = require('./../opcodes/opcodes_0x.js');
+const RetrievedValues = require('./../RetrievedValues.js');
 
 
 // Scope:
@@ -74,8 +75,8 @@ describe('opcodes_0x tests', function(){
     // 0x0D - QNN
 	it("QNN test", function (done) {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
-		var retrieved_values = { "nodeNumber": 0 };
-        var result = tests.test_QNN(retrieved_values);
+		RetrievedValues.setNodeNumber(0);
+        var result = tests.test_QNN(RetrievedValues);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: QNN ended'});
             expect(tests.hasTestPassed).to.equal(true);

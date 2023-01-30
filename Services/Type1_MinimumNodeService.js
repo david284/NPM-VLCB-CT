@@ -53,7 +53,7 @@ class MinimumNodeServiceTests {
 				winston.info({message: 'MERGLCB: MNS : Skipping NNRSM as not fully compliant'});
 				
 				// check for response to QNN from module under test
-				await this.opcodes_0x.test_QNN(RetrievedValues.data);
+				await this.opcodes_0x.test_QNN(RetrievedValues);
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command unfortunately
