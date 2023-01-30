@@ -1,6 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 const Service_Definitions = require('./../Definitions/Service_Definitions.js');
 
@@ -10,7 +11,7 @@ const Service_Definitions = require('./../Definitions/Service_Definitions.js');
 // callbacks need a bind(this) option to allow access to the class members
 // let has block scope (or global if top level)
 // var has function scope (or global if top level)
-// const has block sscope (like let), and can't be changed through reassigment or redeclared
+// const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
 class opcodes_7x {
@@ -68,8 +69,8 @@ class opcodes_7x {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-						if (msg.mnemonic == "NVANS"){
-							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+							if (msg.mnemonic == "NVANS"){
 								this.hasTestPassed = true;
 								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
 								winston.info({message: 'MERGLCB:      ' + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
@@ -77,16 +78,10 @@ class opcodes_7x {
 						}
 					});
 				}
-				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: NVRD passed'}); 
-					RetrievedValues.data.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: NVRD failed'});
-					RetrievedValues.data.TestsFailed++;
-				}
-				winston.debug({message: '-'});
-                resolve();
+
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD ');
+
+				resolve();
                 ;} , timeout
             );
         }.bind(this));
@@ -135,14 +130,8 @@ class opcodes_7x {
 						this.hasTestPassed = true;
 					}
 
-					if (this.hasTestPassed){ 
-						winston.info({message: 'MERGLCB: NVRD_ERROR passed'}); 
-						RetrievedValues.data.TestsPassed++;
-					}else{
-						winston.info({message: 'MERGLCB: NVRD_ERROR failed'});
-						RetrievedValues.data.TestsFailed++;
-					}
-					winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_ERROR ');
+					
 					resolve();
 					;} , timeout
 				);
@@ -166,7 +155,7 @@ class opcodes_7x {
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('PARAN');
-                    if (message.mnemonic == "PARAN"){						
+					if (message.nodeNumber == RetrievedValues.getNodeNumber()){
 						// ok - we have a value, so assume the test has passed - now do additional consistency tests
 						// and fail the test if any of these tests fail
 						this.hasTestPassed = true;
@@ -206,15 +195,9 @@ class opcodes_7x {
 						}
 					}
 				}
-				if (this.hasTestPassed) {
-                    winston.info({message: 'MERGLCB: RQNPN index ' + parameterIndex + ' passed - ' + NodeParameterNames[parameterIndex] + warning_output});
-                    winston.debug({message: 'MERGLCB: RQNPN value ' + message.parameterValue});
-					RetrievedValues.data.TestsPassed++;
-				} else {
-					winston.info({message: 'MERGLCB: RQNPN failed - ' + NodeParameterNames[parameterIndex] + fail_output});
-					RetrievedValues.data.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN index ' + parameterIndex + ' ' + NodeParameterNames[parameterIndex], warning_output);
+				
                 resolve();
                 ;} , 100
             );
@@ -236,14 +219,8 @@ class opcodes_7x {
 					// not implemented yet
 				}
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: CANID passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: CANID failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID');
+
                 resolve();
                 ;} , this.response_time
             );
@@ -252,12 +229,12 @@ class opcodes_7x {
 	
 	
     // 0x76 - MODE
-    test_MODE(retrieved_values, MODE) {
+    test_MODE(RetrievedValues, MODE) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN MODE test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeMODE(retrieved_values.nodeNumber, MODE);
+            var msgData = cbusLib.encodeMODE(RetrievedValues.getNodeNumber(), MODE);
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
@@ -265,7 +242,7 @@ class opcodes_7x {
 						var msg = cbusLib.decode(element);
 						winston.debug({message: msg.text});
 						if (msg.mnemonic == "GRSP"){
-							if (msg.nodeNumber == retrieved_values.nodeNumber){
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
 									this.hasTestPassed = true;
 								}else {
@@ -282,14 +259,8 @@ class opcodes_7x {
 					});
 				}
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: MODE passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: MODE failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'MODE');
+				
                 resolve();
                 ;} , this.response_time
             );
@@ -310,7 +281,7 @@ class opcodes_7x {
                 if (this.network.messagesIn.length > 0){
 		            this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 							if (ServiceIndex == 0) {
 								// service index is 0, so expecting one or more 'SD' messages
 								if (msg.mnemonic == "SD"){
@@ -346,14 +317,8 @@ class opcodes_7x {
 					this.hasTestPassed - false;
 				}
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') passed'}); 
-					RetrievedValues.data.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: RQSD (ServiceIndex ' + ServiceIndex + ') failed'});
-					RetrievedValues.data.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (ServiceIndex ' + ServiceIndex + ')');
+				
                 resolve();
 				;} , this.response_time
             );

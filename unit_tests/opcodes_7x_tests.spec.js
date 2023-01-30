@@ -167,8 +167,8 @@ describe('opcodes_7x tests', function(){
     // 0x76 - MODE
     itParam("MODE test ${JSON.stringify(value)}", GetTestCase_MODE(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN MODE test'});
-		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
-        var result = tests.test_MODE(retrieved_values, test_module_descriptor, value.MODE);
+		RetrievedValues.setNodeNumber(0);
+        var result = tests.test_MODE(RetrievedValues, test_module_descriptor, value.MODE);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: MODE ended'});
             expect(tests.hasTestPassed).to.equal(true);

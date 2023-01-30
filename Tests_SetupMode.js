@@ -47,7 +47,7 @@ class SetupMode_tests {
 		// try to put the module into setup using the MODE command
 		// but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
 		
-		this.opcodes_7x.test_MODE(RetrievedValues.data, 0)		// 0 - setup mode
+		this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
 
         winston.info({message: 'MERGLCB: put module into setup'});
 		RetrievedValues.data["setup_completed"]= false;
