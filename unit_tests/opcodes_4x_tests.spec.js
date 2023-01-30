@@ -7,6 +7,7 @@ const cbusLib = require('cbusLibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_4x = require('./../opcodes/opcodes_4x.js');
+const RetrievedValues = require('./../RetrievedValues.js');
 
 
 // Scope:
@@ -86,9 +87,9 @@ describe('opcodes_4x tests', function(){
     //
     itParam("SNN test ${JSON.stringify(value)}", GetTestCase_SNN(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
-		var retrieved_values = { "nodeNumber": value.nodeNumber };
+		RetrievedValues.setNodeNumber( value.nodeNumber );
         mock_Cbus.enterSetup(0);
-        var result = tests.test_SNN(retrieved_values);
+        var result = tests.test_SNN(RetrievedValues);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: SNN ended'});
             expect(tests.hasTestPassed).to.equal(true);
@@ -103,8 +104,8 @@ describe('opcodes_4x tests', function(){
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
 			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 2;
-			testCases.push({'NNRST':arg1});
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
 		}
 		return testCases;
 	}
@@ -113,8 +114,8 @@ describe('opcodes_4x tests', function(){
     // 0x4F - NNRSM
     itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NNRSM(), function (done, value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRSM test'});
-		var retrieved_values = { "nodeNumber": 0, "nodeParameters": {}};
-        var result = tests.test_NNRSM(retrieved_values);
+		RetrievedValues.setNodeNumber( value.nodeNumber );
+        var result = tests.test_NNRSM(RetrievedValues);
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: NNRSM ended'});
             expect(tests.hasTestPassed).to.equal(true);

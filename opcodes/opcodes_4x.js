@@ -1,6 +1,8 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -42,31 +44,24 @@ class opcodes_4x {
 
     // 0x42 SNN
 	//
-    test_SNN(retrieved_values) {
+    test_SNN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN SNN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeSNN(retrieved_values.nodeNumber);
+            var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('NNACK');
-                    if (message.mnemonic == "NNACK"){
-                        if (message.nodeNumber == retrieved_values.nodeNumber) {
-                            winston.debug({message: 'MERGLCB: SNN valid'});
-                            this.hasTestPassed = true;
-                        }
+					if (message.nodeNumber == RetrievedValues.getNodeNumber()) {
+						winston.debug({message: 'MERGLCB: SNN valid'});
+						this.hasTestPassed = true;
                     }
                 }
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: SNN passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: SNN failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN');
+				
                 resolve();
                 ;} , this.response_time
             );
@@ -75,12 +70,12 @@ class opcodes_4x {
     
 	
     // 0x4F - NNRSM
-    test_NNRSM(retrieved_values) {
+    test_NNRSM(RetrievedValues) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'MERGLCB: BEGIN NNRSM test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
-            var msgData = cbusLib.encodeNNRSM(retrieved_values.nodeNumber);
+            var msgData = cbusLib.encodeNNRSM(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
 				var GRSPreceived = false;
@@ -89,7 +84,7 @@ class opcodes_4x {
 						var msg = cbusLib.decode(element);
 						if (msg.mnemonic == "GRSP"){
 							GRSPreceived = true;
-							if (msg.nodeNumber == retrieved_values.nodeNumber) {
+							if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
 									this.hasTestPassed = true;
 								}else {
@@ -108,14 +103,8 @@ class opcodes_4x {
 				
 				if (!GRSPreceived) { winston.info({message: 'MERGLCB: NNRSM Fail: no GRSP received'}); }
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: NNRSM passed'}); 
-					retrieved_values.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: NNRSM failed'});
-					retrieved_values.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
+				
                 resolve();
                 ;} , this.response_time
             );
