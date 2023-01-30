@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 const Service_Definitions = require('./../Definitions/Service_Definitions.js');
+const utils = require('./../utilities.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -71,14 +72,8 @@ class opcodes_8x {
 				var testType = "\'ServiceIndex " + ServiceIndex + "\'";
 				if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
 				
-                if (this.hasTestPassed){ 
-					winston.info({message: 'MERGLCB: RDGN ' + testType + ' passed'}); 
-					RetrievedValues.data.TestsPassed++;
-				}else{
-					winston.info({message: 'MERGLCB: RDGN failed'});
-					RetrievedValues.data.TestsFailed++;
-				}
-				winston.debug({message: '-'});
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
+				
                 resolve();
                 ;} , RDGN_timeout
             );
