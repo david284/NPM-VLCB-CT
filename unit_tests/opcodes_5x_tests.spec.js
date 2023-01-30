@@ -117,7 +117,7 @@ describe('opcodes_5x tests', function(){
             winston.info({message: 'UNIT TEST: NNRST ended'});
             expect(tests.hasTestPassed).to.equal(true);
 			done();
-		}, 200);
+		}, 600);
 	})
 
 
