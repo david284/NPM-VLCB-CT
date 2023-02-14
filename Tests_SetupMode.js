@@ -39,7 +39,8 @@ class SetupMode_tests {
     async runTests(RetrievedValues) {
 		utils.DisplayStartDivider(this.Title + ' tests');
 
-        await this.sleep(100);	//small delay to allow conenction to be established
+
+        await utils.sleep(100);	//small delay to allow conenction to be established
 		
 		// we need the module in setup mode
 		// try to put the module into setup using the MODE command
@@ -51,7 +52,7 @@ class SetupMode_tests {
 		RetrievedValues.data["setup_completed"]= false;
         var setup_tries = 0;
 		
-        await this.sleep(200);		// delay to allow the MODE command to work
+        await utils.sleep(200);		// delay to allow the MODE command to work
 		
         while (1){
             setup_tries++;
@@ -61,7 +62,7 @@ class SetupMode_tests {
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
             winston.info({message: 'MERGLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
-            await this.sleep(1000);
+            await utils.sleep(1000);
         }
 		
 		// need module to be in setup mode to start the tests
@@ -90,17 +91,6 @@ class SetupMode_tests {
 		winston.debug({message: 'MERGLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 		return RetrievedValues;
     }
-
-    sleep(timeout) {
-        return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
-            setTimeout(()=>{
-                resolve();
-                ;} , timeout
-            );
-        });
-    }
-	
 }
 
 module.exports = {

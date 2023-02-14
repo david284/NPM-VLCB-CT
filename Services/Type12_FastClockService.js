@@ -50,15 +50,6 @@ class FastClockServiceTests {
 		return RetrievedValues;
     }
 
-    sleep(timeout) {
-        return new Promise(function (resolve, reject) {
-            //here our function should be implemented 
-            setTimeout(()=>{
-                resolve();
-                ;} , timeout
-            );
-        });
-    }
 
 }
 

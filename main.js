@@ -209,7 +209,7 @@ async function runtests() {
 	RetrievedValues.writeToDisk('./Test_Results/Retrieved Values.txt');
 	
 	
-	
+	await utils.sleep(500);		// delay to allow the log writes to catch up
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
@@ -218,7 +218,8 @@ async function runtests() {
 	process.stdin.destroy();
 	
 	files.copyFiles();
-}
+	
+}	// endRunTests()
 
 
 
