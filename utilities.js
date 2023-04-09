@@ -54,3 +54,16 @@ function AssembleDivider(name){
 		return name;
 }
 
+
+exports.sleep = function sleep(timeout) {
+	return new Promise(function (resolve, reject) {
+		//here our function should be implemented 
+		setTimeout(()=>{
+			resolve();
+			;} , timeout
+		);
+	});
+};
+	
+
+
