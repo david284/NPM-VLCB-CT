@@ -30,12 +30,16 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 	try {
 		
 		winston.debug({message: `MERGLCB: Fetch_Module_descriptor: RetrievedValues : ${JSON.stringify(RetrievedValues.data, null, "    ")}`});
-		// use values retrieved from module to create filename
-		var filename = RetrievedValues.data["NAME"] + '_' + 
-		RetrievedValues.data["nodeParameters"]["1"].value + '_' + 
-		RetrievedValues.data["nodeParameters"]["7"].value + '_' + 
-		RetrievedValues.data["nodeParameters"]["2"].value +
-		'.json';
+		// use values retrieved from module to create Module descriptor Identity
+		
+		RetrievedValues.data["DescriptorIdentity"] = RetrievedValues.data["NAME"] + '-' + 
+		utils.decToHex(RetrievedValues.data["nodeParameters"]["1"].value, 2) +					// manufacturerID
+		utils.decToHex(RetrievedValues.data["nodeParameters"]["3"].value, 2) + '-' + 			// moduleID
+		utils.decToHex(RetrievedValues.data["nodeParameters"]["7"].value, 2) + 					// major version
+		utils.decToHex(RetrievedValues.data["nodeParameters"]["2"].value, 2);					// minor version
+		
+		// now create filename from DescriptorIdentity
+		var filename = RetrievedValues.data["DescriptorIdentity"] + '.json';
 		winston.info({message: `MERGLCB: module descriptor filename : ` + filename +'\n'});
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)

@@ -213,11 +213,10 @@ async function runtests() {
 
 	Network.closeConnection()
 	winston.info({message: '\nMERGLCB: End of test sequence\n'});
-	winston.info({message: '\nMERGLCB: a copy of these results has been saved in folder \Test_Results\n'});
 	rl.close();
 	process.stdin.destroy();
 	
-	files.copyFiles();
+	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
 }
 
 

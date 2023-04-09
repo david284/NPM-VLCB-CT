@@ -3,15 +3,38 @@ const winston = require('./config/winston.js');
 const fs = require('fs');
 
 
-exports.copyFiles = function copyFiles()
+exports.copyFiles = function copyFiles(identity)
 {
-	
+
+	// create test results folder
+	var foldername = './Test_Results/';
+
+	try {
+		if (!fs.existsSync(foldername)) {
+		fs.mkdirSync(foldername)
+	}
+	} catch (err) {
+		console.error(err)
+	}
+
+	// create module folder
+	foldername = './Test_Results/' + identity + '/';
+
+	try {
+		if (!fs.existsSync(foldername)) {
+		fs.mkdirSync(foldername)
+	}
+	} catch (err) {
+		console.error(err)
+	}
+
+	// now create timestamp folder
 	const date = new Date()
 	const timestamp = date.toISOString().substring(0, 10)
 			+ '-' + date.getHours()
 			+ '-' + date.getMinutes()
 			+ '-' + date.getSeconds();
-	const foldername = './Test_Results/' + timestamp + '/';
+	foldername = './Test_Results/' + identity + '/' + timestamp + '/';
 	
 	try {
 		if (!fs.existsSync(foldername)) {
@@ -40,5 +63,6 @@ exports.copyFiles = function copyFiles()
 		if (err) throw err;
 	});
 
-	
+	winston.info({message: '\nMERGLCB: a copy of the results has been saved in folder ' + foldername});
+
 }
