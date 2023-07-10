@@ -19,7 +19,7 @@ class NodeVariableServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
-		this.Title = 'Minimum Node Service';
+		this.Title = 'Node Variable Service';
         this.hasTestPassed = false;
 		
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);

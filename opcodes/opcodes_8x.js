@@ -71,6 +71,14 @@ class opcodes_8x {
 				
 				var testType = "\'ServiceIndex " + ServiceIndex + "\'";
 				if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
+				if(ServiceIndex != 0) {
+					if ( DiagnosticCode == 0) { 
+						if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
+							winston.info({message: 'MERGLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
+							this.hasTestPassed = false
+						}
+					} 
+				}
 				
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
 				
