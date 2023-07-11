@@ -212,11 +212,12 @@ async function runtests() {
 	await utils.sleep(500);		// delay to allow the log writes to catch up
 
 	Network.closeConnection()
-	winston.info({message: '\nMERGLCB: End of test sequence\n'});
+	winston.info({message: '\nMERGLCB: test sequence completed'});
 	rl.close();
 	process.stdin.destroy();
 	
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
+	winston.info({message: '\n\nMERGLCB: End\n\n\n'});
 	
 }	// endRunTests()
 
