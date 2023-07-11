@@ -14,8 +14,7 @@ module.exports = {
 					"3":{"name":"UPTIME lower word"},
 					"4":{"name":"Memory Fault Indicator"},
 					"5":{"name":"Node ID change count"},
-					"6":{"name":"Software Error Status"},
-					"7":{"name":"Message Processed Count"}
+					"6":{"name":"Software Error Status"}
 				}
 			},
 			"1": {
@@ -25,8 +24,7 @@ module.exports = {
 					"3":{"name":"UPTIME lower word"},
 					"4":{"name":"Memory Fault Indicator"},
 					"5":{"name":"Node ID change count"},
-					"6":{"name":"Software Error Status"},
-					"7":{"name":"Message Processed Count"}
+					"6":{"name":"Software Error Status"}
 				}
 			}
 		}
