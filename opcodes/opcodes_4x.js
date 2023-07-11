@@ -20,7 +20,7 @@ class opcodes_4x {
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;
-        this.response_time = 200;
+        this.response_time = 500;
     }
 	
     //

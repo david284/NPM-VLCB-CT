@@ -41,10 +41,11 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		
 		// now create filename from DescriptorIdentity
 		var filename = RetrievedValues.data["DescriptorIdentity"] + '.json';
-		winston.info({message: `MERGLCB: module descriptor filename : ` + filename +'\n'});
+		winston.info({message: `MERGLCB: module descriptor filename : ` + filename});
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)
-		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename +'\n'});
+		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
+		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;
 	} catch (err) {
 		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
