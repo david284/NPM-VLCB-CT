@@ -38,14 +38,6 @@ class MinimumNodeServiceTests{
 			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 				
-
-				// NNRST - node reset - just check we get an acknowledge (GRSP) to this command
-				await this.opcodes_5x.test_NNRST(RetrievedValues);
-				
-				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
-//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
-				winston.info({message: 'MERGLCB: MNS : Skipping NNRSM as not fully compliant'});
-				
 				// check for response to QNN from module under test
 				await this.opcodes_0x.test_QNN(RetrievedValues);
 				
@@ -80,6 +72,13 @@ class MinimumNodeServiceTests{
 					}
 				}
 
+				// NNRST - node reset - check the 
+				await this.opcodes_5x.test_NNRST(RetrievedValues);
+
+				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
+				//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
+				winston.info({message: 'MERGLCB: MNS : Skipping NNRSM as not fully compliant'});
+				
 				//
 				// Add more tests.......
 				//

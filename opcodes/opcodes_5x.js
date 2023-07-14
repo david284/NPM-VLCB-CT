@@ -82,31 +82,50 @@ class opcodes_5x {
             var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
-				var GRSPreceived = false;
-                if (this.network.messagesIn.length > 0){
-		            this.network.messagesIn.forEach(element => {
-						var msg = cbusLib.decode(element);
-						if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-							if (msg.mnemonic == "GRSP"){
-								GRSPreceived = true;
-								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-									this.hasTestPassed = true;
-								}else {
-									winston.info({message: 'MERGLCB: GRSP requestOpCode:'
-										+ '\n  Expected ' + cbusLib.decode(msgData).opCode
-										+ '\n  Actual ' + msg.requestOpCode}); 
-								}
-							}
-						}
-					});
-				}
-				
-				if (!GRSPreceived) { winston.info({message: 'MERGLCB: NNRST Fail: no GRSP received'}); }
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
-
-                resolve();
-                ;} , 500
+                // get uptime diagnostic code from MNS service - but need to find serviceIndex for MNS first
+                var serviceIndex
+                for (var key in RetrievedValues.data["Services"]) {
+                    var serviceType = RetrievedValues.data["Services"][key]["ServiceType"];
+                    if (serviceType == 1 ) {
+                        serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
+                    }
+                }
+                if (serviceIndex) {
+                    // get all diagnostics for MNS service
+                    var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
+                    this.network.write(msgData);
+                    setTimeout(()=>{
+                        var MSB_Uptime 
+                        var LSB_Uptime 
+                        if (this.network.messagesIn.length > 0){
+                           this.network.messagesIn.forEach(element => {
+                                var msg = cbusLib.decode(element);
+                                if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+                                    if (msg.mnemonic == "DGN"){
+                                        if (msg.DiagnosticCode == 2) {
+                                            MSB_Uptime = msg.DiagnosticValue
+                                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
+                                        }
+                                        if (msg.DiagnosticCode == 3) {
+                                            LSB_Uptime = msg.DiagnosticValue
+                                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                        // now check uptime if we've received both parts
+                        if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
+                            var uptime = (MSB_Uptime << 8) + LSB_Uptime
+                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
+                            if (uptime < 2){ this.hasTestPassed = true }
+                        }
+                        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
+                        resolve();
+                        ;} , 1000
+                    );
+                }
+                ;} , 200
             );
         }.bind(this));
     }
