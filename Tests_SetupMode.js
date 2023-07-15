@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const utils = require('./utilities.js');
 
+const opcodes_0x = require('./opcodes/opcodes_0x.js');
 const opcodes_1x = require('./opcodes/opcodes_1x.js');
 const opcodes_4x = require('./opcodes/opcodes_4x.js');
 const opcodes_5x = require('./opcodes/opcodes_5x.js');
@@ -29,6 +30,7 @@ class SetupMode_tests {
         this.passed_count = 0;
 		this.failed_count = 0;
 		
+		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
 		this.opcodes_1x = new opcodes_1x.opcodes_1x(this.network);
 		this.opcodes_4x = new opcodes_4x.opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
@@ -45,6 +47,9 @@ class SetupMode_tests {
 		// we need the module in setup mode
 		// try to put the module into setup using the MODE command
 		// but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
+    
+    // check for response to QNN from module under test - otherwise node might not be responding
+		await this.opcodes_0x.test_QNN(RetrievedValues);
 		
 		this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
 
