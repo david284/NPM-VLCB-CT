@@ -38,12 +38,12 @@ class opcodes_5x {
         for (var i=0; i<this.network.messagesIn.length; i++){
             message = this.network.messagesIn[i];
             if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
+                winston.debug({message: 'VLCB: Found message ' + mnemonic});
                 break;
             }
         }
         if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
+            winston.debug({message: 'VLCB: No message found for' + mnemonic});
         }
         return message
     }
@@ -58,7 +58,7 @@ class opcodes_5x {
 				RetrievedValues.setNodeNumber( message.nodeNumber);
                 this.inSetupMode = true;
 				this.hasTestPassed = true;
-                winston.info({message: 'MERGLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
+                winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
 			}
 		}
 
@@ -67,7 +67,7 @@ class opcodes_5x {
 		}else{
 			// in this instance, we're calling this method multiple times until we get an RQNN,
 			// so don't mark each try as a fail - the upper layer will timeout and fail if didn't get a pass
-			winston.info({message: 'MERGLCB: no RQNN received....'});
+			winston.info({message: 'VLCB: no RQNN received....'});
 		}
 		winston.debug({message: '-'});
 	}
@@ -76,7 +76,7 @@ class opcodes_5x {
     // 0x5E - NNRST
     test_NNRST(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN NNRST test'});
+            winston.debug({message: 'VLCB: BEGIN NNRST test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
@@ -104,11 +104,11 @@ class opcodes_5x {
                                     if (msg.mnemonic == "DGN"){
                                         if (msg.DiagnosticCode == 2) {
                                             MSB_Uptime = msg.DiagnosticValue
-                                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
+                                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
                                         }
                                         if (msg.DiagnosticCode == 3) {
                                             LSB_Uptime = msg.DiagnosticValue
-                                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
+                                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
                                         }
                                     }
                                 }
@@ -117,7 +117,7 @@ class opcodes_5x {
                         // now check uptime if we've received both parts
                         if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
                             var uptime = (MSB_Uptime << 8) + LSB_Uptime
-                            winston.info({message: 'MERGLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
+                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
                             if (uptime < 2){ this.hasTestPassed = true }
                         }
                         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');

@@ -29,7 +29,7 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 	
 	try {
 		
-		winston.debug({message: `MERGLCB: Fetch_Module_descriptor: RetrievedValues : ${JSON.stringify(RetrievedValues.data, null, "    ")}`});
+		winston.debug({message: `VLCB: Fetch_Module_descriptor: RetrievedValues : ${JSON.stringify(RetrievedValues.data, null, "    ")}`});
 		// use values retrieved from module to create Module descriptor Identity
 		
 		RetrievedValues.data["DescriptorIdentity"] = "CAN" + RetrievedValues.data["NAME"].trimEnd() + '-' + 
@@ -41,22 +41,22 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		
 		// now create filename from DescriptorIdentity
 		var filename = RetrievedValues.data["DescriptorIdentity"] + '.json';
-		winston.info({message: `MERGLCB: module descriptor filename : ` + filename});
+		winston.info({message: `VLCB: module descriptor filename : ` + filename});
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)
-		winston.info({message: `MERGLCB: module descriptor file read succesfully : ` + filename});
+		winston.info({message: `VLCB: module descriptor file read succesfully : ` + filename});
 		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;
 	} catch (err) {
-		winston.debug({message: `MERGLCB: module descriptor file read failed : ` + err});
-		winston.debug({message: `MERGLCB: Building new module_descriptor : `});
+		winston.debug({message: `VLCB: module descriptor file read failed : ` + err});
+		winston.debug({message: `VLCB: Building new module_descriptor : `});
 		// build the module_descriptor json
 		module_descriptor = {};
 		module_descriptor["NAME"] = RetrievedValues.data["NAME"];
 		module_descriptor["nodeParameters"] = {};
 		
 		for (var key in RetrievedValues.data["nodeParameters"]) {
-			winston.debug({message: `MERGLCB: Key ` + JSON.stringify(key) + " " + RetrievedValues.data["nodeParameters"][key].value});
+			winston.debug({message: `VLCB: Key ` + JSON.stringify(key) + " " + RetrievedValues.data["nodeParameters"][key].value});
 			module_descriptor["nodeParameters"][key] = {};
 			module_descriptor["nodeParameters"][key]["name"] = RetrievedValues.data["nodeParameters"][key].name;
 			module_descriptor["nodeParameters"][key]["value"] = RetrievedValues.data["nodeParameters"][key].value;
@@ -66,7 +66,7 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		var text = JSON.stringify(module_descriptor, null, '    ');
 		fs.writeFileSync(file_path + filename, text);
 				
-		winston.info({message: `MERGLCB: New module descriptor file created : ` + filename +'\n'});
+		winston.info({message: `VLCB: New module descriptor file created : ` + filename +'\n'});
 
 		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;

@@ -224,7 +224,7 @@ class RetrievedValues {
 		// now write retrieved_values to disk
 		var text = JSON.stringify(this.data, null, '    ');
 		fs.writeFileSync(path, text);
-		winston.debug({message: 'MERGLCB: Write to disk: retrieved_values \n' + text});
+		winston.debug({message: 'VLCB: Write to disk: retrieved_values \n' + text});
 	}
 
 

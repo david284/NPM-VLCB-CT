@@ -43,7 +43,7 @@ class Bootloader2ServiceTests {
 				//
 				
 			} else {
-				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
+				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
 		
 		utils.DisplayEndDivider(this.Title + ' tests finished');

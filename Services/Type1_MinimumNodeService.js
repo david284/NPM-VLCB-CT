@@ -77,14 +77,14 @@ class MinimumNodeServiceTests{
 
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
 				//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
-				winston.info({message: 'MERGLCB: MNS : Skipping NNRSM as not fully compliant'});
+				winston.info({message: 'VLCB: MNS : Skipping NNRSM as not fully compliant'});
 				
 				//
 				// Add more tests.......
 				//
 				
 			} else {
-				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
+				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
 		
 		utils.DisplayEndDivider(this.Title + ' tests finished');

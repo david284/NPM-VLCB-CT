@@ -63,6 +63,6 @@ exports.copyFiles = function copyFiles(identity)
 		if (err) throw err;
 	});
 
-	winston.info({message: '\nMERGLCB: a copy of the results has been saved in folder ' + foldername});
+	winston.info({message: '\nVLCB: a copy of the results has been saved in folder ' + foldername});
 
 }

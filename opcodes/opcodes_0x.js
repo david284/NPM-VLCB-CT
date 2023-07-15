@@ -30,12 +30,12 @@ class opcodes_0x {
         for (var i=0; i<this.network.messagesIn.length; i++){
             message = this.network.messagesIn[i];
             if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
+                winston.debug({message: 'VLCB: Found message ' + mnemonic});
                 break;
             }
         }
         if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
+            winston.debug({message: 'VLCB: No message found for' + mnemonic});
         }
         return message
     }
@@ -44,7 +44,7 @@ class opcodes_0x {
     // 0x0D - QNN
     test_QNN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN QNN test'});
+            winston.debug({message: 'VLCB: BEGIN QNN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeQNN();
@@ -56,7 +56,7 @@ class opcodes_0x {
 						var msg = cbusLib.decode(element);
 						if (msg.mnemonic == "PNN"){
 							// allow messages from all nodes as we can build up an array of all the modules
-							winston.info({message: 'MERGLCB:      ' + msg.text});
+							winston.info({message: 'VLCB:      ' + msg.text});
 							var newModule = {
 								"nodeNumber":msg.nodeNumber,
 								"manufacturerId":msg.manufacturerId,
@@ -69,7 +69,7 @@ class opcodes_0x {
 							// we check matching node number here, as we're expecting all the nodes to respond to QNN
 							// and we'll only pass the test if we get a response from the node under test
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-								winston.info({message: 'MERGLCB: QNN passed - Node ' + msg.nodeNumber});
+								winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
 								this.hasTestPassed = true;
 							}
 						}

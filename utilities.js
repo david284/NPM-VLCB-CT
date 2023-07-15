@@ -16,10 +16,10 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 {
 	if (comment == null) { comment = ""; }
 	if (hasTestPassed){ 
-		winston.info({message: 'MERGLCB: PASS ' +  testName + ' passed ' + comment}); 
+		winston.info({message: 'VLCB: PASS ' +  testName + ' passed ' + comment}); 
 		RetrievedValues.data.TestsPassed++;
 	}else{
-		winston.info({message: '\x1B[91m' + 'MERGLCB: FAIL ' +  testName + ' failed ' + comment + '\x1B[37m'});
+		winston.info({message: '\x1B[91m' + 'VLCB: FAIL ' +  testName + ' failed ' + comment + '\x1B[37m'});
 		RetrievedValues.data.TestsFailed++;
 	}
 	winston.debug({message: '-'});

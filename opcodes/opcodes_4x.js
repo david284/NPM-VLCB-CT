@@ -31,12 +31,12 @@ class opcodes_4x {
         for (var i=0; i<this.network.messagesIn.length; i++){
             message = this.network.messagesIn[i];
             if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
+                winston.debug({message: 'VLCB: Found message ' + mnemonic});
                 break;
             }
         }
         if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
+            winston.debug({message: 'VLCB: No message found for' + mnemonic});
         }
         return message
     }
@@ -46,7 +46,7 @@ class opcodes_4x {
 	//
     test_SNN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN SNN test'});
+            winston.debug({message: 'VLCB: BEGIN SNN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
@@ -55,7 +55,7 @@ class opcodes_4x {
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('NNACK');
 					if (message.nodeNumber == RetrievedValues.getNodeNumber()) {
-						winston.debug({message: 'MERGLCB: SNN valid'});
+						winston.debug({message: 'VLCB: SNN valid'});
 						this.hasTestPassed = true;
                     }
                 }
@@ -72,7 +72,7 @@ class opcodes_4x {
     // 0x4F - NNRSM
     test_NNRSM(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN NNRSM test'});
+            winston.debug({message: 'VLCB: BEGIN NNRSM test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeNNRSM(RetrievedValues.getNodeNumber());
@@ -88,12 +88,12 @@ class opcodes_4x {
 								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
 									this.hasTestPassed = true;
 								}else {
-									winston.info({message: 'MERGLCB: GRSP requestOpCode:'
+									winston.info({message: 'VLCB: GRSP requestOpCode:'
 										+ '\n  Expected ' + cbusLib.decode(msgData).opCode
 										+ '\n  Actual ' + msg.requestOpCode}); 
 								}
 							} else {
-									winston.info({message: 'MERGLCB: GRSP nodeNumber:' +
+									winston.info({message: 'VLCB: GRSP nodeNumber:' +
 										+ '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
 										+ '\n  Actual ' + msg.nodeNumber}); 
 							}
@@ -101,7 +101,7 @@ class opcodes_4x {
 					});
 				}
 				
-				if (!GRSPreceived) { winston.info({message: 'MERGLCB: NNRSM Fail: no GRSP received'}); }
+				if (!GRSPreceived) { winston.info({message: 'VLCB: NNRSM Fail: no GRSP received'}); }
 				
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
 				

@@ -38,8 +38,8 @@ class callbackTests {
 		if (msg.mnemonic == 'HEARTB') {
 			if (msg.nodeNumber == this.RetrievedValues.getNodeNumber()) {
 				this.RetrievedValues.data["HEARTB"] = 'passed';
-				winston.debug({message: 'MERGLCB: ' + msg.text});		
-				winston.info({message: 'MERGLCB: >>>> HEARTB received'});
+				winston.debug({message: 'VLCB: ' + msg.text});		
+				winston.info({message: 'VLCB: >>>> HEARTB received'});
 			}
 		}
 	}

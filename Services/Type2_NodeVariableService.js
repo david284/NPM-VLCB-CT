@@ -59,7 +59,7 @@ class NodeVariableServiceTests {
 				//
 				
 			} else {
-				winston.info({message: 'MERGLCB: tests aborted - invalid module descriptor file'});
+				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
 		
 		utils.DisplayEndDivider(this.Title + ' tests finished');
@@ -71,7 +71,7 @@ class NodeVariableServiceTests {
 	test_NodeVariableCount(RetrievedValues, serviceIndex) {
 		this.hasTestPassed = false;
 		var nodeVariableCount = RetrievedValues.getNodeVariableCount(serviceIndex);
-		winston.debug({message: 'MERGLCB: NVRD Node Variable Count test '
+		winston.debug({message: 'VLCB: NVRD Node Variable Count test '
 						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 
 						});
@@ -79,7 +79,7 @@ class NodeVariableServiceTests {
 		if (RetrievedValues.data.nodeParameters[6].value == nodeVariableCount){
 			this.hasTestPassed = true;
 		} else {
-			winston.info({message: 'MERGLCB:       NVRD Node Variable Count '
+			winston.info({message: 'VLCB:       NVRD Node Variable Count '
 						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 
 						});

@@ -31,12 +31,12 @@ class opcodes_1x {
         for (var i=0; i<this.network.messagesIn.length; i++){
             message = this.network.messagesIn[i];
             if (message.mnemonic == mnemonic){
-                winston.debug({message: 'MERGLCB: Found message ' + mnemonic});
+                winston.debug({message: 'VLCB: Found message ' + mnemonic});
                 break;
             }
         }
         if (message == undefined){                 
-            winston.debug({message: 'MERGLCB: No message found for' + mnemonic});
+            winston.debug({message: 'VLCB: No message found for' + mnemonic});
         }
         return message
     }
@@ -45,7 +45,7 @@ class opcodes_1x {
 	// 10 - RQNP
 	test_RQNP(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RQNP test'});
+            winston.debug({message: 'VLCB: BEGIN RQNP test'});
 			RetrievedValues.data["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
             this.hasTestPassed = false;
             this.network.messagesIn = [];
@@ -55,7 +55,7 @@ class opcodes_1x {
                 if (this.network.messagesIn.length > 0){
                     var message = this.getMessage('PARAMS');
                     if (message.mnemonic == "PARAMS"){
-                        winston.debug({message: 'MERGLCB: RQNP valid'});
+                        winston.debug({message: 'VLCB: RQNP valid'});
                         this.hasTestPassed = true;
 						RetrievedValues.addNodeParameter(1, message.param1);
 						RetrievedValues.addNodeParameter(2, message.param2);
@@ -65,7 +65,7 @@ class opcodes_1x {
 						RetrievedValues.addNodeParameter(6, message.param6);
 						RetrievedValues.addNodeParameter(7, message.param7);
 						for (var i = 1 ; i< 8; i++){
-							winston.info({message: 'MERGLCB:      RQNP: ' 
+							winston.info({message: 'VLCB:      RQNP: ' 
 								+ NodeParameterNames[i] + ' : ' 
 								+ RetrievedValues.data.nodeParameters[i].value});
 						}
@@ -84,7 +84,7 @@ class opcodes_1x {
 	// 11 - RQMN
     test_RQMN(RetrievedValues) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RQMN test'});
+            winston.debug({message: 'VLCB: BEGIN RQMN test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeRQMN();
@@ -95,7 +95,7 @@ class opcodes_1x {
                     if (message.mnemonic == "NAME"){
                         this.hasTestPassed = true;
 						RetrievedValues.data["NAME"] = message.name;
-                        winston.info({message: 'MERGLCB:      RQMN: Name  : ' + message.name});
+                        winston.info({message: 'VLCB:      RQMN: Name  : ' + message.name});
                     }
                 }
 				

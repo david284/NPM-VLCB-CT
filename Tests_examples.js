@@ -58,13 +58,13 @@ class ExampleTests extends BaseService{
     test_harness()
     {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN test_harness'});
+            winston.debug({message: 'VLCB: BEGIN test_harness'});
             this.hasTestPassed = false;
 			// would typically be sending a command to the module under test here
 			
             setTimeout(()=>{
 				// would typically be checking that a response has been received from the module under test here
-                winston.debug({message: 'MERGLCB: test_harness timeout done'});
+                winston.debug({message: 'VLCB: test_harness timeout done'});
                 this.test_function();
 				this.passed_count++;
 				this.hasTestPassed = true;
@@ -76,7 +76,7 @@ class ExampleTests extends BaseService{
     }
 
     test_function(){
-        winston.debug({message: 'MERGLCB: test_function'});
+        winston.debug({message: 'VLCB: test_function'});
     }
 	
 

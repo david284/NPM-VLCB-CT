@@ -48,7 +48,7 @@ class SetupMode_tests {
 		
 		this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
 
-        winston.info({message: 'MERGLCB: put module into setup'});
+        winston.info({message: 'VLCB: put module into setup'});
 		RetrievedValues.data["setup_completed"]= false;
         var setup_tries = 0;
 		
@@ -61,7 +61,7 @@ class SetupMode_tests {
             this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
-            winston.info({message: 'MERGLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
+            winston.info({message: 'VLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
             await utils.sleep(1000);
         }
 		
@@ -79,7 +79,7 @@ class SetupMode_tests {
 			
         } else {
             winston.info({message: ''});
-            winston.info({message: 'MERGLCB: failed to go into setup'});
+            winston.info({message: 'VLCB: failed to go into setup'});
 			RetrievedValues.data.TestsFailed++;
         }
 		
@@ -88,7 +88,7 @@ class SetupMode_tests {
 		RetrievedValues.data.TestsPassed += this.passed_count;
 		RetrievedValues.data.TestsFailed += this.failed_count;
 		
-		winston.debug({message: 'MERGLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+		winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 		return RetrievedValues;
     }
 }

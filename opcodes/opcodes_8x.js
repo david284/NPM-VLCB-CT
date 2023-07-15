@@ -28,7 +28,7 @@ class opcodes_8x {
 	// 0x87 - RDGN
     test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'MERGLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
+            winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
 			//
@@ -36,7 +36,7 @@ class opcodes_8x {
 			var RDGN_timeout = 100;
 			if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
 			else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
-			winston.debug({message: 'MERGLCB: RDGN_timeout set to ' + RDGN_timeout}); 
+			winston.debug({message: 'VLCB: RDGN_timeout set to ' + RDGN_timeout}); 
 			
 			// now create message and start test
             var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
@@ -53,7 +53,7 @@ class opcodes_8x {
 								// lets findout if we have an entry for this service
 								if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
 								{
-									winston.debug({message: 'MERGLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+									winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
 									this.hasTestPassed = false;
 								} else {
 									// we have a matching service entry, so mark as passed
@@ -63,7 +63,7 @@ class opcodes_8x {
 								// store diagnostic code anyway, even if no matching service (will create a new service entry)
 								RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
 								// display what we have
-								winston.info({message: 'MERGLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
+								winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
 							}
 						}
 					});
@@ -74,7 +74,7 @@ class opcodes_8x {
 				if(ServiceIndex != 0) {
 					if ( DiagnosticCode == 0) { 
 						if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-							winston.info({message: 'MERGLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
+							winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
 							this.hasTestPassed = false
 						}
 					} 
