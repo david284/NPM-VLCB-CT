@@ -1,7 +1,7 @@
 {
-  "name": "MERGLCB ",
+  "name": "VLCB ",
   "version": "0.0.1",
-  "description": "MERGLCB Compliance Test",
+  "description": "VLCB Compliance Test",
   "main": "main.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./unit_tests/*.spec.js --timeout 30000 --exit",

@@ -47,7 +47,7 @@ const NET_PORT = 5550;
 winston.info({message: ' '});
 winston.info({message: '================================================================================'});
 //                      01234567890123456789012345678901234567899876543210987654321098765432109876543210
-winston.info({message: '--------------------------- MERGLCB Compliance Test ----------------------------'});
+winston.info({message: '----------------------------- VLCB Compliance Test -----------------------------'});
 winston.info({message: '--------------------------------------------------------------------------------'});
 winston.info({message: '- Test Version : ' + pjson.version});
 winston.info({message: '- Test Run : ' + new Date()});
@@ -93,7 +93,7 @@ winston.info({message: ' ==== or just enter if putting module into setup using t
 rl.question('\n Enter Node number > ', function(answer) {
 	RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
 	winston.info({message: ' '});
-	winston.info({message: 'MERGLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+	winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
 	winston.info({message: ' '});
 	runtests();
 });
@@ -177,7 +177,7 @@ async function runtests() {
 
 
 				default:
-					winston.info({message: 'MERGLCB: unknown ServiceType ' + serviceType});
+					winston.info({message: 'VLCB: unknown ServiceType ' + serviceType});
 			}
 			
 		}
@@ -212,12 +212,12 @@ async function runtests() {
 	await utils.sleep(500);		// delay to allow the log writes to catch up
 
 	Network.closeConnection()
-	winston.info({message: '\nMERGLCB: test sequence completed'});
+	winston.info({message: '\nVLCB: test sequence completed'});
 	rl.close();
 	process.stdin.destroy();
 	
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
-	winston.info({message: '\n\nMERGLCB: End\n\n\n'});
+	winston.info({message: '\n\nVLCB: End\n\n\n'});
 	
 }	// endRunTests()
 

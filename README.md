@@ -1,4 +1,4 @@
-# NPM-MERGLCB-CT
+# NPM-VLCB-CT
 
 # Installation:
 This application requires NodeJs (& npm) to run

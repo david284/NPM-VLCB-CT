@@ -206,7 +206,7 @@ class opcodes_7x {
  
     
     // 0x75 - CANID
-	// ******* not fully implemented as depricated for MERGLCB *****
+	// ******* not fully implemented as depricated for VLCB *****
     test_CANID(retrieved_values, CANID) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'VLCB: BEGIN CANID test'});
