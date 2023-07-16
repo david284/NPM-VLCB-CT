@@ -119,6 +119,8 @@ class opcodes_5x {
                             var uptime = (MSB_Uptime << 8) + LSB_Uptime
                             winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
                             if (uptime < 2){ this.hasTestPassed = true }
+                        } else {
+                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST has undefined value '}); 
                         }
                         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
                         resolve();
