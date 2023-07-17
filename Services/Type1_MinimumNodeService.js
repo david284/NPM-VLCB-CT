@@ -51,6 +51,9 @@ class MinimumNodeServiceTests{
 					await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
 				}
 				
+				// now test the last node parameter + 1, expecting an error message
+				await this.opcodes_7x.test_RQNPN_ERROR(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
+
 				// this will get all the services that this module supports
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
 								
@@ -76,8 +79,8 @@ class MinimumNodeServiceTests{
 				await this.opcodes_5x.test_NNRST(RetrievedValues);
 
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
-				//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
-				winston.info({message: 'VLCB: MNS : Skipping NNRSM as not fully compliant'});
+//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
+//				winston.info({message: 'VLCB: MNS : Skipping NNRSM as not fully compliant'});
 				
 				//
 				// Add more tests.......

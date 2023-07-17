@@ -68,9 +68,16 @@ class opcodes_0x {
 							
 							// we check matching node number here, as we're expecting all the nodes to respond to QNN
 							// and we'll only pass the test if we get a response from the node under test
-							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-								winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
+                            var expectedNodeNumber = RetrievedValues.getNodeNumber()
+                            if (isNaN(expectedNodeNumber)) {
+                                // don't have an expected node number, so assume good
 								this.hasTestPassed = true;
+                            } else {
+                                // we have an expected node number, so check it
+                            	if (msg.nodeNumber == expectedNodeNumber){
+    								winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
+	    							this.hasTestPassed = true;
+                                }
 							}
 						}
 					});

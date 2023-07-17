@@ -205,6 +205,55 @@ class opcodes_7x {
     }
  
     
+	// 0x73 - RQNPN - out of bounds test
+    test_RQNPN_ERROR(RetrievedValues, module_descriptor, parameterIndex) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
+            this.hasTestPassed = false;
+			var msgBitField = 0;	// bit field to capture when each message has been received
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
+            this.network.write(msgData);
+			setTimeout(()=>{
+				if (this.network.messagesIn.length > 0){
+					this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+							if (msg.mnemonic == "CMDERR"){
+								if (msg.errorNumber == 10) {
+									msgBitField |= 1;			// set bit 0
+								} else {
+									winston.info({message: 'VLCB: RQNPN_ERROR: CMDERR wrong error number'}); 
+								}
+							}
+							if (msg.mnemonic == "GRSP"){
+								if (msg.result == 10) {
+									msgBitField |= 1;			// set bit 0
+								} else {
+									winston.info({message: 'VLCB: RQNPN_ERROR: GRSP wrong result number'}); 
+								}
+							}
+							if (msg.mnemonic == "PARAN"){
+								winston.info({message: 'VLCB: RQNPN_ERROR: unexpected PARAN response for index ' + parameterIndex}); 
+							}
+						}
+					});
+				}
+//					if (msgBitField == 3) {
+				if (msgBitField == 1) {
+					// either message has been received
+					this.hasTestPassed = true;
+			}
+
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN ERROR');
+				
+                resolve();
+                ;} , 100
+            );
+        }.bind(this));
+    }
+ 
+    
     // 0x75 - CANID
 	// ******* not fully implemented as depricated for VLCB *****
     test_CANID(retrieved_values, CANID) {
