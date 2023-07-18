@@ -4,6 +4,7 @@ const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 const Service_Definitions = require('./../Definitions/Service_Definitions.js');
 const utils = require('./../utilities.js');
+const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -26,67 +27,113 @@ class opcodes_8x {
 
 	
 	// 0x87 - RDGN
-    test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
+	test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
+			return new Promise(function (resolve, reject) {
+					winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
+					this.hasTestPassed = false;
+					this.network.messagesIn = [];
+		//
+		// Need to calculate an extended timeout if it's a '0' command that returns multiple messages
+		var RDGN_timeout = 100;
+		if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
+		else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
+		winston.debug({message: 'VLCB: RDGN_timeout set to ' + RDGN_timeout}); 
+		
+		// now create message and start test
+					var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+					this.network.write(msgData);
+					setTimeout(()=>{
+			var nonMatchingCount = 0;
+							if (this.network.messagesIn.length > 0){
+							this.network.messagesIn.forEach(element => {
+					var msg = cbusLib.decode(element);
+					if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+						// ok - it's the right node
+						if (msg.mnemonic == "DGN"){
+							
+							// lets findout if we have an entry for this service
+							if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
+							{
+								winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+								this.hasTestPassed = false;
+							} else {
+								// we have a matching service entry, so mark as passed
+								this.hasTestPassed = true;
+							}
+							
+							// store diagnostic code anyway, even if no matching service (will create a new service entry)
+							RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
+							// display what we have
+							winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
+						}
+					}
+				});
+			}
+			
+			var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
+			if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
+			if(ServiceIndex != 0) {
+				if ( DiagnosticCode == 0) { 
+					if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
+						winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
+						this.hasTestPassed = false
+					}
+				} 
+			}
+			
+			utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
+			
+							resolve();
+							;} , RDGN_timeout
+					);
+			}.bind(this));
+	} // end Test_RDGN
+
+
+	// 0x87 - RDGN_ERROR_DIAG
+	test_RDGN_ERROR_DIAG(RetrievedValues, ServiceIndex, DiagnosticCode) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN RDGN_ERROR_DIAG test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
 			//
-			// Need to calculate an extended timeout if it's a '0' command that returns multiple messages
+			// should be single message, so standard timeout
 			var RDGN_timeout = 100;
-			if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
-			else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
-			winston.debug({message: 'VLCB: RDGN_timeout set to ' + RDGN_timeout}); 
 			
 			// now create message and start test
-            var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
-            this.network.write(msgData);
-            setTimeout(()=>{
-				var nonMatchingCount = 0;
-                if (this.network.messagesIn.length > 0){
-		            this.network.messagesIn.forEach(element => {
+			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+			this.network.write(msgData);
+			setTimeout(()=>{
+				if (this.network.messagesIn.length > 0){
+					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
-							if (msg.mnemonic == "DGN"){
-								
-								// lets findout if we have an entry for this service
-								if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
-								{
-									winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
-									this.hasTestPassed = false;
-								} else {
-									// we have a matching service entry, so mark as passed
+							// so expecting error message back, not DGN
+							if (msg.mnemonic == "GRSP"){
+								winston.debug({message: 'VLCB: RDGN_ERROR_DIAG: GRSP received - code ' + msg.result});
+								if (msg.result == GRSP.InvalidDiagnosticCode) {
 									this.hasTestPassed = true;
+								} else {
+									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
 								}
-								
-								// store diagnostic code anyway, even if no matching service (will create a new service entry)
-								RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
-								// display what we have
-								winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
+							}
+							if (msg.mnemonic == "DGN"){
+								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
 							}
 						}
 					});
 				}
+		
+				var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
 				
-				var testType = "\'ServiceIndex " + ServiceIndex + "\'";
-				if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
-				if(ServiceIndex != 0) {
-					if ( DiagnosticCode == 0) { 
-						if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-							winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
-							this.hasTestPassed = false
-						}
-					} 
-				}
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
-				
-                resolve();
-                ;} , RDGN_timeout
-            );
-        }.bind(this));
-    }
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR ' + testType);
+		
+				resolve();
+				;} , RDGN_timeout
+			);
+		}.bind(this));
+	} // end Test_RDGN
 
 }
 

@@ -92,6 +92,7 @@ class opcodes_5x {
                 }
                 if (serviceIndex) {
                     // get all diagnostics for MNS service
+                    winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
                     var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
                     this.network.write(msgData);
                     setTimeout(()=>{

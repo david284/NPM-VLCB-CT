@@ -29,6 +29,7 @@ class RetrievedValues {
 								"nodeParameters": {},
 								"ServicesActualCount": 0,
 								"ServicesReportedCount":null,
+								"MaxServiceIndex": 0,
 								"Services": {},
 								"modules": {}
 		};	
@@ -79,10 +80,11 @@ class RetrievedValues {
 	addService(ServiceIndex, ServiceType, ServiceVersion){
 		if (this.data.Services[ServiceIndex] == null) {
 			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
-			this.data["Services"][ServiceIndex]["diagnosticActualCount"] = 0;
+			this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
 			this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
 			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
 			this.data.ServicesActualCount++;
+			if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
 		}
 		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
 		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
@@ -155,12 +157,15 @@ class RetrievedValues {
 		
 		if (service["diagnostics"] == null) { 
 			service["diagnosticReportedCount"] = null;
+			service["MaxDiagnosticCode"] = 0;
 			service["diagnostics"] = {};
 		}
 		
 		if (service.diagnostics[DiagnosticCode] == null){
 			// new diagnostic code
-			service.diagnosticActualCount++;
+			service.diagnosticReportedCount++;
+			// keep a record of highest diagnostic code
+			if (DiagnosticCode > service["MaxDiagnosticCode"]) {service["MaxDiagnosticCode"] = DiagnosticCode}
 			service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
 			service.diagnostics[DiagnosticCode] = {};
 		}

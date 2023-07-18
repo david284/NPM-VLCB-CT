@@ -59,8 +59,8 @@ class MinimumNodeServiceTests{
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
 								
 				// test the error returned with invalid service index
-				// so use reported number of services plus 1 for service index
-				await this.opcodes_7x.test_RQSD_ERROR(RetrievedValues, RetrievedValues.data.ServicesReportedCount+1);
+				// so use reported maximum service index plus 1 for service index
+				await this.opcodes_7x.test_RQSD_ERROR(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1);
 								
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
@@ -77,6 +77,16 @@ class MinimumNodeServiceTests{
 						// now request diagnostics just for MNS
 						await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 				
+						// now request single diagnostic code just for MNS
+						await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 1);
+
+						// test the error returned with invalid diagnostic code
+						// use MaxDiagnosticCode + 1 as diagnosticCode, but only if it has been reported
+						if (RetrievedValues.data.Services[key].MaxDiagnosticCode != undefined){
+							await this.opcodes_8x.test_RDGN_ERROR_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode + 1);
+						} else {
+							winston.info({message: 'VLCB: test_RDGN_ERROR_DIAG test skipped - no reported diagnostic codes'});
+						}				
 					}
 				}
 
