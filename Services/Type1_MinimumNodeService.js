@@ -55,7 +55,12 @@ class MinimumNodeServiceTests{
 				await this.opcodes_7x.test_RQNPN_ERROR(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
 
 				// this will get all the services that this module supports
+				// 
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
+								
+				// test the error returned with invalid service index
+				// so use reported number of services plus 1 for service index
+				await this.opcodes_7x.test_RQSD_ERROR(RetrievedValues, RetrievedValues.data.ServicesReportedCount+1);
 								
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);

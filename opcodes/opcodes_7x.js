@@ -220,14 +220,14 @@ class opcodes_7x {
 						var msg = cbusLib.decode(element);
 						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 							if (msg.mnemonic == "CMDERR"){
-								if (msg.errorNumber == 10) {
+								if (msg.errorNumber == 9) {
 									msgBitField |= 1;			// set bit 0
 								} else {
 									winston.info({message: 'VLCB: RQNPN_ERROR: CMDERR wrong error number'}); 
 								}
 							}
 							if (msg.mnemonic == "GRSP"){
-								if (msg.result == 10) {
+								if (msg.result == 9) {
 									msgBitField |= 1;			// set bit 0
 								} else {
 									winston.info({message: 'VLCB: RQNPN_ERROR: GRSP wrong result number'}); 
@@ -375,8 +375,46 @@ class opcodes_7x {
     }
     
 	
-	
-	
+	// 0x78 - RQSD_ERROR - service index out of bounds test
+    test_RQSD_ERROR(RetrievedValues, ServiceIndex) {
+        return new Promise(function (resolve, reject) {
+            winston.debug({message: 'VLCB: BEGIN RQSD test - serviceIndex ' + ServiceIndex});
+            this.hasTestPassed = false;
+            this.network.messagesIn = [];
+            var msgData = cbusLib.encodeRQSD(RetrievedValues.getNodeNumber(), ServiceIndex);
+            this.network.write(msgData);
+            setTimeout(()=>{
+				var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
+                if (this.network.messagesIn.length > 0){
+		            this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+							// expecting a GRSP message
+							if (msg.mnemonic == "GRSP"){
+								if (msg.result == 9) {
+									this.hasTestPassed = true;
+									winston.info({message: 'VLCB:      Service Discovery : GRSP invalid parameter received as expected'});
+								} else {
+									winston.info({message: 'VLCB:      Service Discovery : unexpected GRSP code ' + msg.result});
+								}
+							}
+							if (msg.mnemonic == "ESD"){
+								this.hasTestPassed = false;
+								RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
+								winston.info({message: 'VLCB:      Service Discovery : unexpected ESD message'});
+							}
+						}
+					});
+				}
+								
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_ERROR (ServiceIndex ' + ServiceIndex + ')');
+				
+                resolve();
+				;} , this.response_time
+            );
+        }.bind(this));
+    }
+    	
 
 }
 
