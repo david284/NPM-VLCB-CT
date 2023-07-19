@@ -4,6 +4,7 @@ const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 const Service_Definitions = require('./../Definitions/Service_Definitions.js');
+const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 
 // Scope:
@@ -391,7 +392,7 @@ class opcodes_7x {
 						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
 							// expecting a GRSP message
 							if (msg.mnemonic == "GRSP"){
-								if (msg.result == 9) {
+								if (msg.result == GRSP.InvalidService) {
 									this.hasTestPassed = true;
 									winston.info({message: 'VLCB:      Service Discovery : GRSP invalid parameter received as expected'});
 								} else {
