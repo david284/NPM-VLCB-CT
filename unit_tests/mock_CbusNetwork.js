@@ -309,9 +309,9 @@ class mock_CbusNetwork {
             case '87': //RDGN
                 winston.debug({message: 'Mock CBUS Network: received RDGN'});
                 // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-							for (var key in this.DGN_Outputs) {
-								winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
-								if (cbusMsg.ServiceIndex == 1) {
+							if (cbusMsg.ServiceIndex == 0){
+								for (var key in this.DGN_Outputs) {
+									winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
 									this.outputDGN(cbusMsg.nodeNumber, 
 										this.DGN_Outputs[key].ServiceIndex, 
 										this.DGN_Outputs[key].DiagnosticCode, 
