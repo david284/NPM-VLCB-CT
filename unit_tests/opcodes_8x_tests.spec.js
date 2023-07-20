@@ -10,6 +10,7 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 const RetrievedValues = require('./../RetrievedValues.js');
 
 
+
 // Scope:
 // variables declared outside of the class are 'global' to this module only
 // callbacks need a bind(this) option to allow access to the class members
@@ -57,7 +58,7 @@ describe('opcodes_8x tests', function(){
 		setTimeout(function(){
             // timeout to allow tests to print
             winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
+            winston.info({message: 'UNIT TEST: opcodes_8x tests finished '});
             setTimeout(function(){
                     // timeout to allow the finish text above to print
                      done();
@@ -76,11 +77,11 @@ describe('opcodes_8x tests', function(){
 	//
 	// what we want to test
 	// Service index	Service type	Service Version		Diagnostic Code
-	//		1				1				1					1				//
-	//		1				1				1					2				// change of code
-	//		2				1				1					1				// change of index - same type
-	//		3				2				1					1				// change of index, change of type
-	//		4				1				2					1				// change of index, change of version
+	//			1								1							1									1				//
+	//			1								1							1									2				// change of code
+	//			2								1							1									1				// change of index - same type
+	//			3								2							1									1				// change of index, change of type
+	//			4								1							2									1				// change of index, change of version
 
 	// values to output from mockCbus - ServiceIndex, DiagnosticCode, DiagnosticValue
 	var DGN_Outputs = {
@@ -93,7 +94,7 @@ describe('opcodes_8x tests', function(){
 
 
     // 0x87 - RDGN
-	it("RDGN test", function (done) {
+	it("RDGN test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
 		RetrievedValues.setNodeNumber(0);
 		// storage for values retrieved from module under test	
@@ -104,15 +105,12 @@ describe('opcodes_8x tests', function(){
 		// set mock CBUS with diagnostic values to be sent in response to query
 		mock_Cbus.DGN_Outputs = DGN_Outputs;
 		// ok, all setup, now start test
-        var result = tests.test_RDGN(RetrievedValues, 0, 0, 0);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: RDGN ended'});
-            winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
-            expect(tests.hasTestPassed).to.equal(true);
+    await tests.test_RDGN(RetrievedValues, 0, 0, 0);
+		winston.info({message: 'UNIT TEST: RDGN ended'});
+		winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
+		expect(tests.hasTestPassed).to.equal(true);
 //			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 //			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
-			done();
-		}, 2000);
 	})
 
 
