@@ -75,8 +75,8 @@ class opcodes_5x {
 
     // 0x5E - NNRST
     test_NNRST(RetrievedValues, serviceIndex) {
+        winston.debug({message: 'VLCB: BEGIN NNRST test'});
         return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN NNRST test'});
             this.hasTestPassed = false;
             this.network.messagesIn = [];
             var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());

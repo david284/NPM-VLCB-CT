@@ -106,22 +106,16 @@ describe('opcodes_5x tests', function(){
 		return testCases;
 	}
 
-
-
-
-    // 0x5E - NNRST
-    itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), function (done, value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
+	// 0x5E - NNRST
+	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN ASYNC NNRST test'});
 		RetrievedValues.setNodeNumber(1);
-        var result = tests.test_NNRST(RetrievedValues, 1);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: NNRST ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, 2000);
+
+		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
+		await tests.test_NNRST(RetrievedValues, 1);
+
+		winston.info({message: 'UNIT TEST:: END ASYNC NNRST test'});
 	})
-
-
-
-
+	
 })
+
