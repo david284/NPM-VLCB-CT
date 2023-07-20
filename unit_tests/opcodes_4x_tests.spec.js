@@ -85,17 +85,14 @@ describe('opcodes_4x tests', function(){
 
 	// 0x42 - SNN
     //
-    itParam("SNN test ${JSON.stringify(value)}", GetTestCase_SNN(), function (done, value) {
+    itParam("SNN test ${JSON.stringify(value)}", GetTestCase_SNN(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
-        mock_Cbus.enterSetup(0);
-        var result = tests.test_SNN(RetrievedValues);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: SNN ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-            mock_Cbus.exitSetup(0);
-			done();
-		}, test_timeout);
+    mock_Cbus.enterSetup(0);
+    await tests.test_SNN(RetrievedValues);
+    winston.info({message: 'UNIT TEST: SNN ended'});
+    expect(tests.hasTestPassed).to.equal(true);
+    mock_Cbus.exitSetup(0);
 	})
 
 
@@ -112,15 +109,12 @@ describe('opcodes_4x tests', function(){
 
     
     // 0x4F - NNRSM
-    itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NNRSM(), function (done, value) {
+    itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NNRSM(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRSM test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
-        var result = tests.test_NNRSM(RetrievedValues);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: NNRSM ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, 700);
+    await tests.test_NNRSM(RetrievedValues);
+    winston.info({message: 'UNIT TEST: NNRSM ended'});
+    expect(tests.hasTestPassed).to.equal(true);
 	})
 
 
