@@ -80,48 +80,41 @@ describe('opcodes_7x tests', function(){
 	var nodeVariableCount = nodeVariables.length-1
 
     function GetTestCase_NVRD() {
-		var arg1, arg2, testCases = [];
+		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0; arg2 = 50 + (100 * nodeVariables.length);}	// need to adjust timeout for all variables, inc [0]
-			if (a == 2) {arg1 = 1; arg2 = 100;}
-			if (a == 3) {arg1 = nodeVariableCount; arg2 = 100;}
-			testCases.push({'nodeVariableIndex':arg1, 'timeout': arg2});
+			if (a == 1) {arg1 = 0}
+			if (a == 2) {arg1 = 1}
+			if (a == 3) {arg1 = nodeVariableCount}
+			testCases.push({'nodeVariableIndex':arg1});
 		}
 		return testCases;
 	}
 
 
     // 0x71 - NVRD
-    itParam("NVRD test ${JSON.stringify(value)}", GetTestCase_NVRD(), function (done, value) {
+    itParam("NVRD test ${JSON.stringify(value)}", GetTestCase_NVRD(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-        var result = tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: NVRD ended'});
-			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, value.timeout);
+    await tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
+		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+    expect(tests.hasTestPassed).to.equal(true);
+    winston.info({message: 'UNIT TEST: NVRD ended'});
 	})
 
 
     // 0x71 - NVRD_ERROR
-	it("NVRD_ERROR test", function (done) {
+	it("NVRD_ERROR test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD_ERROR test'});
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-        var result = tests.test_NVRD_ERROR(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: NVRD_ERROR ended'});
-//			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, 100);
+  	await tests.test_NVRD_ERROR(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+    winston.info({message: 'UNIT TEST: NVRD_ERROR ended'});
+    expect(tests.hasTestPassed).to.equal(true);
 	})
 
 
@@ -137,22 +130,19 @@ describe('opcodes_7x tests', function(){
 	}
 
 
-    // 0x73 - RQNPN
-    itParam("RQNPN test ${JSON.stringify(value)}", GetTestCase_RQNPN(), function (done, value) {
+  // 0x73 - RQNPN
+  itParam("RQNPN test ${JSON.stringify(value)}", GetTestCase_RQNPN(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
 		RetrievedValues.setNodeNumber(0);
-        var result = tests.test_RQNPN(RetrievedValues, test_module_descriptor, value.parameterIndex);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: RQNPN ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-			winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
-			done();
-		}, test_timeout);
+  	await tests.test_RQNPN(RetrievedValues, test_module_descriptor, value.parameterIndex);
+    winston.info({message: 'UNIT TEST: RQNPN ended'});
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
 	})
 
 
 
-    function GetTestCase_MODE() {
+  function GetTestCase_MODE() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
@@ -164,16 +154,13 @@ describe('opcodes_7x tests', function(){
 	}
 
 
-    // 0x76 - MODE
-    itParam("MODE test ${JSON.stringify(value)}", GetTestCase_MODE(), function (done, value) {
+	// 0x76 - MODE
+	itParam("MODE test ${JSON.stringify(value)}", GetTestCase_MODE(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN MODE test'});
 		RetrievedValues.setNodeNumber(0);
-        var result = tests.test_MODE(RetrievedValues, test_module_descriptor, value.MODE);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: MODE ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, test_timeout);
+    await tests.test_MODE(RetrievedValues, test_module_descriptor, value.MODE);
+    winston.info({message: 'UNIT TEST: MODE ended'});
+    expect(tests.hasTestPassed).to.equal(true);
 	})
 
 
@@ -211,21 +198,18 @@ describe('opcodes_7x tests', function(){
 
 
 
-    // 0x78 - RQSD
-    itParam("RQSD test ${JSON.stringify(value)}", GetTestCase_RQSD(), function (done, value) {
+  // 0x78 - RQSD
+  itParam("RQSD test ${JSON.stringify(value)}", GetTestCase_RQSD(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
 		mock_Cbus.Services = Services;
 		// storage for values retrieved from module under test	
 		RetrievedValues.setNodeNumber(0);
-        var result = tests.test_RQSD(RetrievedValues, value.ServiceIndex);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: RQSD ended'});
-            winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(RetrievedValues.data, null, "    ")});
-            expect(tests.hasTestPassed).to.equal(true);
+    await tests.test_RQSD(RetrievedValues, value.ServiceIndex);
+    winston.info({message: 'UNIT TEST: RQSD ended'});
+    winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+    expect(tests.hasTestPassed).to.equal(true);
 //			expect(Object.keys(retrieved_values.Services).length).to.equal(3);			// should be three services
 //			expect(retrieved_values.Services[0].ServiceType).to.equal(1);	// first service is type 1
-			done();
-		}, test_timeout);
 	})
 
 
