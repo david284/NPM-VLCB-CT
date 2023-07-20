@@ -90,8 +90,8 @@ class MinimumNodeServiceTests{
 					}
 				}
 
-				// NNRST - node reset - check the 
-				await this.opcodes_5x.test_NNRST(RetrievedValues);
+				// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
+				await this.opcodes_5x.test_NNRST(RetrievedValues, serviceIndex);
 
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
 //				await this.opcodes_4x.test_NNRSM(RetrievedValues);

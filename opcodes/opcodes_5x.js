@@ -1,6 +1,6 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
-const cbusLib = require('cbuslibrary');
+const cbusLib = require('cbusLibrary');
 const utils = require('./../utilities.js');
 
 
@@ -74,7 +74,7 @@ class opcodes_5x {
 
 
     // 0x5E - NNRST
-    test_NNRST(RetrievedValues) {
+    test_NNRST(RetrievedValues, serviceIndex) {
         return new Promise(function (resolve, reject) {
             winston.debug({message: 'VLCB: BEGIN NNRST test'});
             this.hasTestPassed = false;
@@ -82,6 +82,7 @@ class opcodes_5x {
             var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
+                /*
                 // get uptime diagnostic code from MNS service - but need to find serviceIndex for MNS first
                 var serviceIndex
                 for (var key in RetrievedValues.data["Services"]) {
@@ -90,6 +91,7 @@ class opcodes_5x {
                         serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
                     }
                 }
+                */
                 if (serviceIndex) {
                     // get all diagnostics for MNS service
                     winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
@@ -127,6 +129,8 @@ class opcodes_5x {
                         resolve();
                         ;} , 1000
                     );
+                } else {
+                    winston.info({message: 'VLCB:      No Service 1 found '}); 
                 }
                 ;} , 200
             );

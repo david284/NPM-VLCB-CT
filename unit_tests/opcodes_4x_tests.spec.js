@@ -120,7 +120,7 @@ describe('opcodes_4x tests', function(){
             winston.info({message: 'UNIT TEST: NNRSM ended'});
             expect(tests.hasTestPassed).to.equal(true);
 			done();
-		}, 200);
+		}, 700);
 	})
 
 

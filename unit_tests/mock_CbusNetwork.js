@@ -55,9 +55,9 @@ class mock_CbusNetwork {
         this.firmwareChecksum = null
         
 		this.modules = 	[
-						new CANACC8 (0),
-						new CANSERVO8C (1),
-						new CANMIO (65535)
+						new CANTEST (0),
+						new CANTEST (1),
+						new CANTEST (65535)
 						]
 						
 /*						
@@ -73,13 +73,21 @@ class mock_CbusNetwork {
 		// values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
 		// bare minimum to do something - we expect the test will update this array using set_DGN_Outputs()
 		this.DGN_Outputs = {
-				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }
+				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 },
+				"2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 0 },  
+				"3": { "ServiceIndex": 2, "DiagnosticCode": 3, "DiagnosticValue": 0 },  
+				"4": { "ServiceIndex": 3, "DiagnosticCode": 4, "DiagnosticValue": 0 }
 				};
 
 		this.Services = {
 			"1": {
-				"ServiceIndex": 3, "ServiceType": 1, "ServiceVersion": 0,
-				"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
+				"ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": 0,
+				"diagnostics": { 
+					"1": {"DiagnosticCode": 1, "DiagnosticValue": 1}, 
+					"2": {"DiagnosticCode": 1, "DiagnosticValue": 0},
+					"3": {"DiagnosticCode": 1, "DiagnosticValue": 0}, 
+					"4": {"DiagnosticCode": 1, "DiagnosticValue": 0} 
+				}
 			}
 		}
 
@@ -197,28 +205,28 @@ class mock_CbusNetwork {
 			case '11': // RQMN
 				this.outputNAME("CANTEST");			
 				break;
-			case '22':  // QLOC
+			case '22': // QLOC
                 break;
-            case '42':
+            case '42': //SNN
                 // Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
                 var nodeNumber = cbusMsg.nodeNumber
                 winston.debug({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
 				this.outputNNACK(nodeNumber);
                 break;
-            case '4F':
+            case '4F': //NNRSM
                 // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NNRSM'});
 				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
-            case '53':
+            case '53': //NNLRN
                 // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NNLRN'});
                 break;
-            case '54':
+            case '54': //NNULN
                 // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
                 winston.debug({message: 'Mock CBUS Network: received NNULN'});
                 break;
-            case '57':
+            case '57': //NERD
                 // Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NERD'});
                 var nodeNumber = cbusMsg.nodeNumber
@@ -234,22 +242,22 @@ class mock_CbusNetwork {
                 }
 
                 break;
-            case '58':
+            case '58': //RQEVN
                 // Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received RQEVN'});
                 var storedEventsCount = this.getModule(cbusMsg.nodeNumber).getStoredEventsCount();
                 this.outputNUMEV(cbusMsg.nodeNumber, storedEventsCount);
                 break;
-            case '5C':
+            case '5C': //BOOTM
                 // Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>>
                 winston.debug({message: 'Mock CBUS Network: received BOOTM: node ' + cbusMsg.nodeNumber });
                 break;
-            case '5E':
+            case '5E': //NNRST
                 // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
                 winston.debug({message: 'Mock CBUS Network: received NNRST'});
 				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
-            case '71':
+            case '71': //NVRD
                 // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
                 winston.debug({message: 'Mock CBUS Network: received NVRD'});
 				var nodeVariables = this.modules[0].nodeVariables;
@@ -263,22 +271,22 @@ class mock_CbusNetwork {
 					this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 10);
 				}
                 break;
-            case '73':
+            case '73': //RQNPN
                 // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
                 winston.debug({message: 'Mock CBUS Network: received RQNPN'});
                 var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
                 this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
                 break;
-            case '75':
+            case '75': //CANID
                 // Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CANID>
                 winston.debug({message: 'Mock CBUS Network: received CANID'});
                 break;
-            case '76':
+            case '76': //MODE
                 // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
                 winston.debug({message: 'Mock CBUS Network: received MODE'});
 				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
-            case '78':
+            case '78': //RQSD
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});
                 // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
 				if (cbusMsg.ServiceIndex == 0) {
@@ -298,40 +306,40 @@ class mock_CbusNetwork {
 					this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
 				}
 				break;
-            case '87': 
+            case '87': //RDGN
                 winston.debug({message: 'Mock CBUS Network: received RDGN'});
                 // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-				for (var key in this.DGN_Outputs) {
-					winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
-					if (cbusMsg.ServiceIndex == 0) {
-						this.outputDGN(cbusMsg.nodeNumber, 
-							this.DGN_Outputs[key].ServiceIndex, 
-							this.DGN_Outputs[key].DiagnosticCode, 
-							this.DGN_Outputs[key].DiagnosticValue);
-					}
-				}
-				break;
-            case '90':
+							for (var key in this.DGN_Outputs) {
+								winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
+								if (cbusMsg.ServiceIndex == 1) {
+									this.outputDGN(cbusMsg.nodeNumber, 
+										this.DGN_Outputs[key].ServiceIndex, 
+										this.DGN_Outputs[key].DiagnosticCode, 
+										this.DGN_Outputs[key].DiagnosticValue);
+								}
+							}
+							break;
+            case '90': //ACON
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received ACON'});
                 break;
-            case '91':
+            case '91': //ACOF
                 // Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received ACOF'});
                 break;
-            case '95':
+            case '95': //EVULN
                 // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received EVULN'});
                 break;
-            case '96':
+            case '96': //NVSET
                 // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
                 winston.debug({message: 'Mock CBUS Network: received NVSET'});
                 break;
-            case '9C':
+            case '9C': //REVAL
                 // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
                 winston.debug({message: 'Mock CBUS Network: received REVAL'});
                 break;
-            case 'D2':
+            case 'D2': //EVLRN
                 // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received EVLRN'});
                 break;
@@ -604,7 +612,7 @@ class mock_CbusNetwork {
 	outputDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue) {
 		/* // DGN Format: [<MjPri><MinPri=3><CANID>]<C7><NN hi><NN lo><ServiceIndex><DiagnosticCode><DiagnosticValue> */
 		var msgData = cbusLib.encodeDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue);
-        this.broadcast(msgData)
+    this.broadcast(msgData)
 	}
 
 	// D0
@@ -805,95 +813,8 @@ class CbusModule {
 	setCputType(value) {this.parameters[9] = value}
 }
 
-class CANACC8 extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(3);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        this.setCputType(1);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
 
-class CANSERVO8C extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(19);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        this.setCputType(1);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANMIO extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(32);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        this.setCputType(13);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANCAB extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(9);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANPAN extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(29);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANCMD extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(10);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANACE8C extends CbusModule{
-	constructor(nodeId) {
-		super(nodeId);
-		this.setModuleId(5);
-		this.setManufacturerId(165);
-		this.setNodeFlags(7);
-        this.setCputType(1);
-        
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
-	}
-}
-
-class CANMIO_OUT extends CbusModule{
+class CANTEST extends CbusModule{
 	constructor(nodeId) {
 		super(nodeId);
 		this.parameters[3] = 52;
