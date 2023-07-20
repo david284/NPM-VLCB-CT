@@ -42,23 +42,23 @@ describe('opcodes_5x tests', function(){
 
 	})
     
-    beforeEach (function() {
-   		winston.info({message: ' '});   // blank line to separate tests
-		Network.messagesIn = [];
-    })
+  beforeEach (function() {
+    winston.info({message: ' '});   // blank line to separate tests
+  Network.messagesIn = [];
+  })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      winston.info({message: ' '});   // blank line to separate tests
+      winston.info({message: 'UNIT TEST: tests finished '});
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ describe('opcodes_5x tests', function(){
 
 
 
-    function GetTestCase_RQNN() {
+  function GetTestCase_RQNN() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
@@ -80,22 +80,24 @@ describe('opcodes_5x tests', function(){
 	}
 
 
-    // 0x50 RQNN
-    itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_RQNN(), function (done, value) {
+  // 0x50 RQNN
+  // need to use a timeout here, as we send a RQNN from the mock_cbus, and need to wait for it to be received
+  // 
+  itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_RQNN(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
-        mock_Cbus.enterSetup(value.nodeNumber);
+    mock_Cbus.enterSetup(value.nodeNumber);
 		var retrieved_values = {};
 		setTimeout(function(){
 			tests.checkForRQNN(RetrievedValues);
-            expect(tests.inSetupMode).to.equal(true);
-            expect(tests.test_nodeNumber).to.equal(value.nodeNumber);
-            winston.info({message: 'UNIT TEST: RQNN ended'});
-            mock_Cbus.exitSetup(value.nodeNumber);
+      expect(tests.inSetupMode).to.equal(true);
+      expect(tests.test_nodeNumber).to.equal(value.nodeNumber);
+      winston.info({message: 'UNIT TEST: RQNN ended'});
+      mock_Cbus.exitSetup(value.nodeNumber);
 			done();
 		}, 100);
 	})
 
-    function GetTestCase_NNRST() {
+  function GetTestCase_NNRST() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 1;
@@ -108,13 +110,13 @@ describe('opcodes_5x tests', function(){
 
 	// 0x5E - NNRST
 	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN ASYNC NNRST test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
 		RetrievedValues.setNodeNumber(1);
 
 		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
 		await tests.test_NNRST(RetrievedValues, 1);
 
-		winston.info({message: 'UNIT TEST:: END ASYNC NNRST test'});
+		winston.info({message: 'UNIT TEST:: END NNRST test'});
 	})
 	
 })
