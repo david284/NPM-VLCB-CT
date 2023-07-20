@@ -22,7 +22,6 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 		winston.info({message: '\x1B[91m' + 'VLCB: FAIL ' +  testName + ' failed ' + comment + '\x1B[37m'});
 		RetrievedValues.data.TestsFailed++;
 	}
-	winston.debug({message: '-'});
 
 }
 

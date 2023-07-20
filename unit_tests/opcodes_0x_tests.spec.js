@@ -66,6 +66,7 @@ describe('opcodes_0x tests', function(){
     });
 
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // 				Tests
@@ -73,15 +74,12 @@ describe('opcodes_0x tests', function(){
 
 
     // 0x0D - QNN
-	it("QNN test", function (done) {
+	it("QNN test", async function () {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
 		RetrievedValues.setNodeNumber(0);
-        var result = tests.test_QNN(RetrievedValues);
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: QNN ended'});
-            expect(tests.hasTestPassed).to.equal(true);
-			done();
-		}, 600);
+    await tests.test_QNN(RetrievedValues);
+    winston.info({message: 'UNIT TEST: QNN ended'});
+    expect(tests.hasTestPassed).to.equal(true);
 	})
 
 
