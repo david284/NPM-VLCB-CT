@@ -99,7 +99,7 @@ describe('opcodes_7x tests', function(){
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
     await tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
-		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+//		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: NVRD ended'});
 	})
@@ -148,9 +148,31 @@ describe('opcodes_7x tests', function(){
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
 		RetrievedValues.setNodeNumber(0);
   	await tests.test_RQNPN(RetrievedValues, test_module_descriptor, value.parameterIndex);
-    winston.info({message: 'UNIT TEST: RQNPN ended'});
     expect(tests.hasTestPassed).to.equal(true);
-		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
+		winston.info({message: 'UNIT TEST:: END RQNPN test'});    
+	})
+
+
+  // 0x73 - RQNPN_ERROR
+  it("RQNPN_ERROR test", async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_ERROR test'});
+		RetrievedValues.setNodeNumber(0);
+  	await tests.test_RQNPN_ERROR(RetrievedValues, test_module_descriptor, 21);
+    expect(tests.hasTestPassed).to.equal(true);
+//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		winston.info({message: 'UNIT TEST:: END RQNPN_ERROR test'});
+	})
+
+
+  // 0x73 - RQNPN_SHORT
+  it("RQNPN_SHORT test", async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_SHORT test'});
+		RetrievedValues.setNodeNumber(0);
+  	await tests.test_RQNPN_SHORT(RetrievedValues, test_module_descriptor, 21);
+    expect(tests.hasTestPassed).to.equal(true);
+//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+		winston.info({message: 'UNIT TEST:: END RQNPN_SHORT test'});
 	})
 
 

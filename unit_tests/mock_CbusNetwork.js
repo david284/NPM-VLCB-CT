@@ -271,16 +271,23 @@ class mock_CbusNetwork {
 										}
 									}
 									if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
-										this.outputCMDERR(cbusMsg.nodeNumber, 10);
-										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 10);
+										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
+										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
 									}
 								}
                 break;
             case '73': //RQNPN
                 // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
                 winston.debug({message: 'Mock CBUS Network: received RQNPN'});
-                var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
-                this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
+								if (cbusMsg.encoded.length < 16) {
+									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+								} else if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
+										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
+										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
+                } else {
+                  var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
+                  this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
+                }
                 break;
             case '75': //CANID
                 // Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CANID>
@@ -746,27 +753,28 @@ class mock_CbusNetwork {
 
 class CbusModule {
 	constructor(nodeNumber) {
-     	this.events = []
+    this.events = []
 		this.nodeNumber = nodeNumber;
 		this.setupMode = false;
-		this.parameters = 	[ 	8,		// number of available parameters
-								165,    // param 1 manufacturer Id
-								117,		// param 2 Minor code version
-								0,		// param 3 module Id
-								0,		// param 4 number of supported events
-								0,		// param 5 number of event variables
-								0,		// param 6 number of supported node variables
-								2,		// param 7 major version
-								13,		// param 8 node flags
-								1,		// param 9 cpu type (1 = P18F2480)
-								1,		// param 10 interface type (1 = CAN)
-								// NODE flags
-								// 	Bit 0	: Consumer
-								//	Bit 1	: Producer
-								//	Bit 2	: FLiM Mode
-								//	Bit 3	: The module supports bootloading		
-							]
-        this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
+		this.parameters = 	[ 	
+      8,		// number of available parameters
+      165,    // param 1 manufacturer Id
+      117,		// param 2 Minor code version
+      0,		// param 3 module Id
+      0,		// param 4 number of supported events
+      0,		// param 5 number of event variables
+      0,		// param 6 number of supported node variables
+      2,		// param 7 major version
+      13,		// param 8 node flags
+      1,		// param 9 cpu type (1 = P18F2480)
+      1,		// param 10 interface type (1 = CAN)
+      // NODE flags
+      // 	Bit 0	: Consumer
+      //	Bit 1	: Producer
+      //	Bit 2	: FLiM Mode
+      //	Bit 3	: The module supports bootloading		
+    ]
+    this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
 		this.nodeVariables = [ 8, 1, 2, 3, 4, 5, 6, 7, 8 ];
 	}
 
