@@ -46,157 +46,152 @@ class opcodes_7x {
 
             
 
-    // 0x71 - NVRD
-    test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
-			this.hasTestPassed = false;
-			var timeout = 50;
-			if (NodeVariableIndex == 0){ 
-				if (RetrievedValues.data.nodeParameters[6] != null) { 
-					timeout = timeout * RetrievedValues.data.nodeParameters[6].value; 
-				} else {
-					winston.info({message: 'VLCB: FAILURE:  Node Parameter[6] - number of node variables not found '});
-				}
-			}
-			if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
-				RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
-			}
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-		            this.network.messagesIn.forEach(element => {
-						var msg = cbusLib.decode(element);
-						if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-							if (msg.mnemonic == "NVANS"){
-								this.hasTestPassed = true;
-								RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
-								winston.info({message: 'VLCB:      ' + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
-							}
-						}
-					});
-				}
+  // 0x71 - NVRD
+  test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
+      this.hasTestPassed = false;
+      var timeout = 50;
+      if (NodeVariableIndex == 0){ 
+        if (RetrievedValues.data.nodeParameters[6] != null) { 
+          timeout = timeout * RetrievedValues.data.nodeParameters[6].value; 
+        } else {
+          winston.info({message: 'VLCB: FAILURE:  Node Parameter[6] - number of node variables not found '});
+        }
+      }
+      if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
+        RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
+      }
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              if (msg.mnemonic == "NVANS"){
+                this.hasTestPassed = true;
+                RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
+                winston.info({message: 'VLCB:      ' + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD');
+        resolve();
+      } , timeout );
+    }.bind(this));
+  }
 
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD');
-
-				resolve();
-                ;} , timeout
-            );
-        }.bind(this));
-    }
 	
-	
-    // 0x71 - NVRD_ERROR
+  // 0x71 - NVRD_ERROR
 	// request a node variable index that doesn't exist, should get a CMDERR & GRSP back
-    test_NVRD_ERROR(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN NVRD_ERROR test - serviceIndex ' + ServiceIndex});
-			this.hasTestPassed = false;
-			var timeout = 100;
-			var msgBitField = 0;	// bit field to capture when each message has been received
-			// An index of 0 is invalid for this test...
-			if (NodeVariableIndex != 0){ 
-				this.hasTestPassed = false;
-				this.network.messagesIn = [];
-				var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
-				this.network.write(msgData);
-				setTimeout(()=>{
-					if (this.network.messagesIn.length > 0){
-						this.network.messagesIn.forEach(element => {
-							var msg = cbusLib.decode(element);
-							if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-								if (msg.mnemonic == "CMDERR"){
-									if (msg.errorNumber == 10) {
-										msgBitField |= 1;			// set bit 0
-									} else {
-										winston.info({message: 'VLCB: NVRD_ERROR: CMDERR wrong error number'}); 
-									}
-								}
-								if (msg.mnemonic == "GRSP"){
-									if (msg.result == 10) {
-										msgBitField |= 1;			// set bit 0
-									} else {
-										winston.info({message: 'VLCB: NVRD_ERROR: GRSP wrong result number'}); 
-									}
-								}
-							}
-						});
-					}
-//					if (msgBitField == 3) {
-					if (msgBitField == 1) {
-						// either message has been received
-						this.hasTestPassed = true;
-					}
+  test_NVRD_ERROR(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN NVRD_ERROR test - serviceIndex ' + ServiceIndex});
+      this.hasTestPassed = false;
+      var timeout = 100;
+      var msgBitField = 0;	// bit field to capture when each message has been received
+      // An index of 0 is invalid for this test...
+      if (NodeVariableIndex != 0){ 
+        this.hasTestPassed = false;
+        this.network.messagesIn = [];
+        var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
+        this.network.write(msgData);
+        setTimeout(()=>{
+          if (this.network.messagesIn.length > 0){
+            this.network.messagesIn.forEach(element => {
+              var msg = cbusLib.decode(element);
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.mnemonic == "CMDERR"){
+                  if (msg.errorNumber == 10) {
+                    msgBitField |= 1;			// set bit 0
+                  } else {
+                    winston.info({message: 'VLCB: NVRD_ERROR: CMDERR wrong error number'}); 
+                  }
+                }
+                if (msg.mnemonic == "GRSP"){
+                  if (msg.result == 10) {
+                    msgBitField |= 1;			// set bit 0
+                  } else {
+                    winston.info({message: 'VLCB: NVRD_ERROR: GRSP wrong result number'}); 
+                  }
+                }
+              }
+            });
+          }
+  //					if (msgBitField == 3) {
+          if (msgBitField == 1) {
+            // either message has been received
+            this.hasTestPassed = true;
+          }
 
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_ERROR ');
-					
-					resolve();
-					;} , timeout
-				);
-			} else {
-				winston.info({message: 'VLCB: **** NVRD_ERROR Test Aborted **** Node Variable Index 0 requested'});				
-			}
-        }.bind(this));
-    }
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_ERROR ');
+          
+          resolve();
+          ;} , timeout );
+        } else {
+          winston.info({message: 'VLCB: **** NVRD_ERROR Test Aborted **** Node Variable Index 0 requested'});				
+        }
+      }.bind(this));
+  }
 	
 	
   // 0x71 - NVRD_SHORT
 	// message is short, missing the Node Variable - GRSP expected
 	test_NVRD_SHORT(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
 		return new Promise(function (resolve, reject) {
-		winston.debug({message: 'VLCB: BEGIN NVRD_SHORT test - serviceIndex ' + ServiceIndex});
-	this.hasTestPassed = false;
-	var timeout = 100;
-	var msgBitField = 0;	// bit field to capture when each message has been received
-	// An index of 0 is invalid for this test...
-	if (NodeVariableIndex != 0){ 
-		this.hasTestPassed = false;
-		this.network.messagesIn = [];
-		var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
-		// truncate the 16 byte message to remove the node variable - remove last three bytes & add ';' to end
-		msgData = msgData.substring(0,13) + ';'
-		this.network.write(msgData);
-		setTimeout(()=>{
-			if (this.network.messagesIn.length > 0){
-				this.network.messagesIn.forEach(element => {
-					var msg = cbusLib.decode(element);
-					if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-						if (msg.mnemonic == "CMDERR"){
-							if (msg.errorNumber == 10) {
-								msgBitField |= 1;			// set bit 0
-							} else {
-								winston.info({message: 'VLCB: NVRD_SHORT: CMDERR wrong error number'}); 
-							}
-						}
-						if (msg.mnemonic == "GRSP"){
-							if (msg.result == 10) {
-								msgBitField |= 1;			// set bit 0
-							} else {
-								winston.info({message: 'VLCB: NVRD_SHORT: GRSP wrong result number'}); 
-							}
-						}
-					}
-				});
-			}
+      winston.debug({message: 'VLCB: BEGIN NVRD_SHORT test - serviceIndex ' + ServiceIndex});
+      this.hasTestPassed = false;
+      var timeout = 100;
+      var msgBitField = 0;	// bit field to capture when each message has been received
+      // An index of 0 is invalid for this test...
+      if (NodeVariableIndex != 0){ 
+        this.hasTestPassed = false;
+        this.network.messagesIn = [];
+        var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
+        // truncate the 16 byte message to remove the node variable - remove last three bytes & add ';' to end
+        msgData = msgData.substring(0,13) + ';'
+        this.network.write(msgData);
+        setTimeout(()=>{
+          if (this.network.messagesIn.length > 0){
+            this.network.messagesIn.forEach(element => {
+              var msg = cbusLib.decode(element);
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.mnemonic == "CMDERR"){
+                  if (msg.errorNumber == 10) {
+                    msgBitField |= 1;			// set bit 0
+                  } else {
+                    winston.info({message: 'VLCB: NVRD_SHORT: CMDERR wrong error number'}); 
+                  }
+                }
+                if (msg.mnemonic == "GRSP"){
+                  if (msg.result == 10) {
+                    msgBitField |= 1;			// set bit 0
+                  } else {
+                    winston.info({message: 'VLCB: NVRD_SHORT: GRSP wrong result number'}); 
+                  }
+                }
+              }
+            });
+          }
 //					if (msgBitField == 3) {
-			if (msgBitField == 1) {
-				// either message has been received
-				this.hasTestPassed = true;
-			}
+          if (msgBitField == 1) {
+            // either message has been received
+            this.hasTestPassed = true;
+          }
 
-		utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_SHORT ');
-			
-			resolve();
-			;} , timeout
-		);
-	} else {
-		winston.info({message: 'VLCB: **** NVRD_SHORT Test Aborted **** Node Variable Index 0 requested'});				
-	}
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_SHORT ');
+          
+          resolve();
+        } , timeout );
+      } else {
+        winston.info({message: 'VLCB: **** NVRD_SHORT Test Aborted **** Node Variable Index 0 requested'});				
+      }
 		}.bind(this));
-}
+  }
 
 
 
