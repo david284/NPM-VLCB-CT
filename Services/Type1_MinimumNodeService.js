@@ -87,11 +87,12 @@ class MinimumNodeServiceTests{
 						} else {
 							winston.info({message: 'VLCB: test_RDGN_ERROR_DIAG test skipped - no reported diagnostic codes'});
 						}				
+
+						// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
+						await this.opcodes_5x.test_NNRST(RetrievedValues, serviceIndex);
+
 					}
 				}
-
-				// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
-				await this.opcodes_5x.test_NNRST(RetrievedValues, serviceIndex);
 
 				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
 //				await this.opcodes_4x.test_NNRSM(RetrievedValues);
