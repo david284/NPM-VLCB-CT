@@ -86,7 +86,7 @@ describe('RetrievedValues tests', function(){
     //
 	it("Add Service test", function () {
         RetrievedValues.addService(1,2,3);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
 		expect(RetrievedValues.data.Services[1].ServiceType).to.equal(2);
 		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
@@ -98,7 +98,7 @@ describe('RetrievedValues tests', function(){
         RetrievedValues.addService(2,2,3);
 		//
         RetrievedValues.addServiceData(2,3,4,5,6);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[2].ServiceIndex).to.equal(2);
 		expect(RetrievedValues.data.Services[2].Data1).to.equal(3);
 		expect(RetrievedValues.data.Services[2].Data2).to.equal(4);
@@ -173,7 +173,7 @@ describe('RetrievedValues tests', function(){
         RetrievedValues.addService(5,1,1);		// add index 5, type 1 (MNS), version 1
 		//
         RetrievedValues.addDiagnosticCode(value.ServiceIndex, 1, 2);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
+        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[value.ServiceIndex].ServiceIndex).to.equal(value.ServiceIndex);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticName).to.equal(value.DiagnosticName);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticCode).to.equal(1);
