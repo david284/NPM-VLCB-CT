@@ -81,15 +81,16 @@ describe('callback tests', function(){
 		winston.info({message: 'UNIT TEST: BEGIN HEARTB test'});
 		RetrievedValues.setNodeNumber(value.expectedNumber);
 		callback.attach(RetrievedValues);					// attach callback to receive HEARTB
-        mock_Cbus.outputHEARTB(value.nodeNumber);			// transmit HEARTB
+    mock_Cbus.outputHEARTB(value.nodeNumber);			// transmit HEARTB
 		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: HEARTB ended'});
-            winston.debug({message: 'UNIT TEST: HEARTB \n      ' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});
 			if (value.nodeNumber == value.expectedNumber){
 				expect(RetrievedValues.retrieved_values.HEARTB).to.equal('passed');
+				winston.debug({message: 'UNIT TEST: HEARTB expected passed - result ' + RetrievedValues.retrieved_values.HEARTB});
 			} else {
 				expect(RetrievedValues.retrieved_values.HEARTB).to.equal('failed');
+				winston.debug({message: 'UNIT TEST: HEARTB expected failed - result ' + RetrievedValues.retrieved_values.HEARTB});
 			}
+			winston.info({message: 'UNIT TEST: END HEARTB test'});
 			done();
 		}, 100);
 	})
