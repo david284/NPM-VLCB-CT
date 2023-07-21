@@ -3,6 +3,7 @@ var winston = require('winston');		// use config from root instance
 const net = require('net');
 
 const cbusLib = require('cbusLibrary')
+const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 //
 //  *************** mock cbus network ********************
@@ -260,16 +261,20 @@ class mock_CbusNetwork {
             case '71': //NVRD
                 // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
                 winston.debug({message: 'Mock CBUS Network: received NVRD'});
-				var nodeVariables = this.modules[0].nodeVariables;
-				for (var i=0; i< nodeVariables.length; i++){
-					if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
-						this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
-					}
-				}
-				if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
-					this.outputCMDERR(cbusMsg.nodeNumber, 10);
-					this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 10);
-				}
+								if (cbusMsg.encoded.length < 16) {
+									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+								} else {
+									var nodeVariables = this.modules[0].nodeVariables;
+									for (var i=0; i< nodeVariables.length; i++){
+										if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
+											this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
+										}
+									}
+									if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
+										this.outputCMDERR(cbusMsg.nodeNumber, 10);
+										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 10);
+									}
+								}
                 break;
             case '73': //RQNPN
                 // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>

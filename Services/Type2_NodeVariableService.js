@@ -44,15 +44,16 @@ class NodeVariableServiceTests {
 				this.test_NodeVariableCount(RetrievedValues, serviceIndex);
 				
 				// test the last node variable, using the count of variables received
-//				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, RetrievedValues.getNodeVariableCount(serviceIndex));
 				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value);
 				
 				// now test the last node variable + 1, expecting an error message
-//				await this.opcodes_7x.test_NVRD_ERROR(RetrievedValues, serviceIndex, RetrievedValues.getNodeVariableCount(serviceIndex)+1);
 				await this.opcodes_7x.test_NVRD_ERROR(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
 				
-				// now request diagnostics just for this service
-				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
+				// now test a short message, expecting an error message
+				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
+				
+			// now request diagnostics just for this service
+			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
 				//
 				// Add more tests.......

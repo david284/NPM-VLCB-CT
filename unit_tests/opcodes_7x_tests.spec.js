@@ -118,7 +118,20 @@ describe('opcodes_7x tests', function(){
 	})
 
 
-    function GetTestCase_RQNPN() {
+    // 0x71 - NVRD_SHORT
+		it("NVRD_SHORT test", async function () {
+			winston.info({message: 'UNIT TEST:: BEGIN NVRD_SHORT test'});
+			mock_Cbus.modules[0].nodeVariables = nodeVariables;
+			RetrievedValues.setNodeNumber(0);
+			RetrievedValues.data.Services[1] = {};
+			RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
+			await tests.test_NVRD_SHORT(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+			winston.info({message: 'UNIT TEST: NVRD_SHORT ended'});
+			expect(tests.hasTestPassed).to.equal(true);
+		})
+	
+	
+			function GetTestCase_RQNPN() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
