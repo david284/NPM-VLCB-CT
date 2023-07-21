@@ -5,8 +5,8 @@ const assert = require('chai').assert;
 const winston = require('./config/winston_test.js');
 
 const fs = require('fs')
+let RetrievedValues = require('./../RetrievedValues.js');
 const fetch_file = require('./../fetch_module_descriptor.js')
-const RetrievedValues = require('./../RetrievedValues.js');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 
 
@@ -28,7 +28,6 @@ describe('fetch_module_descriptor tests', function(){
 		winston.info({message: '------------ fetch_module_descriptor unit tests ------------'});
 		winston.info({message: '============================================================'});
 		winston.info({message: ' '});
-
 
 	})
     
@@ -53,21 +52,22 @@ describe('fetch_module_descriptor tests', function(){
 
     //
 	it("test_module_descriptor_read_pass", function () {
-		
+    winston.info({message: 'UNIT TEST: BEGIN module_descriptor_read_pass'});
 		// setup module variables
 		RetrievedValues.data["NAME"] = 'TEST'; 
 		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165', "name": NodeParameterNames[1] };
 		RetrievedValues.data["nodeParameters"]["3"] = { "value": '255', "name": NodeParameterNames[3] };
 		RetrievedValues.data["nodeParameters"]["7"] = { "value": '2', "name": NodeParameterNames[7] };
 		RetrievedValues.data["nodeParameters"]["2"]  = { "value": '117', "name": NodeParameterNames[2] };
-		
+
     var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
     assert.exists(module_descriptor, 'test module_descriptor exists');
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
-        winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
-    })
+    winston.info({message: 'UNIT TEST: END module_descriptor_read_pass'});
+  })
 
 	it("test_module_descriptor_read_fail", function () {
+    winston.info({message: 'UNIT TEST: BEGIN module_descriptor_read_fail'});
 		// setup module variables
 		RetrievedValues.data["NAME"] = 'UNKNOWN'; 
 		RetrievedValues.data["nodeParameters"]["1"] = { "value": '165', "name": NodeParameterNames[1]};
@@ -80,13 +80,12 @@ describe('fetch_module_descriptor tests', function(){
 		} catch (err) {
 		}
 
-        var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
+    var module_descriptor = fetch_file.module_descriptor('./unit_tests/module_descriptors/', RetrievedValues);
 		winston.debug({message: `UNIT TEST: Module Descriptor : ${JSON.stringify(module_descriptor, null, "    ")}`});
 		
-        assert.exists(module_descriptor, 'test module_descriptor exists');
-
-        winston.info({message: 'UNIT TEST: module_descriptor_read ended'});
-    })
+    assert.exists(module_descriptor, 'test module_descriptor exists');
+    winston.info({message: 'UNIT TEST: END module_descriptor_read_fail'});
+  })
 
 
 })

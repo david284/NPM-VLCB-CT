@@ -29,7 +29,8 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 	
 	try {
 		
-		winston.debug({message: `VLCB: Fetch_Module_descriptor: RetrievedValues : ${JSON.stringify(RetrievedValues.data, null, "    ")}`});
+		winston.debug({message: `VLCB: Fetch_Module_descriptor: RetrievedValues 'NAME' : ${JSON.stringify(RetrievedValues.data["NAME"], null, "    ")}`});
+		winston.debug({message: `VLCB: Fetch_Module_descriptor: RetrievedValues node parameters : ${JSON.stringify(RetrievedValues.data["nodeParameters"], null, "    ")}`});
 		// use values retrieved from module to create Module descriptor Identity
 		
 		RetrievedValues.data["DescriptorIdentity"] = "CAN" + RetrievedValues.data["NAME"].trimEnd() + '-' + 
