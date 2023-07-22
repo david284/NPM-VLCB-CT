@@ -113,8 +113,8 @@ describe('opcodes_8x tests', function(){
 
 
   // 0x87 - RDGN
-  it("RDGN_ERROR_DIAG test", async function () {
-    winston.info({message: 'UNIT TEST:: BEGIN RDGN_ERROR_DIAG test'});
+  it("RDGN_INVALID_DIAG test", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN RDGN_INVALID_DIAG test'});
     RetrievedValues.setNodeNumber(0);
     // storage for values retrieved from module under test	
     RetrievedValues.addService(1,1,1); // 	"1": { "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": "1" }, 
@@ -124,15 +124,15 @@ describe('opcodes_8x tests', function(){
     // set mock CBUS with diagnostic values to be sent in response to query
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 1, diagnostics 99
-    await tests.test_RDGN_ERROR_DIAG(RetrievedValues, 1, 99);
+    await tests.test_RDGN_INVALID_DIAG(RetrievedValues, 1, 99);
     winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
-    winston.info({message: 'UNIT TEST: RDGN_ERROR_DIAG ended'});
+    winston.info({message: 'UNIT TEST: RDGN_INVALID_DIAG ended'});
   })
 
   // 0x87 - RDGN
-  it("RDGN_ERROR_SERVICE test", async function () {
-    winston.info({message: 'UNIT TEST:: BEGIN RDGN_ERROR_SERVICE test'});
+  it("RDGN_INVALID_SERVICE test", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN RDGN_INVALID_SERVICE test'});
     RetrievedValues.setNodeNumber(0);
     // storage for values retrieved from module under test	
     RetrievedValues.addService(1,1,1); // 	"1": { "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": "1" }, 
@@ -142,10 +142,10 @@ describe('opcodes_8x tests', function(){
     // set mock CBUS with diagnostic values to be sent in response to query
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
-    await tests.test_RDGN_ERROR_SERVICE(RetrievedValues, 5, 0);
+    await tests.test_RDGN_INVALID_SERVICE(RetrievedValues, 5, 0);
     winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
-    winston.info({message: 'UNIT TEST: RDGN_ERROR_SERVICE ended'});
+    winston.info({message: 'UNIT TEST: RDGN_INVALID_SERVICE ended'});
   })
 
   
@@ -161,7 +161,7 @@ describe('opcodes_8x tests', function(){
     // set mock CBUS with diagnostic values to be sent in response to query
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
-    await tests.test_RDGN_ERROR_SERVICE(RetrievedValues, 5, 0);
+    await tests.test_RDGN_SHORT(RetrievedValues, 5, 0);
     winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RDGN_SHORT ended'});

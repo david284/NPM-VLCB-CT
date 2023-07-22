@@ -327,7 +327,11 @@ class mock_CbusNetwork {
             case '87': //RDGN
               winston.debug({message: 'Mock CBUS Network: received RDGN'});
               // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-              this.outputDGN(cbusMsg.nodeNumber, cbusMsg.ServiceIndex, cbusMsg.DiagnosticCode) 
+              if (cbusMsg.encoded.length != 18) {
+                this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+              } else {
+                this.outputDGN(cbusMsg.nodeNumber, cbusMsg.ServiceIndex, cbusMsg.DiagnosticCode) 
+              }
               break;
             case '90': //ACON
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>

@@ -90,10 +90,10 @@ class opcodes_8x {
 	} // end Test_RDGN
 
 
-	// 0x87 - RDGN_ERROR_DIAG
-	test_RDGN_ERROR_DIAG(RetrievedValues, ServiceIndex, DiagnosticCode) {
+	// 0x87 - RDGN_INVALID_DIAG
+	test_RDGN_INVALID_DIAG(RetrievedValues, ServiceIndex, DiagnosticCode) {
 		return new Promise(function (resolve, reject) {
-			winston.debug({message: 'VLCB: BEGIN RDGN_ERROR_DIAG test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
+			winston.debug({message: 'VLCB: BEGIN RDGN_INVALID_DIAG test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
 			// now create message and start test
@@ -120,7 +120,7 @@ class opcodes_8x {
 						}
 					});
 				}
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR_DIAG');
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_DIAG');
 				resolve();
 				;} , 100
 			);
@@ -128,10 +128,10 @@ class opcodes_8x {
 	} // end test_RDGN_ERROR_DIAG
 
 
-	// 0x87 - RDGN_ERROR_SERVICE
-	test_RDGN_ERROR_SERVICE(RetrievedValues, ServiceIndex, DiagnosticCode) {
+	// 0x87 - RDGN_INVALID_SERVICE
+	test_RDGN_INVALID_SERVICE(RetrievedValues, ServiceIndex, DiagnosticCode) {
 		return new Promise(function (resolve, reject) {
-			winston.debug({message: 'VLCB: BEGIN RDGN_ERROR_SERVICE test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
+			winston.debug({message: 'VLCB: BEGIN RDGN_INVALID_SERVICE test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
 			// now create message and start test
@@ -158,7 +158,7 @@ class opcodes_8x {
 						}
 					});
 				}
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR_SERVICE');
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_SERVICE');
 				resolve();
 				;} , 100
 			);
