@@ -52,7 +52,7 @@ class MinimumNodeServiceTests{
 				}
 				
 				// now test the last node parameter + 1, expecting an error message
-				await this.opcodes_7x.test_RQNPN_ERROR(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
+				await this.opcodes_7x.test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
 
 				// now test a short RQNPN message, expecting an error message
 				await this.opcodes_7x.test_RQNPN_SHORT(RetrievedValues, module_descriptor, 1);
@@ -63,7 +63,7 @@ class MinimumNodeServiceTests{
 								
 				// test the error returned with invalid service index
 				// so use reported maximum service index plus 1 for service index
-				await this.opcodes_7x.test_RQSD_ERROR(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1);
+				await this.opcodes_7x.test_RQSD_INVALID_SERVICE(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1);
 								
 				// test the error returned with short message
 				await this.opcodes_7x.test_RQSD_SHORT(RetrievedValues, 1);
@@ -72,7 +72,7 @@ class MinimumNodeServiceTests{
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
 
 				// request the diagnostics for an invalid service, test the error return
-				await this.opcodes_8x.test_RDGN_ERROR_SERVICE(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1, 0);
+				await this.opcodes_8x.test_RDGN_INVALID_SERVICE(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1, 0);
 
 				// request the diagnostics with a short message, expect an error
 				await this.opcodes_8x.test_RDGN_SHORT(RetrievedValues, 0, 0);
@@ -95,7 +95,7 @@ class MinimumNodeServiceTests{
 						// test the error returned with invalid diagnostic code
 						// use MaxDiagnosticCode + 1 as diagnosticCode, but only if it has been reported
 						if (RetrievedValues.data.Services[key].MaxDiagnosticCode != undefined){
-							await this.opcodes_8x.test_RDGN_ERROR_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode + 1);
+							await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode + 1);
 						} else {
 							winston.info({message: 'VLCB: test_RDGN_ERROR_DIAG test skipped - no reported diagnostic codes'});
 						}				

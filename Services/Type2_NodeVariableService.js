@@ -47,7 +47,7 @@ class NodeVariableServiceTests {
 				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value);
 				
 				// now test the last node variable + 1, expecting an error message
-				await this.opcodes_7x.test_NVRD_ERROR(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
+				await this.opcodes_7x.test_NVRD_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
 				
 				// now test a short message, expecting an error message
 				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
