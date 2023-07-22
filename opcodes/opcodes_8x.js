@@ -96,10 +96,6 @@ class opcodes_8x {
 			winston.debug({message: 'VLCB: BEGIN RDGN_ERROR_DIAG test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
-			//
-			// should be single message, so standard timeout
-			var RDGN_timeout = 100;
-			
 			// now create message and start test
 			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
 			this.network.write(msgData);
@@ -111,7 +107,7 @@ class opcodes_8x {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-								winston.debug({message: 'VLCB: RDGN_ERROR_DIAG: GRSP received - code ' + msg.result});
+								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
 								if (msg.result == GRSP.InvalidDiagnosticCode) {
 									this.hasTestPassed = true;
 								} else {
@@ -124,18 +120,95 @@ class opcodes_8x {
 						}
 					});
 				}
-		
-				var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR ' + testType);
-		
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR_DIAG');
 				resolve();
-				;} , RDGN_timeout
+				;} , 100
 			);
 		}.bind(this));
-	} // end Test_RDGN
+	} // end test_RDGN_ERROR_DIAG
 
-}
+
+	// 0x87 - RDGN_ERROR_SERVICE
+	test_RDGN_ERROR_SERVICE(RetrievedValues, ServiceIndex, DiagnosticCode) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN RDGN_ERROR_SERVICE test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+			// now create message and start test
+			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+			this.network.write(msgData);
+			setTimeout(()=>{
+				if (this.network.messagesIn.length > 0){
+					this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+							// ok - it's the right node
+							// so expecting error message back, not DGN
+							if (msg.mnemonic == "GRSP"){
+								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
+								if (msg.result == GRSP.InvalidService) {
+									this.hasTestPassed = true;
+								} else {
+									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
+								}
+							}
+							if (msg.mnemonic == "DGN"){
+								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
+							}
+						}
+					});
+				}
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_ERROR_SERVICE');
+				resolve();
+				;} , 100
+			);
+		}.bind(this));
+	} // end test_RDGN_ERROR_SERVICE
+
+
+	// 0x87 - RDGN_SHORT
+	test_RDGN_SHORT(RetrievedValues, ServiceIndex, DiagnosticCode) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN RDGN_SHORT test - ServiceIndex ' + ServiceIndex + " Diagnostic Code " + DiagnosticCode});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+			// now create message and start test
+			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+      // :SB780N8700000163;
+      // 123456789012345678
+			// truncate the 18 byte message to remove the node variable - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,15) + ';'
+			this.network.write(msgData);
+			setTimeout(()=>{
+				if (this.network.messagesIn.length > 0){
+					this.network.messagesIn.forEach(element => {
+						var msg = cbusLib.decode(element);
+						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+							// ok - it's the right node
+							// so expecting error message back, not DGN
+							if (msg.mnemonic == "GRSP"){
+								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
+								if (msg.result == GRSP.Invalid_Command) {
+									this.hasTestPassed = true;
+								} else {
+									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
+								}
+							}
+							if (msg.mnemonic == "DGN"){
+								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
+							}
+						}
+					});
+				}
+				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_SHORT');
+				resolve();
+				;} , 100
+			);
+		}.bind(this));
+	} // end test_RDGN_SHORT
+
+
+} // end class
 
 module.exports = {
     opcodes_8x: opcodes_8x

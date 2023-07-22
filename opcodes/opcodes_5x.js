@@ -82,18 +82,8 @@ class opcodes_5x {
             var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
             this.network.write(msgData);
             setTimeout(()=>{
-                /*
-                // get uptime diagnostic code from MNS service - but need to find serviceIndex for MNS first
-                var serviceIndex
-                for (var key in RetrievedValues.data["Services"]) {
-                    var serviceType = RetrievedValues.data["Services"][key]["ServiceType"];
-                    if (serviceType == 1 ) {
-                        serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];
-                    }
-                }
-                */
                 if (serviceIndex) {
-                    // get all diagnostics for MNS service
+                    // get all diagnostics for MNS service, so we can check uptime has been reset
                     winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
                     var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
                     this.network.write(msgData);

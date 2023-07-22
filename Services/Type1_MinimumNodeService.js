@@ -71,6 +71,12 @@ class MinimumNodeServiceTests{
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
 
+				// request the diagnostics for an invalid service, test the error return
+				await this.opcodes_8x.test_RDGN_ERROR_SERVICE(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1, 0);
+
+				// request the diagnostics with a short message, expect an error
+				await this.opcodes_8x.test_RDGN_SHORT(RetrievedValues, 0, 0);
+
 				// now do MNS specific service tests, that rely on the serviceIndex value
 				for (var key in RetrievedValues.data["Services"]) {
 					var serviceIndex = RetrievedValues.data["Services"][key]["ServiceIndex"];

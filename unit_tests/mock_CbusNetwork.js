@@ -325,18 +325,10 @@ class mock_CbusNetwork {
 								}
 								break;
             case '87': //RDGN
-                winston.debug({message: 'Mock CBUS Network: received RDGN'});
-                // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-							if (cbusMsg.ServiceIndex == 0){
-								for (var key in this.DGN_Outputs) {
-									winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
-									this.outputDGN(cbusMsg.nodeNumber, 
-										this.DGN_Outputs[key].ServiceIndex, 
-										this.DGN_Outputs[key].DiagnosticCode, 
-										this.DGN_Outputs[key].DiagnosticValue);
-								}
-							}
-							break;
+              winston.debug({message: 'Mock CBUS Network: received RDGN'});
+              // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
+              this.outputDGN(cbusMsg.nodeNumber, cbusMsg.ServiceIndex, cbusMsg.DiagnosticCode) 
+              break;
             case '90': //ACON
                 // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
                 winston.debug({message: 'Mock CBUS Network: received ACON'});
@@ -627,10 +619,47 @@ class mock_CbusNetwork {
 
 
 	// C7
-	outputDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue) {
-		/* // DGN Format: [<MjPri><MinPri=3><CANID>]<C7><NN hi><NN lo><ServiceIndex><DiagnosticCode><DiagnosticValue> */
-		var msgData = cbusLib.encodeDGN(nodeNumber, ServiceIndex, DiagnosticCode, DiagnosticValue);
-    this.broadcast(msgData)
+	outputDGN(nodeNumber, ServiceIndex, DiagnosticCode) {
+    if (ServiceIndex == 0){
+      for (var key in this.DGN_Outputs) {
+        winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});		
+        var msgData = cbusLib.encodeDGN(nodeNumber, 
+          this.DGN_Outputs[key].ServiceIndex,
+          this.DGN_Outputs[key].DiagnosticCode, 
+          this.DGN_Outputs[key].DiagnosticValue);
+          this.broadcast(msgData);
+      }
+    } else {
+      // requesting individual service, so get count of service entries
+      var count = 0;
+      for (var index in this.Services) { count++; }
+      if(ServiceIndex > count) {
+        this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidService);
+      } else {
+        if (DiagnosticCode == 0) {
+          for (var key in this.DGN_Outputs) {
+            var msgData = cbusLib.encodeDGN(nodeNumber, 
+              this.DGN_Outputs[key].ServiceIndex,
+              this.DGN_Outputs[key].DiagnosticCode, 
+              this.DGN_Outputs[key].DiagnosticValue);
+              this.broadcast(msgData);
+          }
+        } else {
+          // requesting individual service, so get count of service entries
+          var diagCount = 0;
+          for (var index in this.Services[ServiceIndex].diagnostics) { diagCount++; }
+          if (DiagnosticCode > diagCount) {
+            this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidDiagnosticCode);
+          } else {
+            var msgData = cbusLib.encodeDGN(nodeNumber, 
+              ServiceIndex,
+              DiagnosticCode, 
+              this.Services[ServiceIndex].diagnostics[DiagnosticCode].DiagnosticValue);
+              this.broadcast(msgData);
+          }
+        }
+      }
+    }
 	}
 
 	// D0
