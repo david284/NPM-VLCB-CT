@@ -86,11 +86,11 @@ class opcodes_7x {
   }
 
 	
-  // 0x71 - NVRD_ERROR
+  // 0x71 - NVRD
 	// request a node variable index that doesn't exist, should get a CMDERR & GRSP back
-  test_NVRD_ERROR(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
+  test_NVRD_INVALID_INDEX(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NVRD_ERROR test - serviceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN NVRD_INVALID_INDEX test - serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
       var timeout = 100;
       var msgBitField = 0;	// bit field to capture when each message has been received
@@ -109,14 +109,14 @@ class opcodes_7x {
                   if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
-                    winston.info({message: 'VLCB: NVRD_ERROR: CMDERR wrong error number'}); 
+                    winston.info({message: 'VLCB: NVRD_INVALID_INDEX: CMDERR wrong error number'}); 
                   }
                 }
                 if (msg.mnemonic == "GRSP"){
                   if (msg.result == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
-                    winston.info({message: 'VLCB: NVRD_ERROR: GRSP wrong result number'}); 
+                    winston.info({message: 'VLCB: NVRD_INVALID_INDEX: GRSP wrong result number'}); 
                   }
                 }
               }
@@ -128,12 +128,12 @@ class opcodes_7x {
             this.hasTestPassed = true;
           }
 
-          utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_ERROR ');
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX ');
           
           resolve();
           ;} , timeout );
         } else {
-          winston.info({message: 'VLCB: **** NVRD_ERROR Test Aborted **** Node Variable Index 0 requested'});				
+          winston.info({message: 'VLCB: **** NVRD_INVALID_INDEX Test Aborted **** Node Variable Index 0 requested'});				
         }
       }.bind(this));
   }
@@ -243,7 +243,7 @@ class opcodes_7x {
  
     
 	// 0x73 - RQNPN - out of bounds test
-  test_RQNPN_ERROR(RetrievedValues, module_descriptor, parameterIndex) {
+  test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, parameterIndex) {
     return new Promise(function (resolve, reject) {
       winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
       this.hasTestPassed = false;
@@ -260,18 +260,18 @@ class opcodes_7x {
                 if (msg.errorNumber == GRSP.InvalidParameterIndex) {
                   msgBitField |= 1;			// set bit 0
                 } else {
-                  winston.info({message: 'VLCB: RQNPN_ERROR: CMDERR wrong error number'}); 
+                  winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: CMDERR wrong error number'}); 
                 }
               }
               if (msg.mnemonic == "GRSP"){
                 if (msg.result == GRSP.InvalidParameterIndex) {
                   msgBitField |= 1;			// set bit 0
                 } else {
-                  winston.info({message: 'VLCB: RQNPN_ERROR: GRSP wrong result number'}); 
+                  winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: GRSP wrong result number'}); 
                 }
               }
               if (msg.mnemonic == "PARAN"){
-                winston.info({message: 'VLCB: RQNPN_ERROR: unexpected PARAN response for index ' + parameterIndex}); 
+                winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: unexpected PARAN response for index ' + parameterIndex}); 
               }
             }
           });
@@ -281,7 +281,7 @@ class opcodes_7x {
           // either message has been received
           this.hasTestPassed = true;
         }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN ERROR');
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX ERROR');
         resolve();
       ;} , 100 );
     }.bind(this));
@@ -437,10 +437,10 @@ class opcodes_7x {
   }
     
 	
-	// 0x78 - RQSD_ERROR - service index out of bounds test
-  test_RQSD_ERROR(RetrievedValues, ServiceIndex) {
+	// 0x78 - RQSD_INVALID_SERVICE - service index out of bounds test
+  test_RQSD_INVALID_SERVICE(RetrievedValues, ServiceIndex) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN RQSD test - serviceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN RQSD_INVALID_SERVICE test - serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeRQSD(RetrievedValues.getNodeNumber(), ServiceIndex);
@@ -455,20 +455,20 @@ class opcodes_7x {
               if (msg.mnemonic == "GRSP"){
                 if (msg.result == GRSP.InvalidService) {
                   this.hasTestPassed = true;
-                  winston.info({message: 'VLCB:      Service Discovery : GRSP received as expected'});
+                  winston.info({message: 'VLCB:      RQSD_INVALID_SERVICE : GRSP received as expected'});
                 } else {
-                  winston.info({message: 'VLCB:      Service Discovery : unexpected GRSP code ' + msg.result});
+                  winston.info({message: 'VLCB:      RQSD_INVALID_SERVICE : unexpected GRSP code ' + msg.result});
                 }
               }
               if (msg.mnemonic == "ESD"){
                 this.hasTestPassed = false;
                 RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
-                winston.info({message: 'VLCB:      Service Discovery : unexpected ESD message'});
+                winston.info({message: 'VLCB:      RQSD_INVALID_SERVICE : unexpected ESD message'});
               }
             }
           });
         }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_ERROR (ServiceIndex ' + ServiceIndex + ')');
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_INVALID_SERVICE (ServiceIndex ' + ServiceIndex + ')');
         resolve();
       } , this.response_time );
     }.bind(this));

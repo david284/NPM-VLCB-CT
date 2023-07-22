@@ -110,15 +110,15 @@ describe('opcodes_7x tests', function(){
 	})
 
 
-  // 0x71 - NVRD_ERROR
-	it("NVRD_ERROR test", async function () {
-		winston.info({message: 'UNIT TEST:: BEGIN NVRD_ERROR test'});
+  // 0x71 - NVRD
+	it("NVRD_INVALID_INDEX test", async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN NVRD_INVALID_INDEX test'});
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-  	await tests.test_NVRD_ERROR(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
-    winston.info({message: 'UNIT TEST: NVRD_ERROR ended'});
+  	await tests.test_NVRD_INVALID_INDEX(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+    winston.info({message: 'UNIT TEST: NVRD_INVALID_INDEX ended'});
     expect(tests.hasTestPassed).to.equal(true);
 	})
 
@@ -164,14 +164,14 @@ describe('opcodes_7x tests', function(){
 	})
 
 
-  // 0x73 - RQNPN_ERROR
-  it("RQNPN_ERROR test", async function () {
-		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_ERROR test'});
+  // 0x73 - RQNPN_INVALID_INDEX
+  it("RQNPN_INVALID_INDEX test", async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_INVALID_INDEX test'});
 		RetrievedValues.setNodeNumber(0);
-  	await tests.test_RQNPN_ERROR(RetrievedValues, test_module_descriptor, 21);
+  	await tests.test_RQNPN_INVALID_INDEX(RetrievedValues, test_module_descriptor, 21);
     expect(tests.hasTestPassed).to.equal(true);
 //		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
-		winston.info({message: 'UNIT TEST:: END RQNPN_ERROR test'});
+		winston.info({message: 'UNIT TEST:: END RQNPN_INVALID_INDEX test'});
 	})
 
 
@@ -260,15 +260,15 @@ describe('opcodes_7x tests', function(){
 	})
 
 
-  // 0x78 - RQSD_ERROR
-  it("RQSD_ERROR test",  async function () {
-		winston.info({message: 'UNIT TEST:: BEGIN RQSD_ERROR test'});
+  // 0x78 - RQSD_INVALID_SERVICE
+  it("RQSD_INVALID_SERVICE test",  async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQSD_INVALID_SERVICE test'});
 		mock_Cbus.Services = Services;
 		// storage for values retrieved from module under test	
 		RetrievedValues.setNodeNumber(0);
-    await tests.test_RQSD_ERROR(RetrievedValues, 4);
+    await tests.test_RQSD_INVALID_SERVICE(RetrievedValues, 4);
     expect(tests.hasTestPassed).to.equal(true);
-    winston.info({message: 'UNIT TEST: RQSD_ERROR ended'});
+    winston.info({message: 'UNIT TEST: RQSD_INVALID_SERVICE ended'});
 	})
 
   // 0x78 - RQSD_SHORT
