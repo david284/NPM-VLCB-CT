@@ -100,10 +100,10 @@ describe('opcodes_5x tests', function(){
   function GetTestCase_NNRST() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 1;
+			if (a == 1) arg1 = 0;
 			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 2;
-			testCases.push({'NNRST':arg1});
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
 		}
 		return testCases;
 	}
@@ -111,9 +111,10 @@ describe('opcodes_5x tests', function(){
 	// 0x5E - NNRST
 	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
-		RetrievedValues.setNodeNumber(1);
+		RetrievedValues.setNodeNumber(value.nodeNumber);
 
 		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
+		// so need to pass in the service index for the MNS service - 1 in this case
 		await tests.test_NNRST(RetrievedValues, 1);
 
 		winston.info({message: 'UNIT TEST:: END NNRST test'});
