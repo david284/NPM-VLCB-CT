@@ -262,7 +262,7 @@ class mock_CbusNetwork {
                 // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
                 winston.debug({message: 'Mock CBUS Network: received NVRD'});
 								if (cbusMsg.encoded.length < 16) {
-									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
 								} else {
 									var nodeVariables = this.modules[0].nodeVariables;
 									for (var i=0; i< nodeVariables.length; i++){
@@ -271,8 +271,8 @@ class mock_CbusNetwork {
 										}
 									}
 									if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
-										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
-										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
+										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex);
+										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
 									}
 								}
                 break;
@@ -280,7 +280,7 @@ class mock_CbusNetwork {
                 // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
                 winston.debug({message: 'Mock CBUS Network: received RQNPN'});
 								if (cbusMsg.encoded.length < 16) {
-									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
 								} else if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
 										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
 										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
@@ -296,28 +296,34 @@ class mock_CbusNetwork {
             case '76': //MODE
                 // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
                 winston.debug({message: 'Mock CBUS Network: received MODE'});
-				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+								this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
                 break;
             case '78': //RQSD
                 winston.debug({message: 'Mock CBUS Network: received RQSD'});
                 // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
-				if (cbusMsg.ServiceIndex == 0) {
-					// send count of service entries first
-					var count = 0;
-					for (var index in this.Services) { count++; }
-					this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
-					// now send a message for each actual service entry
-					for (var index in this.Services) {
-						this.outputSD(cbusMsg.nodeNumber, 
-							this.Services[index].ServiceIndex,
-							this.Services[index].ServiceType,
-							this.Services[index].ServiceVersion);
-					}
-				} else
-				{
-					this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
-				}
-				break;
+								// get count of service entries first
+								var count = 0;
+								for (var index in this.Services) { count++; }
+								if (cbusMsg.encoded.length < 16) {
+									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+								} else if (cbusMsg.ServiceIndex == 0) {
+									this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
+									// now send a message for each actual service entry
+									for (var index in this.Services) {
+										this.outputSD(cbusMsg.nodeNumber, 
+											this.Services[index].ServiceIndex,
+											this.Services[index].ServiceType,
+											this.Services[index].ServiceVersion);
+									}
+								} else
+								{
+									if(cbusMsg.ServiceIndex > count) {
+										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, cbusMsg.ServiceIndex, GRSP.InvalidService);
+									} else {
+										this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
+									}
+								}
+								break;
             case '87': //RDGN
                 winston.debug({message: 'Mock CBUS Network: received RDGN'});
                 // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>

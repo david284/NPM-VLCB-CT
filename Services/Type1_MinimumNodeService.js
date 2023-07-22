@@ -65,6 +65,9 @@ class MinimumNodeServiceTests{
 				// so use reported maximum service index plus 1 for service index
 				await this.opcodes_7x.test_RQSD_ERROR(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1);
 								
+				// test the error returned with short message
+				await this.opcodes_7x.test_RQSD_SHORT(RetrievedValues, 1);
+								
 				// request all the diagnostics, for all services, not just MNS
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
 

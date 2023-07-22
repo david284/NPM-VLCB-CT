@@ -253,12 +253,35 @@ describe('opcodes_7x tests', function(){
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
 		mock_Cbus.Services = Services;
 		// storage for values retrieved from module under test	
-		RetrievedValues.setNodeNumber(0);
+		RetrievedValues.setNodeNumber(value.nodeNumber);
     await tests.test_RQSD(RetrievedValues, value.ServiceIndex);
-    winston.info({message: 'UNIT TEST: RQSD ended'});
-    winston.info({message: 'UNIT TEST: retrieved_values ' + JSON.stringify(RetrievedValues.data, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
+    winston.info({message: 'UNIT TEST: RQSD ended'});
 	})
+
+
+  // 0x78 - RQSD_ERROR
+  it("RQSD_ERROR test",  async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQSD_ERROR test'});
+		mock_Cbus.Services = Services;
+		// storage for values retrieved from module under test	
+		RetrievedValues.setNodeNumber(0);
+    await tests.test_RQSD_ERROR(RetrievedValues, 4);
+    expect(tests.hasTestPassed).to.equal(true);
+    winston.info({message: 'UNIT TEST: RQSD_ERROR ended'});
+	})
+
+  // 0x78 - RQSD_SHORT
+  it("RQSD_SHORT test",  async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN RQSD_SHORT test'});
+		mock_Cbus.Services = Services;
+		// storage for values retrieved from module under test	
+		RetrievedValues.setNodeNumber(0);
+    await tests.test_RQSD_SHORT(RetrievedValues, 1);
+    expect(tests.hasTestPassed).to.equal(true);
+    winston.info({message: 'UNIT TEST: RQSD_SHORT ended'});
+	})
+
 
 
 

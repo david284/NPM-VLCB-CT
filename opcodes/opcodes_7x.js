@@ -106,14 +106,14 @@ class opcodes_7x {
               var msg = cbusLib.decode(element);
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "CMDERR"){
-                  if (msg.errorNumber == GRSP.InvalidParameterIndex) {
+                  if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
                     winston.info({message: 'VLCB: NVRD_ERROR: CMDERR wrong error number'}); 
                   }
                 }
                 if (msg.mnemonic == "GRSP"){
-                  if (msg.result == GRSP.InvalidParameterIndex) {
+                  if (msg.result == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
                     winston.info({message: 'VLCB: NVRD_ERROR: GRSP wrong result number'}); 
@@ -146,7 +146,6 @@ class opcodes_7x {
       winston.debug({message: 'VLCB: BEGIN NVRD_SHORT test - serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
       var timeout = 100;
-      var msgBitField = 0;	// bit field to capture when each message has been received
       // An index of 0 is invalid for this test...
       if (NodeVariableIndex != 0){ 
         this.hasTestPassed = false;
@@ -162,27 +161,15 @@ class opcodes_7x {
             this.network.messagesIn.forEach(element => {
               var msg = cbusLib.decode(element);
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-                if (msg.mnemonic == "CMDERR"){
-                  if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
-                    msgBitField |= 1;			// set bit 0
-                  } else {
-                    winston.info({message: 'VLCB: NVRD_SHORT: CMDERR wrong error number'}); 
-                  }
-                }
                 if (msg.mnemonic == "GRSP"){
-                  if (msg.result == GRSP.InvalidNodeVariableIndex) {
-                    msgBitField |= 1;			// set bit 0
+                  if (msg.result == GRSP.Invalid_Command) {
+                    this.hasTestPassed = true;
                   } else {
                     winston.info({message: 'VLCB: NVRD_SHORT: GRSP wrong result number'}); 
                   }
                 }
               }
             });
-          }
-//					if (msgBitField == 3) {
-          if (msgBitField == 1) {
-            // either message has been received
-            this.hasTestPassed = true;
           }
 
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_SHORT ');
@@ -306,7 +293,6 @@ class opcodes_7x {
     return new Promise(function (resolve, reject) {
       winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
       this.hasTestPassed = false;
-      var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
 			// :SB780N7303E815;
@@ -319,16 +305,9 @@ class opcodes_7x {
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-              if (msg.mnemonic == "CMDERR"){
-                if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
-                  msgBitField |= 1;			// set bit 0
-                } else {
-                  winston.info({message: 'VLCB: RQNPN_SHORT: CMDERR wrong error number'}); 
-                }
-              }
               if (msg.mnemonic == "GRSP"){
-                if (msg.result == GRSP.InvalidNodeVariableIndex) {
-                  msgBitField |= 1;			// set bit 0
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
                 } else {
                   winston.info({message: 'VLCB: RQNPN_SHORT: GRSP wrong result number'}); 
                 }
@@ -338,11 +317,6 @@ class opcodes_7x {
               }
             }
           });
-        }
-        //					if (msgBitField == 3) {
-        if (msgBitField == 1) {
-          // either message has been received
-          this.hasTestPassed = true;
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_SHORT');
         resolve();
@@ -481,7 +455,7 @@ class opcodes_7x {
               if (msg.mnemonic == "GRSP"){
                 if (msg.result == GRSP.InvalidService) {
                   this.hasTestPassed = true;
-                  winston.info({message: 'VLCB:      Service Discovery : GRSP invalid parameter received as expected'});
+                  winston.info({message: 'VLCB:      Service Discovery : GRSP received as expected'});
                 } else {
                   winston.info({message: 'VLCB:      Service Discovery : unexpected GRSP code ' + msg.result});
                 }
@@ -495,6 +469,48 @@ class opcodes_7x {
           });
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_ERROR (ServiceIndex ' + ServiceIndex + ')');
+        resolve();
+      } , this.response_time );
+    }.bind(this));
+  }
+    	
+
+	// 0x78 RQSD_SHORT - short message
+  test_RQSD_SHORT(RetrievedValues, ServiceIndex) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN RQSD_SHORT test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeRQSD(RetrievedValues.getNodeNumber(), ServiceIndex);
+			// :SB780N78000004;
+			// 1234567890123456
+			// truncate the 16 byte message to remove the service index - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,13) + ';'
+      this.network.write(msgData);
+      setTimeout(()=>{
+        var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              // expecting a GRSP message
+              if (msg.mnemonic == "GRSP"){
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                  winston.info({message: 'VLCB:      Service Discovery : GRSP received as expected'});
+                } else {
+                  winston.info({message: 'VLCB:      Service Discovery : unexpected GRSP code ' + msg.result});
+                }
+              }
+              if (msg.mnemonic == "ESD"){
+                this.hasTestPassed = false;
+                RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
+                winston.info({message: 'VLCB:      Service Discovery : unexpected ESD message'});
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_SHORT');
         resolve();
       } , this.response_time );
     }.bind(this));
