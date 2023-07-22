@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
+const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 
 // Scope:
@@ -88,7 +89,13 @@ class opcodes_4x {
 							GRSPreceived = true;
 							if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 								if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-									this.hasTestPassed = true;
+                                    if (msg.result == GRSP.OK) {
+    									this.hasTestPassed = true;
+                                    } else {
+                                        winston.info({message: 'VLCB: GRSP result:'
+										+ '\n  Expected ' + GRSP.OK
+										+ '\n  Actual ' + msg.result}); 
+                                    }
 								}else {
 									winston.info({message: 'VLCB: GRSP requestOpCode:'
 										+ '\n  Expected ' + cbusLib.decode(msgData).opCode

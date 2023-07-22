@@ -13,7 +13,14 @@ const GRSP = {
 	InvalidNodeVariableIndex: 10,
 	InvalidEventVariableValue: 11,
 	InvalidNodeVariableValue: 12,
-	// MNS specific codes
+
+	INV_CMD: 100,
+	Invalid_Command: 101,
+	Invalid_parameter: 102,
+	invalid_state: 103,
+	Invalid_Command: 104,
+	No_EV: 105,
+
 	InvalidService: 252,
 	InvalidDiagnosticCode: 253,
 	UnknownNVM: 254

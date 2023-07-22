@@ -54,6 +54,9 @@ class MinimumNodeServiceTests{
 				// now test the last node parameter + 1, expecting an error message
 				await this.opcodes_7x.test_RQNPN_ERROR(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
 
+				// now test a short RQNPN message, expecting an error message
+				await this.opcodes_7x.test_RQNPN_SHORT(RetrievedValues, module_descriptor, 1);
+				
 				// this will get all the services that this module supports
 				// 
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
