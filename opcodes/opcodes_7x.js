@@ -114,7 +114,7 @@ class opcodes_7x {
                 }
                 if (msg.mnemonic == "GRSP"){
                   if (msg.result == GRSP.InvalidNodeVariableIndex) {
-                    msgBitField |= 1;			// set bit 0
+                    msgBitField |= 2;			// set bit 1
                   } else {
                     winston.info({message: 'VLCB: NVRD_INVALID_INDEX: GRSP wrong result number'}); 
                   }
@@ -122,11 +122,14 @@ class opcodes_7x {
               }
             });
           }
-  //					if (msgBitField == 3) {
-          if (msgBitField == 1) {
-            // either message has been received
+  				if (msgBitField == 3) {
+            // both messages has been received
             this.hasTestPassed = true;
-          }
+          } else {
+            if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both CMDERR & GRSP messages missing/incorrect'}); }
+            if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
+            if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
+            }
 
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX ');
           
@@ -265,7 +268,7 @@ class opcodes_7x {
               }
               if (msg.mnemonic == "GRSP"){
                 if (msg.result == GRSP.InvalidParameterIndex) {
-                  msgBitField |= 1;			// set bit 0
+                  msgBitField |= 2;			// set bit 1
                 } else {
                   winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: GRSP wrong result number'}); 
                 }
@@ -276,12 +279,15 @@ class opcodes_7x {
             }
           });
         }
-        //					if (msgBitField == 3) {
-        if (msgBitField == 1) {
-          // either message has been received
+        if (msgBitField == 3) {
+          // both messages has been received
           this.hasTestPassed = true;
+        } else {
+          if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both CMDERR & GRSP messages missing/incorrect'}); }
+          if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
+          if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
         }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX ERROR');
+      utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX');
         resolve();
       ;} , 100 );
     }.bind(this));
