@@ -115,7 +115,7 @@ class opcodes_4x {
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
 				
                 resolve();
-                ;} , this.response_time
+                ;} , 1000
             );
         }.bind(this));
     }
