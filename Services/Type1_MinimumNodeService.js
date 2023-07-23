@@ -106,9 +106,9 @@ class MinimumNodeServiceTests{
 					}
 				}
 
-				// NNRSM - node return to manufaturer defaults - just check we get an acknowledge (GRSP) to this command
-//				await this.opcodes_4x.test_NNRSM(RetrievedValues);
-//				winston.info({message: 'VLCB: MNS : Skipping NNRSM as not fully compliant'});
+				// NNRSM - node return to manufaturer defaults - should retain node number
+        // just check we get an acknowledge (GRSP) to this command
+        await this.opcodes_4x.test_NNRSM(RetrievedValues);
 				
 				//
 				// Add more tests.......
