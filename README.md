@@ -3,7 +3,8 @@
 This is an application to test conformance with the VLCB specification   
 More information about VLCB can be found here -> https://github.com/Versatile-LCB/VLCB-documents.git   
 
-The application is written in javascript, and uses the Node.js cross-platform runtime environment to run the javascript on the computer being used
+The application is written in javascript, and uses the Node.js cross-platform runtime environment to run the javascript on the computer being used   
+As it's a remote unit being tested, typical 'off-the-shelf' unit test frameworks are not suitable for this (but see unit-tests section)
 
 
 # Requirements
@@ -54,14 +55,22 @@ As well as the screen display of the results, there are files saved in the folde
 'Retrieved Values.txt' is a copy of the JSON used internally by the application to hold information retrieved from the unit (quite readable)   
 Historic copies of these files are also stored in a sub-folder for each specific module, by date&time, so previous runs can be accessed   
 
-# Module Descriptor File
-The test aims to verify some values using a module-descriptor file thats specific to the module & it's firmware version   
-It's quite likely this module_descriptor file doesn't exist for the module being tested,   
-but the application will create a basic file if one doesn't exist   
-The file is in jSON format, so modifying the contents to suit is straighforward if required   
+# Documentation
+There is a documentation folder   
+The code is arranged as test suites, typically a test suite for each service, which contain calls to multiple test cases for that specific service   
+Each use case typically tests one specific behaviour of a single opcode, and will set a pass/fail condition on execution   
+The documentation mirrors this, being composed of test suite documents & use case documents - see following sections on test suites & test cases   
+
+# test suites
+These determine the what test cases (opcodes) are used, the sequence they are called in and the parameters used for the specific service   
+As the code is quite concise and readable, the documentation for these is quite similar to the code, and maybe unnecessary, but it's there for the moment
 
 # Test cases
-The aim is to exercise all combinations of parameters for supported opcodes. Boundary values are used for efficient test cases (see Boundary Value Analysis below).
+The test cases contain the actual logic for the test, with the intention of producing a simple pass/fail result   
+With opcode that provide multiple results (ek - ok, invalid parameter etc..) then there will be a test case for each   
+The documentation uses the given/when/then syntax to declare the intent of the test, without going into the 'how', to minimise as much as possible the burden of keeping it updated   
+As the documentation for each test case is a few lines at most, they are grouped into documents for ranges of opcodes - e.g. '0x1X' for codes 0x10 to 0x1F   
+The aim of the test case is to exercise all combinations of parameters for supported opcodes. Boundary values are used for efficient test cases (see Boundary Value Analysis below).
 
 # Boundary Value Analysis
 Boundary Value Analysis (or Boundary testing) is based on testing the boundary values of valid and invalid partitions (closely related to equivalence partitioning)   
@@ -71,7 +80,16 @@ For example, a byte variable with a valid range of 0 to 100 (and, by implication
 # Single bit test case
 Where the test value requires programatic ordering, e.g. where the value is a less than a whole byte, or occupies multiple bytes, then setting just one bit will validate the ordering & placement of the value. Adding a one bit test to every set of test cases ensures this is never neglected, even if it's strictly not required in some cases.
 
+# Module Descriptor File
+The test aims to verify some values using a module-descriptor file thats specific to the module & it's firmware version   
+It's quite likely this module_descriptor file doesn't exist for the module being tested,   
+but the application will create a basic file if one doesn't exist   
+The file is in jSON format, so modifying the contents to suit is straighforward if required   
+
 # unit-tests
 In order to verify the operation of this conformance test application (i.e. 'test the tests'), there are stand alone unit-tests   
 When run, these check the basic functions are working as expected in isolation, so doesn't need any connection to any actual device   
-These are simply run by using 'npm test', and mostly test the correct handling of each opcode, including error responses   
+These are simply run by using 'npm test', and mostly test the correct handling of each opcode, including error responses 
+As these tests are testing the application itself, then the Mocha javascript test framework is used, in combination with the Chia assertion library   
+https://mochajs.org/   
+https://www.chaijs.com/api/bdd/   
