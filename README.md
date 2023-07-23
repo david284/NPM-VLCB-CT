@@ -89,7 +89,7 @@ The file is in jSON format, so modifying the contents to suit is straighforward 
 # unit-tests
 In order to verify the operation of this conformance test application (i.e. 'test the tests'), there are stand alone unit-tests   
 When run, these check the basic functions are working as expected in isolation, so doesn't need any connection to any actual device   
-These are simply run by using 'npm test', and mostly test the correct handling of each opcode, including error responses 
+These are simply run by using 'npm test', and mostly test the correct handling of each opcode, including error responses   
 As these tests are testing the application itself, then the Mocha javascript test framework is used, in combination with the Chia assertion library   
 https://mochajs.org/   
 https://www.chaijs.com/api/bdd/   
