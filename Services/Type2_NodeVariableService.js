@@ -60,6 +60,11 @@ class NodeVariableServiceTests {
 				// set last node variable with value of 0
 				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
 
+				// set last node variable + 1 with value of 0, expect error response
+				await this.opcodes_9x.test_NVSET_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1, 0);
+
+				// now test a short message, expecting an error message
+				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
 				
 			// now request diagnostics just for this service
 			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);

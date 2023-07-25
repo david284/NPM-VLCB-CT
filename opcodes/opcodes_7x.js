@@ -325,7 +325,7 @@ class opcodes_7x {
                 }
               }
               if (msg.mnemonic == "PARAN"){
-                winston.info({message: 'VLCB: RQNPN_SHORT: unexpected PARAN response for index ' + parameterIndex}); 
+                winston.info({message: 'VLCB:      RQNPN_SHORT: unexpected PARAN response for index ' + parameterIndex}); 
               }
             }
           });

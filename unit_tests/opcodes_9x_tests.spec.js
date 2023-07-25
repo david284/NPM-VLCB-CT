@@ -105,5 +105,26 @@ function GetTestCase_NVSET() {
       winston.info({message: 'UNIT TEST: NVSET ended'});
     })
     
+    // 0x96 - NVSET
+    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+    it("NVSET_INVALID_INDEX", async function () {
+      winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
+      RetrievedValues.setNodeNumber(0);
+      await tests.test_NVSET_SHORT(RetrievedValues, 1, 255, 0);
+      expect(tests.hasTestPassed).to.equal(true);  
+
+      winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
+    })
+
+    // 0x96 - NVSET
+    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+    it("NVSET_SHORT", async function () {
+      winston.info({message: 'UNIT TEST:: BEGIN NVSET_SHORT test'});
+      RetrievedValues.setNodeNumber(0);
+      await tests.test_NVSET_SHORT(RetrievedValues, 1, 1, 0);
+      expect(tests.hasTestPassed).to.equal(true);  
+
+      winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});
+    })
 })
 

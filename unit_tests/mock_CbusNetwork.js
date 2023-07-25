@@ -348,7 +348,15 @@ class mock_CbusNetwork {
             case '96': //NVSET
                 // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
                 winston.debug({message: 'Mock CBUS Network: received NVSET'});
-                this.outputWRACK(cbusMsg.nodeNumber);
+                if (cbusMsg.encoded.length != 18) {
+                  this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+                } else {
+                  if (cbusMsg.nodeVariableIndex < 255) {
+                    this.outputWRACK(cbusMsg.nodeNumber);
+                  } else {
+                    this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex)
+                  }
+                }
                 break;
             case '9C': //REVAL
                 // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
@@ -805,17 +813,17 @@ class CbusModule {
 		this.nodeNumber = nodeNumber;
 		this.setupMode = false;
 		this.parameters = 	[ 	
-      8,		// number of available parameters
+      8,		  // number of available parameters
       165,    // param 1 manufacturer Id
       117,		// param 2 Minor code version
-      0,		// param 3 module Id
-      0,		// param 4 number of supported events
-      0,		// param 5 number of event variables
-      0,		// param 6 number of supported node variables
-      2,		// param 7 major version
-      13,		// param 8 node flags
-      1,		// param 9 cpu type (1 = P18F2480)
-      1,		// param 10 interface type (1 = CAN)
+      0,		  // param 3 module Id
+      0,		  // param 4 number of supported events
+      0,		  // param 5 number of event variables
+      0,		  // param 6 number of supported node variables
+      2,		  // param 7 major version
+      13,		  // param 8 node flags
+      1,		  // param 9 cpu type (1 = P18F2480)
+      1,		  // param 10 interface type (1 = CAN)
       // NODE flags
       // 	Bit 0	: Consumer
       //	Bit 1	: Producer
@@ -824,6 +832,7 @@ class CbusModule {
     ]
     this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
 		this.nodeVariables = [ 8, 1, 2, 3, 4, 5, 6, 7, 8 ];
+    this.parameters[6] = this.nodeVariables.length - 1
 	}
 
 	getStoredEvents() { return this.events}
@@ -881,9 +890,9 @@ class CANTEST extends CbusModule{
 		this.parameters[3] = 52;
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
-        this.setCputType(13);
+    this.setCputType(13);
         
-   		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
 	}
 }
