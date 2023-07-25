@@ -107,11 +107,11 @@ class opcodes_8x {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.InvalidDiagnosticCode) {
 									this.hasTestPassed = true;
 								} else {
-									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidDiagnosticCode}); 
 								}
 							}
 							if (msg.mnemonic == "DGN"){
@@ -145,11 +145,11 @@ class opcodes_8x {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.InvalidService) {
 									this.hasTestPassed = true;
 								} else {
-									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidService}); 
 								}
 							}
 							if (msg.mnemonic == "DGN"){
@@ -187,11 +187,11 @@ class opcodes_8x {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-								winston.info({message: 'VLCB:      GRSP received - code ' + msg.result});
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.Invalid_Command) {
 									this.hasTestPassed = true;
 								} else {
-									winston.info({message: 'VLCB: FAIL wrong error code received ' + msg.result});
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
 								}
 							}
 							if (msg.mnemonic == "DGN"){

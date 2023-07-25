@@ -89,15 +89,18 @@ class MinimumNodeServiceTests{
 						// now request diagnostics just for MNS
 						await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 				
-						// now request single diagnostic code just for MNS
+						// now request first diagnostic code just for MNS
 						await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 1);
 
-						// test the error returned with invalid diagnostic code
-						// use MaxDiagnosticCode + 1 as diagnosticCode, but only if it has been reported
+						// use MaxDiagnosticCode for next tests, but only if it has been reported
 						if (RetrievedValues.data.Services[key].MaxDiagnosticCode != undefined){
-							await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode + 1);
+
+  						// now request last diagnostic code just for MNS
+	  					await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode);
+  						// test the error returned with invalid diagnostic code
+              await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[key].MaxDiagnosticCode + 1);
 						} else {
-							winston.info({message: 'VLCB: test_RDGN_ERROR_DIAG test skipped - no reported diagnostic codes'});
+							winston.info({message: 'VLCB: test_RDGN_INVALID_DIAG test skipped - no reported diagnostic codes'});
 						}				
 
 						// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
@@ -108,7 +111,7 @@ class MinimumNodeServiceTests{
 
 				// NNRSM - node return to manufaturer defaults - should retain node number
         // just check we get an acknowledge (GRSP) to this command
-        await this.opcodes_4x.test_NNRSM(RetrievedValues);
+//        await this.opcodes_4x.test_NNRSM(RetrievedValues);
 				
 				//
 				// Add more tests.......

@@ -106,17 +106,19 @@ class opcodes_7x {
               var msg = cbusLib.decode(element);
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "CMDERR"){
+                  winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
                   if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
-                    winston.info({message: 'VLCB: NVRD_INVALID_INDEX: CMDERR wrong error number'}); 
+                    winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidParameterIndex}); 
                   }
                 }
                 if (msg.mnemonic == "GRSP"){
+                  winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                   if (msg.result == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 2;			// set bit 1
                   } else {
-                    winston.info({message: 'VLCB: NVRD_INVALID_INDEX: GRSP wrong result number'}); 
+                    winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidParameterIndex}); 
                   }
                 }
               }
@@ -165,10 +167,11 @@ class opcodes_7x {
               var msg = cbusLib.decode(element);
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "GRSP"){
+                  winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                   if (msg.result == GRSP.Invalid_Command) {
                     this.hasTestPassed = true;
                   } else {
-                    winston.info({message: 'VLCB: NVRD_SHORT: GRSP wrong result number'}); 
+                    winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
                   }
                 }
               }
@@ -260,21 +263,23 @@ class opcodes_7x {
             var msg = cbusLib.decode(element);
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "CMDERR"){
+                winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
                 if (msg.errorNumber == GRSP.InvalidParameterIndex) {
                   msgBitField |= 1;			// set bit 0
                 } else {
-                  winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: CMDERR wrong error number'}); 
+                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidParameterIndex}); 
                 }
               }
               if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.InvalidParameterIndex) {
                   msgBitField |= 2;			// set bit 1
                 } else {
-                  winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: GRSP wrong result number'}); 
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidParameterIndex}); 
                 }
               }
               if (msg.mnemonic == "PARAN"){
-                winston.info({message: 'VLCB: RQNPN_INVALID_INDEX: unexpected PARAN response for index ' + parameterIndex}); 
+                winston.info({message: 'VLCB:      unexpected PARAN response for index ' + parameterIndex}); 
               }
             }
           });
@@ -312,10 +317,11 @@ class opcodes_7x {
             var msg = cbusLib.decode(element);
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.Invalid_Command) {
                   this.hasTestPassed = true;
                 } else {
-                  winston.info({message: 'VLCB: RQNPN_SHORT: GRSP wrong result number'}); 
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
                 }
               }
               if (msg.mnemonic == "PARAN"){
@@ -459,11 +465,11 @@ class opcodes_7x {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.InvalidService) {
                   this.hasTestPassed = true;
-                  winston.info({message: 'VLCB:      RQSD_INVALID_SERVICE : GRSP received as expected'});
                 } else {
-                  winston.info({message: 'VLCB:      RQSD_INVALID_SERVICE : unexpected GRSP code ' + msg.result});
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidService}); 
                 }
               }
               if (msg.mnemonic == "ESD"){
@@ -501,17 +507,17 @@ class opcodes_7x {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.Invalid_Command) {
                   this.hasTestPassed = true;
-                  winston.info({message: 'VLCB:      Service Discovery : GRSP received as expected'});
                 } else {
-                  winston.info({message: 'VLCB:      Service Discovery : unexpected GRSP code ' + msg.result});
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
                 }
               }
               if (msg.mnemonic == "ESD"){
                 this.hasTestPassed = false;
                 RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
-                winston.info({message: 'VLCB:      Service Discovery : unexpected ESD message'});
+                winston.info({message: 'VLCB:      unexpected ESD message'});
               }
             }
           });

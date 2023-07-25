@@ -55,6 +55,22 @@ class NodeVariableServiceTests {
 			// now request diagnostics just for this service
 			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
+			// now request first diagnostic just for this service
+			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 1);
+
+      // use MaxDiagnosticCode for next tests, but only if it has been reported
+      if (RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode != undefined){
+  			// now request last diagnostic just for this service
+	  		await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode);
+        //
+        // test the error returned with invalid diagnostic code
+        await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode + 1);
+      } else {
+        winston.info({message: 'VLCB: test_RDGN_INVALID_DIAG test skipped - no reported diagnostic codes'});
+      }				
+
+
+
 				//
 				// Add more tests.......
 				//
