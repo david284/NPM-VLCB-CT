@@ -6,6 +6,7 @@ const utils = require('./../utilities.js');
 const opcodes_0x = require('./../opcodes/opcodes_0x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
+const opcodes_9x = require('./../opcodes/opcodes_9x.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -25,6 +26,7 @@ class NodeVariableServiceTests {
 		this.opcodes_0x = new opcodes_0x.opcodes_0x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_9x = new opcodes_9x.opcodes_9x(this.network);
     }
 
 
@@ -51,6 +53,13 @@ class NodeVariableServiceTests {
 				
 				// now test a short message, expecting an error message
 				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
+
+				// set node variable 1 with value of 0
+				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, 0);
+
+				// set last node variable with value of 0
+				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
+
 				
 			// now request diagnostics just for this service
 			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);

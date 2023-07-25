@@ -348,6 +348,7 @@ class mock_CbusNetwork {
             case '96': //NVSET
                 // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
                 winston.debug({message: 'Mock CBUS Network: received NVSET'});
+                this.outputWRACK(cbusMsg.nodeNumber);
                 break;
             case '9C': //REVAL
                 // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
@@ -463,6 +464,14 @@ class mock_CbusNetwork {
 	outputNERD(nodeNumber) {
 		//Format: [<MjPri><MinPri=3><CANID>]<57>NN hi><NN lo>
 		var msgData = cbusLib.encodeNERD(nodeNumber);
+        this.broadcast(msgData)
+	}
+	
+
+	// 59
+	outputWRACK(nodeNumber) {
+		//Format: [<MjPri><MinPri=3><CANID>]<59>NN hi><NN lo>
+		var msgData = cbusLib.encodeWRACK(nodeNumber);
         this.broadcast(msgData)
 	}
 	

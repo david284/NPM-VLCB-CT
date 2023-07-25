@@ -72,10 +72,36 @@ describe('opcodes_9x tests', function(){
 // 				Tests
 //
 
+function GetTestCase_NVSET() {
+  var arg1, arg2, arg3, testCases = [];
+  for (var a = 1; a< 4; a++) {
+    if (a == 1) {arg1 = 0}
+    if (a == 2) {arg1 = 1}
+    if (a == 3) {arg1 = 65535}
+    for (var b = 1; b < 4; b++) {
+      if (b == 1) {arg2 = 0}
+      if (b == 2) {arg2 = 1}
+      if (b == 3) {arg2 = 2}
+      for (var c = 1; c < 4; c++) {
+        if (c == 1) {arg3 = 0}
+        if (c == 2) {arg3 = 1}
+        if (c == 3) {arg3 = 2}
+        testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
+      }
+    }
+  }
+  return testCases;
+}
+
+
     // 0x96 - NVSET
-    it("NVSET test", async function () {
+    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+    itParam("NVSET test ${JSON.stringify(value)}", GetTestCase_NVSET(), async function (value) {
       winston.info({message: 'UNIT TEST:: BEGIN NVSET test'});
-      RetrievedValues.setNodeNumber(0);
+      RetrievedValues.setNodeNumber(value.nodeNumber);
+      await tests.test_NVSET(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
+      expect(tests.hasTestPassed).to.equal(true);  
+
       winston.info({message: 'UNIT TEST: NVSET ended'});
     })
     
