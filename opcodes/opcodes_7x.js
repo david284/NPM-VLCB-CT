@@ -24,26 +24,7 @@ class opcodes_7x {
 		this.network = NETWORK;
         this.hasTestPassed = false;
     }
-	
-	    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'VLCB: Found message ' + mnemonic});
-                break;
-            }
-        }
-        if (message == undefined){                 
-            winston.debug({message: 'VLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
 
-            
 
   // 0x71 - NVRD
   test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
@@ -69,11 +50,11 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "NVANS"){
                 this.hasTestPassed = true;
                 RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
-                winston.info({message: 'VLCB:      ' + ' Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue});
               }
             }
           });
@@ -102,6 +83,7 @@ class opcodes_7x {
           if (this.network.messagesIn.length > 0){
             this.network.messagesIn.forEach(element => {
               var msg = cbusLib.decode(element);
+              winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "CMDERR"){
                   winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
@@ -162,6 +144,7 @@ class opcodes_7x {
           if (this.network.messagesIn.length > 0){
             this.network.messagesIn.forEach(element => {
               var msg = cbusLib.decode(element);
+              winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "GRSP"){
                   winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
@@ -189,60 +172,64 @@ class opcodes_7x {
 
 
 	// 0x73 - RQNPN
-    test_RQNPN(RetrievedValues, module_descriptor, parameterIndex) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('PARAN');
-					if (message.nodeNumber == RetrievedValues.getNodeNumber()){
-						// ok - we have a value, so assume the test has passed - now do additional consistency tests
-						// and fail the test if any of these tests fail
-						this.hasTestPassed = true;					
-						//start building an ouput string in case it fails
-						var fail_output = '\n      parameter index : ' + parameterIndex;
-						fail_output += '\n      actual value : ' + message.parameterValue;
-						// and a warning outputstring also
-						var warning_output = "";
-						if (RetrievedValues.data["nodeParameters"][parameterIndex] != null){
-							fail_output += '\n      retrieved_value : ' + RetrievedValues.data["nodeParameters"][parameterIndex].value;
-							// we have previously read this value, so check it's still the same
-							if ( RetrievedValues.data["nodeParameters"][parameterIndex].value != message.parameterValue){
-								this.hasTestPassed = false;
-								winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + fail_output});  
-							}
-						} else {
-							// new value, so save it
-							RetrievedValues.addNodeParameter(message.parameterIndex, message.parameterValue);
-							winston.debug({message: 'VLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
-						}
-						// if it's in the module_descriptor, we need to check we've read the same value
-						if (module_descriptor.nodeParameters[parameterIndex] != null) {
-							if (module_descriptor.nodeParameters[parameterIndex].value != null) {
-								fail_output += '\n      module_descriptor : ' + module_descriptor.nodeParameters[parameterIndex].value;
-								if ( module_descriptor.nodeParameters[parameterIndex].value != message.parameterValue) {
-									this.hasTestPassed = false;
-									winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + fail_output});
-								}
-							} else {
-								warning_output = ' :: Warning: No matching module_descriptor value entry';
-							}
-						} else {
-							warning_output =  ' :: Warning: No matching module_descriptor file entry';
-						}
-					}
-				}
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN index ' + parameterIndex + ' ' + NodeParameterNames[parameterIndex], warning_output);
-				
-                resolve();
-                ;} , 100
-            );
-        }.bind(this));
-    }
+  test_RQNPN(RetrievedValues, module_descriptor, parameterIndex) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        // a warning outputstring
+        var fail_output = "";
+        var warning_output = "";
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              if (msg.mnemonic == "PARAN"){
+                // ok - we have a value, so assume the test has passed - now do additional consistency tests
+                // and fail the test if any of these tests fail
+                this.hasTestPassed = true;					
+                //start building the output string in case it fails
+                fail_output += '\n      parameter index : ' + parameterIndex;
+                fail_output += '\n      actual value : ' + msg.parameterValue;
+                if (RetrievedValues.data["nodeParameters"][parameterIndex] != null){
+                  fail_output += '\n      retrieved_value : ' + RetrievedValues.data["nodeParameters"][parameterIndex].value;
+                  // we have previously read this value, so check it's still the same
+                  if ( RetrievedValues.data["nodeParameters"][parameterIndex].value != msg.parameterValue){
+                    this.hasTestPassed = false;
+                    winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + fail_output});  
+                  }
+                } else {
+                  // new value, so save it
+                  RetrievedValues.addNodeParameter(msg.parameterIndex, msg.parameterValue);
+                  winston.debug({message: 'VLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
+                }
+                // if it's in the module_descriptor, we need to check we've read the same value
+                if (module_descriptor.nodeParameters[parameterIndex] != null) {
+                  if (module_descriptor.nodeParameters[parameterIndex].value != null) {
+                    fail_output += '\n      module_descriptor : ' + module_descriptor.nodeParameters[parameterIndex].value;
+                    if ( module_descriptor.nodeParameters[parameterIndex].value != msg.parameterValue) {
+                      this.hasTestPassed = false;
+                      winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + fail_output});
+                    }
+                  } else {
+                    warning_output = ' :: Warning: No matching module_descriptor value entry';
+                  }
+                } else {
+                  warning_output =  ' :: Warning: No matching module_descriptor file entry';
+                }
+              }
+            }
+          })
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN index ' + parameterIndex + ' ' + NodeParameterNames[parameterIndex], warning_output);
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
  
     
 	// 0x73 - RQNPN - out of bounds test
@@ -258,6 +245,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "CMDERR"){
                 winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
@@ -312,6 +300,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "GRSP"){
                 winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
@@ -366,7 +355,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
         this.network.messagesIn.forEach(element => {
           var msg = cbusLib.decode(element);
-          winston.debug({message: msg.text});
+          winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
           if (msg.mnemonic == "GRSP"){
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               winston.info({message: 'VLCB:      MODE: GRSP received ' + msg.result}); 
@@ -406,6 +395,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (ServiceIndex == 0) {
                 // service index is 0, so expecting one or more 'SD' messages
@@ -460,6 +450,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
@@ -502,6 +493,7 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){

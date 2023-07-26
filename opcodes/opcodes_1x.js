@@ -1,5 +1,5 @@
 'use strict';
-const winston = require('winston');		// use config from root instance
+const winston = require('winston');   // use config from root instance
 const cbusLib = require('cbuslibrary');
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
 const utils = require('./../utilities.js');
@@ -16,96 +16,78 @@ const utils = require('./../utilities.js');
 class opcodes_1x {
 
     constructor(NETWORK) {
-		//                        0123456789012345678901234567890123456789
-		winston.debug({message:  '----------------- opcodes_1x Constructor'});
-		
-		this.network = NETWORK;
+    //                        0123456789012345678901234567890123456789
+    winston.debug({message:  '----------------- opcodes_1x Constructor'});
+    
+    this.network = NETWORK;
         this.hasTestPassed = false;
     }
-	
-	    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'VLCB: Found message ' + mnemonic});
-                break;
+  
+  
+  // 10 - RQNP
+  test_RQNP(RetrievedValues) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN RQNP test'});
+      RetrievedValues.data["nodeParameters"] = {};  // ensure theres an element for 'nodeParameters'
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeRQNP();
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+            if (msg.mnemonic == "PARAMS"){
+              winston.debug({message: 'VLCB: RQNP valid'});
+              this.hasTestPassed = true;
+              RetrievedValues.addNodeParameter(1, msg.param1);
+              RetrievedValues.addNodeParameter(2, msg.param2);
+              RetrievedValues.addNodeParameter(3, msg.param3);
+              RetrievedValues.addNodeParameter(4, msg.param4);
+              RetrievedValues.addNodeParameter(5, msg.param5);
+              RetrievedValues.addNodeParameter(6, msg.param6);
+              RetrievedValues.addNodeParameter(7, msg.param7);
+              for (var i = 1 ; i< 8; i++){
+                winston.info({message: 'VLCB:      RQNP: ' 
+                  + NodeParameterNames[i] + ' : ' 
+                  + RetrievedValues.data.nodeParameters[i].value});
+              }
             }
+          })
         }
-        if (message == undefined){                 
-            winston.debug({message: 'VLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
-	
-	
-	// 10 - RQNP
-	test_RQNP(RetrievedValues) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN RQNP test'});
-			RetrievedValues.data["nodeParameters"] = {}; 	// ensure theres an element for 'nodeParameters'
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQNP();
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('PARAMS');
-                    if (message.mnemonic == "PARAMS"){
-                        winston.debug({message: 'VLCB: RQNP valid'});
-                        this.hasTestPassed = true;
-						RetrievedValues.addNodeParameter(1, message.param1);
-						RetrievedValues.addNodeParameter(2, message.param2);
-						RetrievedValues.addNodeParameter(3, message.param3);
-						RetrievedValues.addNodeParameter(4, message.param4);
-						RetrievedValues.addNodeParameter(5, message.param5);
-						RetrievedValues.addNodeParameter(6, message.param6);
-						RetrievedValues.addNodeParameter(7, message.param7);
-						for (var i = 1 ; i< 8; i++){
-							winston.info({message: 'VLCB:      RQNP: ' 
-								+ NodeParameterNames[i] + ' : ' 
-								+ RetrievedValues.data.nodeParameters[i].value});
-						}
-                    }
-                }
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
-				
-                resolve();
-                ;} , 100
-            );
-        }.bind(this));
-    }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
+        resolve();
+      }, 100 );
+    }.bind(this));
+  }
     
 
-	// 11 - RQMN
-    test_RQMN(RetrievedValues) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN RQMN test'});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeRQMN();
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-                    var message = this.getMessage('NAME');
-                    if (message.mnemonic == "NAME"){
-                        this.hasTestPassed = true;
-						RetrievedValues.data["NAME"] = message.name;
-                        winston.info({message: 'VLCB:      RQMN: Name  : ' + message.name});
-                    }
-                }
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
-
-                resolve();
-                ;} , 100
-            );
-        }.bind(this));
-    }
+  // 11 - RQMN
+  test_RQMN(RetrievedValues) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN RQMN test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeRQMN();
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+            if (msg.mnemonic == "NAME"){
+              this.hasTestPassed = true;
+              RetrievedValues.data["NAME"] = msg.name;
+              winston.info({message: 'VLCB:      RQMN: Name  : ' + msg.name});
+            }
+          })
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
+        resolve();
+      }, 100 )
+    }.bind(this));
+  }
     
 
 }

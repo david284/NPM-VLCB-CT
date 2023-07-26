@@ -24,26 +24,8 @@ class opcodes_4x {
         this.response_time = 500;
     }
 	
-    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'VLCB: Found message ' + mnemonic});
-                break;
-            }
-        }
-        if (message == undefined){                 
-            winston.debug({message: 'VLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
 
-
-    // 0x42 SNN
+  // 0x42 SNN
 	//
   test_SNN(RetrievedValues) {
     return new Promise(function (resolve, reject) {
@@ -54,11 +36,16 @@ class opcodes_4x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          var message = this.getMessage('NNACK');
-          if (message.nodeNumber == RetrievedValues.getNodeNumber()) {
-            winston.info({message: 'VLCB:      NNACK received'})
-            this.hasTestPassed = true;
-          }
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            winston.debug({message: 'VLCB: NNRSM: msg received: ' + msg.mnemonic})
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              if (msg.mnemonic == "NNACK"){
+                winston.info({message: 'VLCB:      NNACK received'})
+                this.hasTestPassed = true;
+              }
+            }
+          })
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN');
         resolve();

@@ -40,6 +40,7 @@ class opcodes_9x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "WRACK"){
@@ -71,6 +72,7 @@ class opcodes_9x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "CMDERR"){
@@ -113,6 +115,7 @@ class opcodes_9x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){

@@ -29,39 +29,24 @@ class opcodes_5x {
         this.test_nodeNumber = 0;
         this.response_time = 100;
     }
-	
-	    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'VLCB: Found message ' + mnemonic});
-                break;
-            }
-        }
-        if (message == undefined){                 
-            winston.debug({message: 'VLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
+
 
 	// 0x50 RQNN
 	checkForRQNN(RetrievedValues){
 		this.hasTestPassed = false;
-		var message = this.getMessage('RQNN');
-			if (message != null) {
-            if (message.mnemonic == "RQNN"){
-                this.test_nodeNumber = message.nodeNumber;
-				RetrievedValues.setNodeNumber( message.nodeNumber);
-                this.inSetupMode = true;
-				this.hasTestPassed = true;
-                winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
-			}
+    if (this.network.messagesIn.length > 0){
+      this.network.messagesIn.forEach(element => {
+        var msg = cbusLib.decode(element);
+        winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+        if (msg.mnemonic == "RQNN"){
+          this.test_nodeNumber = msg.nodeNumber;
+          RetrievedValues.setNodeNumber( msg.nodeNumber);
+          this.inSetupMode = true;
+          this.hasTestPassed = true;
+          winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
+        }
+      })
 		}
-
 		if (this.hasTestPassed){ 
 			utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNN');
 		}else{
@@ -73,61 +58,60 @@ class opcodes_5x {
 	}
 
 
-    // 0x5E - NNRST
-    test_NNRST(RetrievedValues, serviceIndex) {
-        winston.debug({message: 'VLCB: BEGIN NNRST test'});
-        return new Promise(function (resolve, reject) {
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (serviceIndex) {
-                    // get all diagnostics for MNS service, so we can check uptime has been reset
-                    winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
-                    var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
-                    this.network.write(msgData);
-                    setTimeout(()=>{
-                        var MSB_Uptime 
-                        var LSB_Uptime 
-                        if (this.network.messagesIn.length > 0){
-                           this.network.messagesIn.forEach(element => {
-                                var msg = cbusLib.decode(element);
-                                if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-                                    if (msg.mnemonic == "DGN"){
-                                        if (msg.DiagnosticCode == 2) {
-                                            MSB_Uptime = msg.DiagnosticValue
-                                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
-                                        }
-                                        if (msg.DiagnosticCode == 3) {
-                                            LSB_Uptime = msg.DiagnosticValue
-                                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
-                                        }
-                                    }
-                                }
-                            })
-                        }
-                        // now check uptime if we've received both parts
-                        if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
-                            var uptime = (MSB_Uptime << 8) + LSB_Uptime
-                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-                            if (uptime < 2){ this.hasTestPassed = true }
-                        } else {
-                            winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST has undefined value '}); 
-                        }
-                        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
-                        resolve();
-                        ;} , 1000
-                    );
-                } else {
-                    winston.info({message: 'VLCB:      No Service 1 found '}); 
+  // 0x5E - NNRST
+  test_NNRST(RetrievedValues, serviceIndex) {
+    winston.debug({message: 'VLCB: BEGIN NNRST test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (serviceIndex) {
+          // get all diagnostics for MNS service, so we can check uptime has been reset
+          winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
+          var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
+          this.network.write(msgData);
+          setTimeout(()=>{
+            var MSB_Uptime 
+            var LSB_Uptime 
+            if (this.network.messagesIn.length > 0){
+             this.network.messagesIn.forEach(element => {
+                var msg = cbusLib.decode(element);
+                winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+                if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+                  if (msg.mnemonic == "DGN"){
+                    if (msg.DiagnosticCode == 2) {
+                      MSB_Uptime = msg.DiagnosticValue
+                      winston.info({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
+                    }
+                    if (msg.DiagnosticCode == 3) {
+                      LSB_Uptime = msg.DiagnosticValue
+                      winston.info({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
+                    }
+                  }
                 }
-                ;} , 200
-            );
-        }.bind(this));
-    }
-	
-	
+              })
+            }
+            // now check uptime if we've received both parts
+            if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
+              var uptime = (MSB_Uptime << 8) + LSB_Uptime
+              winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
+              if (uptime < 2){ this.hasTestPassed = true }
+            } else {
+              winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST has undefined value '}); 
+            }
+            utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
+            resolve();
+          } , 1000 );
+        } else {
+            winston.info({message: 'VLCB:      No Service 1 found '}); 
+        }
+      } , 200 );
+    }.bind(this));
+  }
+
+
 }
 
 module.exports = {

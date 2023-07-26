@@ -47,6 +47,7 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "DGN"){
@@ -100,6 +101,7 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
@@ -138,6 +140,7 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
@@ -180,6 +183,7 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
@@ -220,6 +224,7 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "NVANS"){
@@ -253,6 +258,7 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){
@@ -295,6 +301,7 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){

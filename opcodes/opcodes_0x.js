@@ -22,78 +22,52 @@ class opcodes_0x {
         this.response_time = 200;
     }
 	
-	    //
-    // get first instance of a received message with the specified mnemonic
-    //
-    getMessage(mnemonic){
-        var message = undefined;
-        for (var i=0; i<this.network.messagesIn.length; i++){
-            message = this.network.messagesIn[i];
-            if (message.mnemonic == mnemonic){
-                winston.debug({message: 'VLCB: Found message ' + mnemonic});
-                break;
+            
+  // 0x0D - QNN
+  test_QNN(RetrievedValues) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN QNN test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeQNN();
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          var i=0;
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
+            if (msg.mnemonic == "PNN"){
+              // allow messages from all nodes as we can build up an array of all the modules
+              var newModule = {
+                "nodeNumber":msg.nodeNumber,
+                "manufacturerId":msg.manufacturerId,
+                "moduleId":msg.moduleId,
+                "flags":msg.flags,
+                "CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
+              }
+              RetrievedValues.data.modules[i++] = newModule;
+              // we check matching node number here, as we're expecting all the nodes to respond to QNN
+              // and we'll only pass the test if we get a response from the node under test
+              var expectedNodeNumber = RetrievedValues.getNodeNumber()
+              if (isNaN(expectedNodeNumber)) {
+                // don't have an expected node number, so assume good
+                this.hasTestPassed = true;
+              } else {
+                // we have an expected node number, so check it
+                if (msg.nodeNumber == expectedNodeNumber){
+                  winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
+                  this.hasTestPassed = true;
+                }
+              }
             }
+          });
         }
-        if (message == undefined){                 
-            winston.debug({message: 'VLCB: No message found for' + mnemonic});
-        }
-        return message
-    }
-
-            
-    // 0x0D - QNN
-    test_QNN(RetrievedValues) {
-        return new Promise(function (resolve, reject) {
-            winston.debug({message: 'VLCB: BEGIN QNN test'});
-            this.hasTestPassed = false;
-            this.network.messagesIn = [];
-            var msgData = cbusLib.encodeQNN();
-            this.network.write(msgData);
-            setTimeout(()=>{
-                if (this.network.messagesIn.length > 0){
-					var i=0;
-		            this.network.messagesIn.forEach(element => {
-						var msg = cbusLib.decode(element);
-						if (msg.mnemonic == "PNN"){
-							// allow messages from all nodes as we can build up an array of all the modules
-							winston.info({message: 'VLCB:      ' + msg.text});
-							var newModule = {
-								"nodeNumber":msg.nodeNumber,
-								"manufacturerId":msg.manufacturerId,
-								"moduleId":msg.moduleId,
-								"flags":msg.flags,
-								"CANID":parseInt(msg.encoded.substr(3, 2), 16)>>1
-							}
-							RetrievedValues.data.modules[i++] = newModule;
-							
-							// we check matching node number here, as we're expecting all the nodes to respond to QNN
-							// and we'll only pass the test if we get a response from the node under test
-                            var expectedNodeNumber = RetrievedValues.getNodeNumber()
-                            if (isNaN(expectedNodeNumber)) {
-                                // don't have an expected node number, so assume good
-								this.hasTestPassed = true;
-                            } else {
-                                // we have an expected node number, so check it
-                            	if (msg.nodeNumber == expectedNodeNumber){
-    								winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
-	    							this.hasTestPassed = true;
-                                }
-							}
-						}
-					});
-				}
-				
-				utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
-				
-                resolve();
-                ;} , 500
-            );
-        }.bind(this));
-    }
-
-
-            
-	
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
+        resolve();
+      } , 500 );
+    }.bind(this));
+  } // end test_QNN
 
 }
 
