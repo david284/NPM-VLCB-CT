@@ -180,7 +180,7 @@ describe('opcodes_8x tests', function(){
         for (var c = 1; c < 4; c++) {
           if (c == 1) {arg3 = 0}
           if (c == 2) {arg3 = 1}
-          if (c == 3) {arg3 = 2}
+          if (c == 3) {arg3 = 255}
           testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
         }
       }
@@ -200,6 +200,27 @@ describe('opcodes_8x tests', function(){
         winston.info({message: 'UNIT TEST: NVSETRD ended'});
       })
   
+    // 0x8E - NVSETRD
+      // Format: [<MjPri><MinPri=3><CANID>]<8E><NN hi><NN lo><NV# ><NV val>
+      it("NVSETRD_INVALID_INDEX", async function () {
+      winston.info({message: 'UNIT TEST:: BEGIN NVSETRD_INVALID_INDEX test'});
+      RetrievedValues.setNodeNumber(0);
+      await tests.test_NVSETRD_INVALID_INDEX(RetrievedValues, 1, 255, 0);
+      expect(tests.hasTestPassed).to.equal(true);  
+
+      winston.info({message: 'UNIT TEST: NVSETRD_INVALID_INDEX ended'});
+    })
+
+    // 0x8E - NVSETRD
+    // Format: [<MjPri><MinPri=3><CANID>]<8E><NN hi><NN lo><NV# ><NV val>
+    it("NVSETRD_SHORT", async function () {
+      winston.info({message: 'UNIT TEST:: BEGIN NVSETRD_SHORT test'});
+      RetrievedValues.setNodeNumber(0);
+      await tests.test_NVSETRD_SHORT(RetrievedValues, 1, 1, 0);
+      expect(tests.hasTestPassed).to.equal(true);  
+
+      winston.info({message: 'UNIT TEST: NVSETRD_SHORT ended'});
+    })
   
 })
 

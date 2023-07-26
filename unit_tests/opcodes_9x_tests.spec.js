@@ -110,7 +110,7 @@ function GetTestCase_NVSET() {
     it("NVSET_INVALID_INDEX", async function () {
       winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
       RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSET_SHORT(RetrievedValues, 1, 255, 0);
+      await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 1, 255, 0);
       expect(tests.hasTestPassed).to.equal(true);  
 
       winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});

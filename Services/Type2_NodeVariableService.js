@@ -55,7 +55,7 @@ class NodeVariableServiceTests {
 				await this.opcodes_7x.test_NVRD_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
 				
 				// now test a short message, expecting an error message
-				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
+				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, 1);
 
 				// set node variable 1 with existing value (non-destructive)
         var value1 = RetrievedValues.data.Services[serviceIndex].nodeVariables[1]
@@ -77,28 +77,28 @@ class NodeVariableServiceTests {
 				// set & read the last node variable with existing value (non-destructive)
 				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
 				
-			// now request diagnostics just for this service
-			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
+				// now test the last node variable + 1, expecting an error message
+				await this.opcodes_8x.test_NVSETRD_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1, 0);
+				
+				// now test a short message, expecting an error message
+				await this.opcodes_8x.test_NVSETRD_SHORT(RetrievedValues, serviceIndex, 1, 0);
 
-			// now request first diagnostic just for this service
-			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 1);
+        // now request diagnostics just for this service
+        await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
-      // use MaxDiagnosticCode for next tests, but only if it has been reported
-      if (RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode != undefined){
-  			// now request last diagnostic just for this service
-	  		await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode);
-        //
-        // test the error returned with invalid diagnostic code
-        await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode + 1);
-      } else {
-        winston.info({message: 'VLCB: test_RDGN_INVALID_DIAG test skipped - no reported diagnostic codes'});
-      }				
+        // now request first diagnostic just for this service
+        await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 1);
 
-
-
-				//
-				// Add more tests.......
-				//
+        // use MaxDiagnosticCode for next tests, but only if it has been reported
+        if (RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode != undefined){
+          // now request last diagnostic just for this service
+          await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode);
+          //
+          // test the error returned with invalid diagnostic code
+          await this.opcodes_8x.test_RDGN_INVALID_DIAG(RetrievedValues, serviceIndex, RetrievedValues.data.Services[serviceIndex].MaxDiagnosticCode + 1);
+        } else {
+          winston.info({message: 'VLCB: test_RDGN_INVALID_DIAG test skipped - no reported diagnostic codes'});
+        }				
 				
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});

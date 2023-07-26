@@ -238,6 +238,86 @@ class opcodes_8x {
 	} // end Test_NVSETRD
 
 
+	// 0x8E - NVSETRD
+	test_NVSETRD_INVALID_INDEX(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN NVSETRD_INVALID_INDEX test - ServiceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+      // now create message and start test
+      var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
+      this.network.write(msgData);
+      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex + ' value ' + nodeVariableValue });
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
+                if (msg.result == GRSP.InvalidNodeVariableIndex) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.InvalidNodeVariableIndex}); 
+                }
+              }
+              if (msg.mnemonic == "NVANS"){
+                winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_INVALID_INDEX');
+        resolve();
+			} , 250 );
+    }.bind(this));
+	} // end Test_NVSETRD_INVALID_INDEX
+
+
+	// 0x8E - NVSETRD
+	test_NVSETRD_SHORT(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN NVSETRD_SHORT test - ServiceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+      // now create message and start test
+      var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
+			// :SB780N8E03E80101;
+			// 123456789012345678
+			// truncate the 18 byte message to remove the last byte - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,15) + ';'
+      this.network.write(msgData);
+      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex });
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.Invalid_Command}); 
+                }
+              }
+              if (msg.mnemonic == "NVANS"){
+                winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_SHORT');
+        resolve();
+			} , 250 );
+    }.bind(this));
+	} // end test_NVSETRD_SHORT
+
+
 
 
 } // end class
