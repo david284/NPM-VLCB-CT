@@ -54,16 +54,18 @@ class NodeVariableServiceTests {
 				// now test a short message, expecting an error message
 				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
 
-				// set node variable 1 with value of 0
-				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, 0);
+				// set node variable 1 with existing value (non-desctructive)
+        var value1 = RetrievedValues.data.Services[serviceIndex].nodeVariables[1]
+				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, value1);
 
-				// set last node variable with value of 0
-				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
+				// set last node variable with existing value (non-desctructive) 
+        var lastValue = RetrievedValues.data.Services[serviceIndex].nodeVariables[RetrievedValues.data.nodeParameters[6].value]
+				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
 
-				// set last node variable + 1 with value of 0, expect error response
+				// set last node variable + 1, value doesn't matter, as we're expecting the command to be rejected with an error response
 				await this.opcodes_9x.test_NVSET_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1, 0);
 
-				// now test a short message, expecting an error message
+				// now test a short message,  value doesn't matter, as we're expecting the command to be rejected with an error response
 				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
 				
 			// now request diagnostics just for this service
