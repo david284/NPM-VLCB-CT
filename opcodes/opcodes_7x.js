@@ -23,7 +23,6 @@ class opcodes_7x {
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;
-        this.response_time = 200;
     }
 	
 	    //
@@ -49,9 +48,9 @@ class opcodes_7x {
   // 0x71 - NVRD
   test_NVRD(RetrievedValues, ServiceIndex, NodeVariableIndex, module_descriptor) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN NVRD test - serviceIndex ' + ServiceIndex + ' nodeVariableIndex ' + NodeVariableIndex});
       this.hasTestPassed = false;
-      var timeout = 50;
+      var timeout = 100;
       if (NodeVariableIndex == 0){ 
         if (RetrievedValues.data.nodeParameters[6] != null) { 
           timeout = timeout * RetrievedValues.data.nodeParameters[6].value; 
@@ -92,7 +91,6 @@ class opcodes_7x {
     return new Promise(function (resolve, reject) {
       winston.debug({message: 'VLCB: BEGIN NVRD_INVALID_INDEX test - serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
-      var timeout = 100;
       var msgBitField = 0;	// bit field to capture when each message has been received
       // An index of 0 is invalid for this test...
       if (NodeVariableIndex != 0){ 
@@ -136,7 +134,7 @@ class opcodes_7x {
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX ');
           
           resolve();
-          ;} , timeout );
+          ;} , 250 );
         } else {
           winston.info({message: 'VLCB: **** NVRD_INVALID_INDEX Test Aborted **** Node Variable Index 0 requested'});				
         }
@@ -150,7 +148,6 @@ class opcodes_7x {
 		return new Promise(function (resolve, reject) {
       winston.debug({message: 'VLCB: BEGIN NVRD_SHORT test - serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
-      var timeout = 100;
       // An index of 0 is invalid for this test...
       if (NodeVariableIndex != 0){ 
         this.hasTestPassed = false;
@@ -181,7 +178,7 @@ class opcodes_7x {
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_SHORT ');
           
           resolve();
-        } , timeout );
+        } , 250 );
       } else {
         winston.info({message: 'VLCB: **** NVRD_SHORT Test Aborted **** Node Variable Index 0 requested'});				
       }
@@ -294,7 +291,7 @@ class opcodes_7x {
         }
       utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX');
         resolve();
-      ;} , 100 );
+      ;} , 250 );
     }.bind(this));
   }
  
@@ -332,7 +329,7 @@ class opcodes_7x {
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_SHORT');
         resolve();
-      ;} , 100 );
+      ;} , 250 );
     }.bind(this));
   }
  
@@ -352,7 +349,7 @@ class opcodes_7x {
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID');
         resolve();
-      }, this.response_time );
+      }, 250 );
     }.bind(this));
   }
 	
@@ -372,6 +369,7 @@ class opcodes_7x {
           winston.debug({message: msg.text});
           if (msg.mnemonic == "GRSP"){
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              winston.info({message: 'VLCB:      MODE: GRSP received ' + msg.result}); 
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 this.hasTestPassed = true;
               }else {
@@ -390,7 +388,7 @@ class opcodes_7x {
         utils.processResult(RetrievedValues, this.hasTestPassed, 'MODE');
   
         resolve();
-      }, this.response_time );
+      }, 250 );
     }.bind(this));
   }
 	
@@ -444,7 +442,7 @@ class opcodes_7x {
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (ServiceIndex ' + ServiceIndex + ')');
         resolve();
-      } , this.response_time );
+      } , 250 );
     }.bind(this));
   }
     
@@ -482,7 +480,7 @@ class opcodes_7x {
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_INVALID_SERVICE (ServiceIndex ' + ServiceIndex + ')');
         resolve();
-      } , this.response_time );
+      } , 250 );
     }.bind(this));
   }
     	
@@ -524,7 +522,7 @@ class opcodes_7x {
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_SHORT');
         resolve();
-      } , this.response_time );
+      } , 250 );
     }.bind(this));
   }
     	

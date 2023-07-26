@@ -119,7 +119,7 @@ class opcodes_8x {
 				}
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_DIAG');
 				resolve();
-				;} , 100
+				;} , 250
 			);
 		}.bind(this));
 	} // end test_RDGN_ERROR_DIAG
@@ -157,7 +157,7 @@ class opcodes_8x {
 				}
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_SERVICE');
 				resolve();
-				;} , 100
+				;} , 250
 			);
 		}.bind(this));
 	} // end test_RDGN_ERROR_SERVICE
@@ -199,7 +199,7 @@ class opcodes_8x {
 				}
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_SHORT');
 				resolve();
-				;} , 100
+				;} , 250
 			);
 		}.bind(this));
 	} // end test_RDGN_SHORT

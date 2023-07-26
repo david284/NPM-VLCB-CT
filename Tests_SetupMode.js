@@ -51,9 +51,11 @@ class SetupMode_tests {
     // check for response to QNN from module under test - otherwise node might not be responding
 		await this.opcodes_0x.test_QNN(RetrievedValues);
 		
-		this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
+    winston.info({message: 'VLCB: put module into setup'});
 
-        winston.info({message: 'VLCB: put module into setup'});
+    await this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
+
+    // now lets check if it has really gone into setup & sent us an RQNN
 		RetrievedValues.data["setup_completed"]= false;
         var setup_tries = 0;
 		
