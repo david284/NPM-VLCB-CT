@@ -28,65 +28,62 @@ class opcodes_8x {
 	
 	// 0x87 - RDGN
 	test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
-			return new Promise(function (resolve, reject) {
-					winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
-					this.hasTestPassed = false;
-					this.network.messagesIn = [];
-		//
-		// Need to calculate an extended timeout if it's a '0' command that returns multiple messages
-		var RDGN_timeout = 100;
-		if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
-		else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
-		winston.debug({message: 'VLCB: RDGN_timeout set to ' + RDGN_timeout}); 
-		
-		// now create message and start test
-					var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
-					this.network.write(msgData);
-					setTimeout(()=>{
-			var nonMatchingCount = 0;
-							if (this.network.messagesIn.length > 0){
-							this.network.messagesIn.forEach(element => {
-					var msg = cbusLib.decode(element);
-					if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-						// ok - it's the right node
-						if (msg.mnemonic == "DGN"){
-							
-							// lets findout if we have an entry for this service
-							if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
-							{
-								winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
-								this.hasTestPassed = false;
-							} else {
-								// we have a matching service entry, so mark as passed
-								this.hasTestPassed = true;
-							}
-							
-							// store diagnostic code anyway, even if no matching service (will create a new service entry)
-							RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
-							// display what we have
-							winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
-						}
-					}
-				});
-			}
-			
-			var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
-			if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
-			if(ServiceIndex != 0) {
-				if ( DiagnosticCode == 0) { 
-					if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-						winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
-						this.hasTestPassed = false
-					}
-				} 
-			}
-			
-			utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
-			
-							resolve();
-							;} , RDGN_timeout
-					);
-			}.bind(this));
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+      //
+      // Need to calculate an extended timeout if it's a '0' command that returns multiple messages
+      var RDGN_timeout = 100;
+      if ( ServiceIndex == 0) { RDGN_timeout = 1500; } 
+      else if ( DiagnosticCode == 0) { RDGN_timeout = 500; }
+      winston.debug({message: 'VLCB: RDGN_timeout set to ' + RDGN_timeout}); 
+      
+      // now create message and start test
+      var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "DGN"){
+                
+                // lets findout if we have an entry for this service
+                if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
+                {
+                  winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+                  this.hasTestPassed = false;
+                } else {
+                  // we have a matching service entry, so mark as passed
+                  this.hasTestPassed = true;
+                }
+                
+                // store diagnostic code anyway, even if no matching service (will create a new service entry)
+                RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
+                // display what we have
+                winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
+              }
+            }
+          });
+        }
+        
+        var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
+        if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
+        if(ServiceIndex != 0) {
+          if ( DiagnosticCode == 0) { 
+            if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
+              winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
+              this.hasTestPassed = false
+            }
+          } 
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
+        resolve();
+			} , RDGN_timeout );
+    }.bind(this));
 	} // end Test_RDGN
 
 
@@ -206,6 +203,41 @@ class opcodes_8x {
 			);
 		}.bind(this));
 	} // end test_RDGN_SHORT
+
+
+	// 0x8E - NVSETRD
+	test_NVSETRD(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+		return new Promise(function (resolve, reject) {
+			winston.debug({message: 'VLCB: BEGIN NVSETRD test - ServiceIndex ' + ServiceIndex});
+			this.hasTestPassed = false;
+			this.network.messagesIn = [];
+      // now create message and start test
+      var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
+      this.network.write(msgData);
+      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex + ' value ' + nodeVariableValue });
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "NVANS"){
+                if (msg.nodeVariableIndex == nodeVariableIndex){
+                  winston.info({message: 'VLCB:      NVANS received: Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue });
+                  this.hasTestPassed = true;
+                }                
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD');
+        resolve();
+			} , 250 );
+    }.bind(this));
+	} // end Test_NVSETRD
+
+
 
 
 } // end class

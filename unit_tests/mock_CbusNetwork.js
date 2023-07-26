@@ -103,20 +103,20 @@ class mock_CbusNetwork {
 				for (var i = 0; i < msgArray.length - 1; i++) {
 					msgArray[i] = msgArray[i].concat(";");				// add back the ';' terminator that was lost in the split
 					this.sendArray.push(msgArray[i]);					// store the incoming messages so the test can inspect them
-                    var cbusMsg = cbusLib.decode(msgArray[i]);
-                    if ( cbusMsg.ID_TYPE == 'S' ) {
-                        this.processStandardMessage(cbusMsg)
-                    } else if ( cbusMsg.ID_TYPE == 'X' ) {
-                        this.processExtendedMessage(cbusMsg)
-                    } else {
-                        winston.info({message: 'Mock CBUS Network: Receive <<<< message UNKNOWN ID TYPE [' + msgIndex + '] ' +  message + " <<< "});
-                    }
-                }
+          var cbusMsg = cbusLib.decode(msgArray[i]);
+          if ( cbusMsg.ID_TYPE == 'S' ) {
+              this.processStandardMessage(cbusMsg)
+          } else if ( cbusMsg.ID_TYPE == 'X' ) {
+              this.processExtendedMessage(cbusMsg)
+          } else {
+              winston.info({message: 'Mock CBUS Network: Receive <<<< message UNKNOWN ID TYPE [' + msgIndex + '] ' +  message + " <<< "});
+          }
+        }
 			}.bind(this));
 
 			socket.on('end', function () {
-                this.clients.splice(this.clients.indexOf(socket), 1);
-                var rport = socket.remotePort;
+        this.clients.splice(this.clients.indexOf(socket), 1);
+        var rport = socket.remotePort;
 				winston.debug({message: 'Mock CBUS Network: Client Disconnected at port ' + rport});
 			}.bind(this));
 			
@@ -136,240 +136,257 @@ class mock_CbusNetwork {
 	}
 
     processExtendedMessage(cbusMsg) {
-        winston.debug({message: 'Mock CBUS Network: Receive <<<< EXTENDED ID message: ' + cbusMsg.text });
-        if (cbusMsg.type == 'CONTROL') {
-            switch (cbusMsg.SPCMD) {
-                case 0:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_NOP <<< '});
-                    break;
-                case 1:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RESET  <<< '});
-                    this.firmware = []
-                    break;
-                case 2:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RST_CHKSM <<< '});
-                    break;
-                case 3:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_CHK_RUN <<< '});
-                    this.firmwareChecksum = arrayChecksum(this.firmware)
-                    winston.debug({message: 'Mock CBUS Network: CMD_CHK_RUN: calculated checksum: ' + this.firmwareChecksum + ' received checksum: ' + decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)});
-                    if (this.firmwareChecksum == decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)) {
-                        this.outputExtResponse(1)   // 1 = ok
-                    } else {
-                        this.outputExtResponse(0)   // 0 = not ok
-                    }
-                    break;
-                case 4:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_BOOT_TEST <<< '});
-                    this.outputExtResponse(2)   // 2 = confirm boot load
-                    this.firmware = []
-                    break;
-                default:
-                    winston.debug({message: 'Mock CBUS Network: <<< Received control message UNKNOWN COMMAND ' + cbusMsg.text});
-                    break
+      winston.debug({message: 'Mock CBUS Network: Receive <<<< EXTENDED ID message: ' + cbusMsg.text });
+      if (cbusMsg.type == 'CONTROL') {
+        switch (cbusMsg.SPCMD) {
+          case 0:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_NOP <<< '});
+            break;
+          case 1:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RESET  <<< '});
+            this.firmware = []
+            break;
+          case 2:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RST_CHKSM <<< '});
+            break;
+          case 3:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_CHK_RUN <<< '});
+            this.firmwareChecksum = arrayChecksum(this.firmware)
+            winston.debug({message: 'Mock CBUS Network: CMD_CHK_RUN: calculated checksum: ' + this.firmwareChecksum + ' received checksum: ' + decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)});
+            if (this.firmwareChecksum == decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)) {
+                this.outputExtResponse(1)   // 1 = ok
+            } else {
+                this.outputExtResponse(0)   // 0 = not ok
             }
+            break;
+          case 4:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_BOOT_TEST <<< '});
+            this.outputExtResponse(2)   // 2 = confirm boot load
+            this.firmware = []
+            break;
+          default:
+            winston.debug({message: 'Mock CBUS Network: <<< Received control message UNKNOWN COMMAND ' + cbusMsg.text});
+            break;
         }
-        if (cbusMsg.type == 'DATA') {
-            for (var i = 0; i < 8; i++) {this.firmware.push(cbusMsg.data[i])}
-//            winston.debug({message: 'Mock CBUS Network: <<< Received DATA - new length ' + this.firmware.length});
-        }
+      }
+      if (cbusMsg.type == 'DATA') {
+        for (var i = 0; i < 8; i++) {this.firmware.push(cbusMsg.data[i])}
+//        winston.debug({message: 'Mock CBUS Network: <<< Received DATA - new length ' + this.firmware.length});
+      }
     }
 
 
     outputExtResponse(value) {
 		var msgData = cbusLib.encode_EXT_RESPONSE(value)
-        this.broadcast(msgData)
+      this.broadcast(msgData)
     }
 
 
     processStandardMessage(cbusMsg) {
-        winston.debug({message: 'Mock CBUS Network: Receive <<<< STANDARD ID message ' + cbusMsg.text });
-        switch (cbusMsg.opCode) {
-            case '0D':
-                // Format: <MjPri><MinPri=3><CANID>]<0D>
-                winston.debug({message: 'Mock CBUS Network: received QNN'});
-                for (var i = 0; i < this.modules.length; i++) {
-                    this.outputPNN(this.modules[i].getNodeNumber(), 
-                        this.modules[i].getManufacturerId(),
-                        this.modules[i].getModuleId(), 
-                        this.modules[i].getFlags())
-                }
-                break;
-			case '10': // RQNP
-				for (var moduleIndex = 0; moduleIndex < this.modules.length; moduleIndex++) {
-					// should only respond if in setup mode
-					if (this.modules[moduleIndex].inSetupMode()){
-						this.outputPARAMS(this.modules[moduleIndex].getNodeNumber());
-					}
-				}
-				break;
-			case '11': // RQMN
-				this.outputNAME("CANTEST");			
-				break;
-			case '22': // QLOC
-                break;
-            case '42': //SNN
-                // Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-                var nodeNumber = cbusMsg.nodeNumber
-                winston.debug({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
-				this.outputNNACK(nodeNumber);
-                break;
-            case '4F': //NNRSM
-                // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
-                winston.debug({message: 'Mock CBUS Network: received NNRSM'});
-				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
-                break;
-            case '53': //NNLRN
-                // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
-                winston.debug({message: 'Mock CBUS Network: received NNLRN'});
-                break;
-            case '54': //NNULN
-                // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-                winston.debug({message: 'Mock CBUS Network: received NNULN'});
-                break;
-            case '57': //NERD
-                // Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-                winston.debug({message: 'Mock CBUS Network: received NERD'});
-                var nodeNumber = cbusMsg.nodeNumber
-                if ( this.getModule(nodeNumber) != undefined) {
-                    var events = this.getModule(nodeNumber).getStoredEvents();
-                    //for (var i = 0; i < events.length; i++) {
-                        //this.outputENRSP(nodeNumber, i);
-                    //}
-                    // only output first event (if it exists)
-                    if (events.length > 0) {
-                        this.outputENRSP(nodeNumber, events[0].eventName, 0);
-                    }
-                }
-
-                break;
-            case '58': //RQEVN
-                // Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
-                winston.debug({message: 'Mock CBUS Network: received RQEVN'});
-                var storedEventsCount = this.getModule(cbusMsg.nodeNumber).getStoredEventsCount();
-                this.outputNUMEV(cbusMsg.nodeNumber, storedEventsCount);
-                break;
-            case '5C': //BOOTM
-                // Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>>
-                winston.debug({message: 'Mock CBUS Network: received BOOTM: node ' + cbusMsg.nodeNumber });
-                break;
-            case '5E': //NNRST
-                // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
-                winston.debug({message: 'Mock CBUS Network: received NNRST'});
-				this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
-                break;
-            case '71': //NVRD
-                // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
-                winston.debug({message: 'Mock CBUS Network: received NVRD'});
-								if (cbusMsg.encoded.length < 16) {
-									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-								} else {
-									var nodeVariables = this.modules[0].nodeVariables;
-									for (var i=0; i< nodeVariables.length; i++){
-										if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
-											this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
-										}
-									}
-									if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
-										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex);
-										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
-									}
-								}
-                break;
-            case '73': //RQNPN
-                // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-                winston.debug({message: 'Mock CBUS Network: received RQNPN'});
-								if (cbusMsg.encoded.length < 16) {
-									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-								} else if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
-										this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
-										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
-                } else {
-                  var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
-                  this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
-                }
-                break;
-            case '75': //CANID
-                // Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CANID>
-                winston.debug({message: 'Mock CBUS Network: received CANID'});
-                break;
-            case '76': //MODE
-                // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
-                winston.debug({message: 'Mock CBUS Network: received MODE'});
-								this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
-                break;
-            case '78': //RQSD
-                winston.debug({message: 'Mock CBUS Network: received RQSD'});
-                // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
-								// get count of service entries first
-								var count = 0;
-								for (var index in this.Services) { count++; }
-								if (cbusMsg.encoded.length < 16) {
-									this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-								} else if (cbusMsg.ServiceIndex == 0) {
-									this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
-									// now send a message for each actual service entry
-									for (var index in this.Services) {
-										this.outputSD(cbusMsg.nodeNumber, 
-											this.Services[index].ServiceIndex,
-											this.Services[index].ServiceType,
-											this.Services[index].ServiceVersion);
-									}
-								} else
-								{
-									if(cbusMsg.ServiceIndex > count) {
-										this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, cbusMsg.ServiceIndex, GRSP.InvalidService);
-									} else {
-										this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
-									}
-								}
-								break;
-            case '87': //RDGN
-              winston.debug({message: 'Mock CBUS Network: received RDGN'});
-              // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
-              if (cbusMsg.encoded.length != 18) {
-                this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-              } else {
-                this.outputDGN(cbusMsg.nodeNumber, cbusMsg.ServiceIndex, cbusMsg.DiagnosticCode) 
+      winston.debug({message: 'Mock CBUS Network: Receive <<<< STANDARD ID message ' + cbusMsg.text });
+      switch (cbusMsg.opCode) {
+        case '0D':
+          // Format: <MjPri><MinPri=3><CANID>]<0D>
+          winston.debug({message: 'Mock CBUS Network: received QNN'});
+          for (var i = 0; i < this.modules.length; i++) {
+            this.outputPNN(this.modules[i].getNodeNumber(), 
+                this.modules[i].getManufacturerId(),
+                this.modules[i].getModuleId(), 
+                this.modules[i].getFlags())
+          }
+          break;
+        case '10': // RQNP
+          for (var moduleIndex = 0; moduleIndex < this.modules.length; moduleIndex++) {
+            // should only respond if in setup mode
+            if (this.modules[moduleIndex].inSetupMode()){
+              this.outputPARAMS(this.modules[moduleIndex].getNodeNumber());
+            }
+          }
+          break;
+        case '11': // RQMN
+          this.outputNAME("CANTEST");			
+          break;
+        case '22': // QLOC
+          break;
+        case '42': //SNN
+          // Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+          var nodeNumber = cbusMsg.nodeNumber
+          winston.debug({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
+          this.outputNNACK(nodeNumber);
+          break;
+        case '4F': //NNRSM
+          // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
+          winston.debug({message: 'Mock CBUS Network: received NNRSM'});
+          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          break;
+        case '53': //NNLRN
+          // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+          winston.debug({message: 'Mock CBUS Network: received NNLRN'});
+          break;
+        case '54': //NNULN
+          // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+          winston.debug({message: 'Mock CBUS Network: received NNULN'});
+          break;
+        case '57': //NERD
+          // Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+          winston.debug({message: 'Mock CBUS Network: received NERD'});
+          var nodeNumber = cbusMsg.nodeNumber
+          if ( this.getModule(nodeNumber) != undefined) {
+            var events = this.getModule(nodeNumber).getStoredEvents();
+            //for (var i = 0; i < events.length; i++) {
+                //this.outputENRSP(nodeNumber, i);
+            //}
+            // only output first event (if it exists)
+            if (events.length > 0) {
+                this.outputENRSP(nodeNumber, events[0].eventName, 0);
+            }
+          }
+          break;
+        case '58': //RQEVN
+          // Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
+          winston.debug({message: 'Mock CBUS Network: received RQEVN'});
+          var storedEventsCount = this.getModule(cbusMsg.nodeNumber).getStoredEventsCount();
+          this.outputNUMEV(cbusMsg.nodeNumber, storedEventsCount);
+          break;
+        case '5C': //BOOTM
+          // Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>>
+          winston.debug({message: 'Mock CBUS Network: received BOOTM: node ' + cbusMsg.nodeNumber });
+          break;
+        case '5E': //NNRST
+          // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
+          winston.debug({message: 'Mock CBUS Network: received NNRST'});
+          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          break;
+        case '71': //NVRD
+          // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+          winston.debug({message: 'Mock CBUS Network: received NVRD'});
+          if (cbusMsg.encoded.length < 16) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            var nodeVariables = this.modules[0].nodeVariables;
+            for (var i=0; i< nodeVariables.length; i++){
+              if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
+                this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
               }
-              break;
-            case '90': //ACON
-                // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-                winston.debug({message: 'Mock CBUS Network: received ACON'});
-                break;
-            case '91': //ACOF
-                // Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-                winston.debug({message: 'Mock CBUS Network: received ACOF'});
-                break;
-            case '95': //EVULN
-                // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
-                winston.debug({message: 'Mock CBUS Network: received EVULN'});
-                break;
-            case '96': //NVSET
-                // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-                winston.debug({message: 'Mock CBUS Network: received NVSET'});
-                if (cbusMsg.encoded.length != 18) {
-                  this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-                } else {
-                  if (cbusMsg.nodeVariableIndex < 255) {
-                    this.outputWRACK(cbusMsg.nodeNumber);
-                  } else {
-                    this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex)
-                  }
-                }
-                break;
-            case '9C': //REVAL
-                // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-                winston.debug({message: 'Mock CBUS Network: received REVAL'});
-                break;
-            case 'D2': //EVLRN
-                // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
-                winston.debug({message: 'Mock CBUS Network: received EVLRN'});
-                break;
-            default:
-                winston.debug({message: 'Mock CBUS Network: ********************** received unknown opcode ' + cbusMsg.opCode});
-                break;
-        }
+            }
+            if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
+              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex);
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+            }
+          }
+          break;
+        case '73': //RQNPN
+          // Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
+          winston.debug({message: 'Mock CBUS Network: received RQNPN'});
+          if (cbusMsg.encoded.length < 16) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
+              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
+          } else {
+            var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
+            this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
+          }
+          break;
+        case '75': //CANID
+          // Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CANID>
+          winston.debug({message: 'Mock CBUS Network: received CANID'});
+          break;
+        case '76': //MODE
+          // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
+          winston.debug({message: 'Mock CBUS Network: received MODE'});
+          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          break;
+        case '78': //RQSD
+          winston.debug({message: 'Mock CBUS Network: received RQSD'});
+          // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
+          // get count of service entries first
+          var count = 0;
+          for (var index in this.Services) { count++; }
+          if (cbusMsg.encoded.length < 16) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else if (cbusMsg.ServiceIndex == 0) {
+            this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
+            // now send a message for each actual service entry
+            for (var index in this.Services) {
+              this.outputSD(cbusMsg.nodeNumber, 
+                this.Services[index].ServiceIndex,
+                this.Services[index].ServiceType,
+                this.Services[index].ServiceVersion);
+            }
+          } else
+          {
+            if(cbusMsg.ServiceIndex > count) {
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, cbusMsg.ServiceIndex, GRSP.InvalidService);
+            } else {
+              this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
+            }
+          }
+          break;
+        case '87': //RDGN
+          winston.debug({message: 'Mock CBUS Network: received RDGN'});
+          // Format: [<MjPri><MinPri=3><CANID>]<87><NN hi><NN lo><ServiceIndex><DiagnosticCode>
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            this.outputDGN(cbusMsg.nodeNumber, cbusMsg.ServiceIndex, cbusMsg.DiagnosticCode) 
+          }
+          break;
+        case '8E': //NVSETRD
+          // Format: [<MjPri><MinPri=3><CANID>]<8E><NN hi><NN lo><NV# ><NV val>
+          winston.debug({message: 'Mock CBUS Network: received NVSETRD'});
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            var nodeVariables = this.modules[0].nodeVariables;
+            for (var i=0; i< nodeVariables.length; i++){
+              if (cbusMsg.nodeVariableIndex == i) {
+                nodeVariables[i] = cbusMsg.nodeVariableValue
+                this.outputNVANS(cbusMsg.nodeNumber, i, nodeVariables[i]);
+              }
+            }
+            if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+            }
+          }
+          break;
+        case '90': //ACON
+          // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received ACON'});
+          break;
+        case '91': //ACOF
+          // Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received ACOF'});
+          break;
+        case '95': //EVULN
+          // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received EVULN'});
+          break;
+        case '96': //NVSET
+          // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+          winston.debug({message: 'Mock CBUS Network: received NVSET'});
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            if (cbusMsg.nodeVariableIndex < 255) {
+              this.outputWRACK(cbusMsg.nodeNumber);
+            } else {
+              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex)
+            }
+          }
+          break;
+        case '9C': //REVAL
+          // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+          winston.debug({message: 'Mock CBUS Network: received REVAL'});
+          break;
+        case 'D2': //EVLRN
+          // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received EVLRN'});
+          break;
+        default:
+          winston.debug({message: 'Mock CBUS Network: ********************** received unknown opcode ' + cbusMsg.opCode});
+          break;
+      }
     }
 
 

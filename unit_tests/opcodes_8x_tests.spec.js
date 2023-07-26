@@ -167,6 +167,39 @@ describe('opcodes_8x tests', function(){
     winston.info({message: 'UNIT TEST: RDGN_SHORT ended'});
   })
 
+  function GetTestCase_NVSETRD() {
+    var arg1, arg2, arg3, testCases = [];
+    for (var a = 1; a< 4; a++) {
+      if (a == 1) {arg1 = 0}
+      if (a == 2) {arg1 = 1}
+      if (a == 3) {arg1 = 65535}
+      for (var b = 1; b < 4; b++) {
+        if (b == 1) {arg2 = 1}
+        if (b == 2) {arg2 = 2}
+        if (b == 3) {arg2 = 3}
+        for (var c = 1; c < 4; c++) {
+          if (c == 1) {arg3 = 0}
+          if (c == 2) {arg3 = 1}
+          if (c == 3) {arg3 = 2}
+          testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
+        }
+      }
+    }
+    return testCases;
+  }
+  
+  
+      // 0x8E - NVSETRD
+      // Format: [<MjPri><MinPri=3><CANID>]<8E><NN hi><NN lo><NV# ><NV val>
+      itParam("NVSETRD test ${JSON.stringify(value)}", GetTestCase_NVSETRD(), async function (value) {
+        winston.info({message: 'UNIT TEST:: BEGIN NVSETRD test'});
+        RetrievedValues.setNodeNumber(value.nodeNumber);
+        await tests.test_NVSETRD(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
+        expect(tests.hasTestPassed).to.equal(true);  
+  
+        winston.info({message: 'UNIT TEST: NVSETRD ended'});
+      })
+  
   
 })
 

@@ -45,6 +45,9 @@ class NodeVariableServiceTests {
 				// test that the number of node Variables matches published count in nodeParameters
 				this.test_NodeVariableCount(RetrievedValues, serviceIndex);
 				
+				// test the first node variable, using the count of variables received
+				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, 1);
+				
 				// test the last node variable, using the count of variables received
 				await this.opcodes_7x.test_NVRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value);
 				
@@ -54,11 +57,11 @@ class NodeVariableServiceTests {
 				// now test a short message, expecting an error message
 				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1);
 
-				// set node variable 1 with existing value (non-desctructive)
+				// set node variable 1 with existing value (non-destructive)
         var value1 = RetrievedValues.data.Services[serviceIndex].nodeVariables[1]
 				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, value1);
 
-				// set last node variable with existing value (non-desctructive) 
+				// set last node variable with existing value (non-destructive) 
         var lastValue = RetrievedValues.data.Services[serviceIndex].nodeVariables[RetrievedValues.data.nodeParameters[6].value]
 				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
 
@@ -67,6 +70,12 @@ class NodeVariableServiceTests {
 
 				// now test a short message,  value doesn't matter, as we're expecting the command to be rejected with an error response
 				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
+				
+				// set & read the first node variable with existing value (non-destructive)
+				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, 1, value1);
+				
+				// set & read the last node variable with existing value (non-destructive)
+				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
 				
 			// now request diagnostics just for this service
 			await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
