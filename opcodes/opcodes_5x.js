@@ -51,7 +51,7 @@ class opcodes_5x {
 		}else{
 			// in this instance, we're calling this method multiple times until we get an RQNN,
 			// so don't mark each try as a fail - the upper layer will timeout and fail if didn't get a pass
-			winston.info({message: 'VLCB: no RQNN received....'});
+			winston.info({message: 'VLCB:      no RQNN received....'});
 		}
 		winston.debug({message: '-'});
 	}

@@ -68,7 +68,7 @@ class SetupMode_tests {
             this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
             if (this.inSetupMode) break;
             if (setup_tries > 20) break;
-            winston.info({message: 'VLCB: waiting for RQNN (setup) ' + setup_tries + ' of 20' });
+            winston.info({message: 'VLCB:      waiting for RQNN (setup) ' + setup_tries + ' of 20' });
             await utils.sleep(1000);
         }
 		
@@ -86,7 +86,7 @@ class SetupMode_tests {
 			
         } else {
             winston.info({message: ''});
-            winston.info({message: 'VLCB: failed to go into setup'});
+            winston.info({message: 'VLCB:      failed to go into setup'});
 			RetrievedValues.data.TestsFailed++;
         }
 		
