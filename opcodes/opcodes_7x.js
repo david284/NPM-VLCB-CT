@@ -50,7 +50,6 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "NVANS"){
                 this.hasTestPassed = true;
@@ -83,10 +82,8 @@ class opcodes_7x {
           if (this.network.messagesIn.length > 0){
             this.network.messagesIn.forEach(element => {
               var msg = cbusLib.decode(element);
-              winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "CMDERR"){
-                  winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
                   if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 1;			// set bit 0
                   } else {
@@ -94,7 +91,6 @@ class opcodes_7x {
                   }
                 }
                 if (msg.mnemonic == "GRSP"){
-                  winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                   if (msg.result == GRSP.InvalidNodeVariableIndex) {
                     msgBitField |= 2;			// set bit 1
                   } else {
@@ -144,10 +140,8 @@ class opcodes_7x {
           if (this.network.messagesIn.length > 0){
             this.network.messagesIn.forEach(element => {
               var msg = cbusLib.decode(element);
-              winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "GRSP"){
-                  winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                   if (msg.result == GRSP.Invalid_Command) {
                     this.hasTestPassed = true;
                   } else {
@@ -186,7 +180,6 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "PARAN"){
                 // ok - we have a value, so assume the test has passed - now do additional consistency tests
@@ -245,10 +238,8 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "CMDERR"){
-                winston.info({message: 'VLCB:      CMDERR received ' + msg.errorNumber}); 
                 if (msg.errorNumber == GRSP.InvalidParameterIndex) {
                   msgBitField |= 1;			// set bit 0
                 } else {
@@ -256,7 +247,6 @@ class opcodes_7x {
                 }
               }
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.InvalidParameterIndex) {
                   msgBitField |= 2;			// set bit 1
                 } else {
@@ -300,10 +290,8 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.Invalid_Command) {
                   this.hasTestPassed = true;
                 } else {
@@ -355,10 +343,8 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
         this.network.messagesIn.forEach(element => {
           var msg = cbusLib.decode(element);
-          winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
           if (msg.mnemonic == "GRSP"){
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-              winston.info({message: 'VLCB:      MODE: GRSP received ' + msg.result}); 
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 this.hasTestPassed = true;
               }else {
@@ -395,7 +381,6 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (ServiceIndex == 0) {
                 // service index is 0, so expecting one or more 'SD' messages
@@ -408,8 +393,6 @@ class opcodes_7x {
                     winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
                   } else {
                     RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
-                    winston.info({message: 'VLCB:      Service Discovery : '
-                      + RetrievedValues.ServiceToString(msg.ServiceIndex)});
                   }
                 }
               } else {
@@ -417,8 +400,6 @@ class opcodes_7x {
                 if (msg.mnemonic == "ESD"){
                   this.hasTestPassed = true;
                   RetrievedValues.addServiceData(msg.ServiceIndex, msg.Data1, msg.Data2, msg.Data3, msg.Data4);
-                  winston.info({message: 'VLCB:      Service Discovery : '
-                    + RetrievedValues.ServiceDataToString(msg.ServiceIndex)});
                 }
               }
             }
@@ -450,11 +431,9 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.InvalidService) {
                   this.hasTestPassed = true;
                 } else {
@@ -493,11 +472,9 @@ class opcodes_7x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.Invalid_Command) {
                   this.hasTestPassed = true;
                 } else {

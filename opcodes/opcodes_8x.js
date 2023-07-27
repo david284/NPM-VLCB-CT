@@ -47,7 +47,6 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "DGN"){
@@ -64,8 +63,6 @@ class opcodes_8x {
                 
                 // store diagnostic code anyway, even if no matching service (will create a new service entry)
                 RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
-                // display what we have
-                winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)}); 
               }
             }
           });
@@ -101,12 +98,10 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.InvalidDiagnosticCode) {
 									this.hasTestPassed = true;
 								} else {
@@ -140,12 +135,10 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.InvalidService) {
 									this.hasTestPassed = true;
 								} else {
@@ -183,12 +176,10 @@ class opcodes_8x {
 				if (this.network.messagesIn.length > 0){
 					this.network.messagesIn.forEach(element => {
 						var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
 						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
 							// ok - it's the right node
 							// so expecting error message back, not DGN
 							if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
 								if (msg.result == GRSP.Invalid_Command) {
 									this.hasTestPassed = true;
 								} else {
@@ -224,12 +215,10 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "NVANS"){
                 if (msg.nodeVariableIndex == nodeVariableIndex){
-                  winston.info({message: 'VLCB:      NVANS received: Node Variable ' + msg.nodeVariableIndex + ' value ' + msg.nodeVariableValue });
                   this.hasTestPassed = true;
                 }                
               }
@@ -258,11 +247,9 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.InvalidNodeVariableIndex) {
                   this.hasTestPassed = true;
                 } else {
@@ -301,11 +288,9 @@ class opcodes_8x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){
-                winston.info({message: 'VLCB:      GRSP received ' + msg.result}); 
                 if (msg.result == GRSP.Invalid_Command) {
                   this.hasTestPassed = true;
                 } else {

@@ -42,10 +42,10 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		
 		// now create filename from DescriptorIdentity
 		var filename = RetrievedValues.data["DescriptorIdentity"] + '.json';
-		winston.info({message: `VLCB: module descriptor filename : ` + filename});
+		winston.info({message: `VLCB:      module descriptor filename : ` + filename});
 
 		module_descriptor = jsonfile.readFileSync(file_path + filename)
-		winston.info({message: `VLCB: module descriptor file read succesfully : ` + filename});
+		winston.info({message: `VLCB:      module descriptor file read succesfully : ` + filename});
 		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;
 	} catch (err) {
@@ -67,7 +67,7 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		var text = JSON.stringify(module_descriptor, null, '    ');
 		fs.writeFileSync(file_path + filename, text);
 				
-		winston.info({message: `VLCB: New module descriptor file created : ` + filename +'\n'});
+		winston.info({message: `VLCB:      New module descriptor file created : ` + filename +'\n'});
 
 		utils.DisplayEndDivider(Title + ' finished');
 		return module_descriptor;

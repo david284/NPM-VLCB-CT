@@ -38,10 +38,8 @@ class opcodes_4x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.debug({message: 'VLCB: NNRSM: msg received: ' + msg.mnemonic})
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               if (msg.mnemonic == "NNACK"){
-                winston.info({message: 'VLCB:      NNACK received'})
                 this.hasTestPassed = true;
               }
             }
@@ -67,9 +65,7 @@ class opcodes_4x {
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.debug({message: 'VLCB: NNRSM: msg received: ' + msg.mnemonic})
             if (msg.mnemonic == "GRSP"){
-              winston.debug({message: 'VLCB: NNRSM: GRSP received: '})
               GRSPreceived = true;
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
                 if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {

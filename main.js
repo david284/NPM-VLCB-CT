@@ -106,6 +106,9 @@ rl.question('\n Enter Node number > ', function(answer) {
 async function runtests() {
 	// RetrievedValues is used to store information gleaned from the module under test
 	// and is shared with, & updated by, all tests
+
+  // tell network we've started tests (enables messages to console)
+  Network.testStarted = true;
 							
 	// attach callback tests to network, to manage unsolicited messages from modules
 	callback.attach(RetrievedValues);

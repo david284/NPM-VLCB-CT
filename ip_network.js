@@ -17,6 +17,8 @@ class IP_Network {
     constructor(NET_ADDRESS, NET_PORT) {
 		winston.debug({message: 'IP_NETWORK: Connecting to ' + NET_ADDRESS + ':' + NET_PORT + '\n'});
         this.messagesIn = [];
+
+        this.testStarted = false;
 		
 		this.callback = this.dummyFunction;
         
@@ -31,6 +33,10 @@ class IP_Network {
                 msgArray[msgIndex] += ';'           // replace terminator removed by split function
                 var decodedMsg = cbusLib.decode(msgArray[msgIndex]);
                 winston.debug({message: 'IP_NETWORK: <<< receive ' + msgArray[msgIndex] + " " + decodedMsg.text});
+                if (this.testStarted) {
+                  // stops console filling up with heartb messages whilst waiting for user input
+                  winston.info({message: 'VLCB:      <<< received: ' + decodedMsg.text});
+                } 
                 this.messagesIn.push(decodedMsg)
 				this.callback(decodedMsg);
             }
@@ -50,7 +56,8 @@ class IP_Network {
         this.testClient.write(msgData);
         var decodedMsg = cbusLib.decode(msgData);
         winston.debug({message: 'IP_NETWORK: transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
-	}
+        winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
+      }
 	
 	closeConnection(){
 		this.testClient.end();

@@ -37,7 +37,6 @@ class opcodes_5x {
     if (this.network.messagesIn.length > 0){
       this.network.messagesIn.forEach(element => {
         var msg = cbusLib.decode(element);
-        winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
         if (msg.mnemonic == "RQNN"){
           this.test_nodeNumber = msg.nodeNumber;
           RetrievedValues.setNodeNumber( msg.nodeNumber);
@@ -78,16 +77,15 @@ class opcodes_5x {
             if (this.network.messagesIn.length > 0){
              this.network.messagesIn.forEach(element => {
                 var msg = cbusLib.decode(element);
-                winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
                 if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
                   if (msg.mnemonic == "DGN"){
                     if (msg.DiagnosticCode == 2) {
                       MSB_Uptime = msg.DiagnosticValue
-                      winston.info({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
+                      winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
                     }
                     if (msg.DiagnosticCode == 3) {
                       LSB_Uptime = msg.DiagnosticValue
-                      winston.info({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
+                      winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
                     }
                   }
                 }

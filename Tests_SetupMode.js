@@ -51,7 +51,7 @@ class SetupMode_tests {
     // check for response to QNN from module under test - otherwise node might not be responding
 		await this.opcodes_0x.test_QNN(RetrievedValues);
 		
-    winston.info({message: 'VLCB: put module into setup'});
+    winston.info({message: 'VLCB:      put module into setup'});
 
     await this.opcodes_7x.test_MODE(RetrievedValues, 0)		// 0 - setup mode
 

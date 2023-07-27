@@ -36,7 +36,6 @@ class opcodes_0x {
           var i=0;
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
-            winston.info({message: 'VLCB:      msg received: ' + msg.text}); 
             if (msg.mnemonic == "PNN"){
               // allow messages from all nodes as we can build up an array of all the modules
               var newModule = {
@@ -56,7 +55,7 @@ class opcodes_0x {
               } else {
                 // we have an expected node number, so check it
                 if (msg.nodeNumber == expectedNodeNumber){
-                  winston.info({message: 'VLCB: QNN passed - Node ' + msg.nodeNumber});
+                  winston.info({message: 'VLCB:      QNN passed for node ' + msg.nodeNumber});
                   this.hasTestPassed = true;
                 }
               }
