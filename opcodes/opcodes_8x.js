@@ -54,7 +54,7 @@ class opcodes_8x {
                 // lets findout if we have an entry for this service
                 if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
                 {
-                  winston.debug({message: 'VLCB: No Matching service found for serviceIndex ' + msg.ServiceIndex});
+                  winston.debug({message: 'VLCB:      No Matching service found for serviceIndex ' + msg.ServiceIndex});
                   this.hasTestPassed = false;
                 } else {
                   // we have a matching service entry, so mark as passed
@@ -73,7 +73,7 @@ class opcodes_8x {
         if(ServiceIndex != 0) {
           if ( DiagnosticCode == 0) { 
             if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-              winston.info({message: 'VLCB: FAIL number of expected diagnostics do not match number of received diagnostics'});
+              winston.info({message: 'VLCB:      FAIL number of expected diagnostics do not match number of received diagnostics'});
               this.hasTestPassed = false
             }
           } 
@@ -109,7 +109,7 @@ class opcodes_8x {
 								}
 							}
 							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
+								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
 							}
 						}
 					});
@@ -146,7 +146,7 @@ class opcodes_8x {
 								}
 							}
 							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
+								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
 							}
 						}
 					});
@@ -187,7 +187,7 @@ class opcodes_8x {
 								}
 							}
 							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB: FAIL expected error message but received DGN'});
+								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
 							}
 						}
 					});
