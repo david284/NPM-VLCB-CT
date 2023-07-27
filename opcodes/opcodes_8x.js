@@ -209,7 +209,6 @@ class opcodes_8x {
       // now create message and start test
       var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
-      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex + ' value ' + nodeVariableValue });
       setTimeout(()=>{
         var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
@@ -241,7 +240,6 @@ class opcodes_8x {
       // now create message and start test
       var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
-      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex + ' value ' + nodeVariableValue });
       setTimeout(()=>{
         var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
@@ -282,7 +280,6 @@ class opcodes_8x {
 			// truncate the 18 byte message to remove the last byte - remove last three bytes & add ';' to end
 			msgData = msgData.substring(0,15) + ';'
       this.network.write(msgData);
-      winston.info({message: 'VLCB:      NVSETRD sent: Node Variable ' + nodeVariableIndex });
       setTimeout(()=>{
         var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
