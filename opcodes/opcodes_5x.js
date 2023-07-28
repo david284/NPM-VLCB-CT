@@ -43,6 +43,8 @@ class opcodes_5x {
           this.inSetupMode = true;
           this.hasTestPassed = true;
           winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
+          // ok, the message must be from the unit under test, so store it's CANID
+          RetrievedValues.data.CANID = parseInt(msg.encoded.substr(3, 2), 16)>>1
         }
       })
 		}

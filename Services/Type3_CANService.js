@@ -38,7 +38,8 @@ class CANServiceTests {
 				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
 				// now test CANID
-				await this.opcodes_7x.test_CANID(RetrievedValues, 1);
+        // use previously captured CANID, so the test is non-destructive
+				await this.opcodes_7x.test_CANID(RetrievedValues, RetrievedValues.data.CANID);
 
         // now test CANID_INVALID_VALUE
 				await this.opcodes_7x.test_CANID_INVALID_VALUE(RetrievedValues, 0);
