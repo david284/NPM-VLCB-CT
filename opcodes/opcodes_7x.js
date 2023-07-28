@@ -312,17 +312,43 @@ class opcodes_7x {
  
     
 	// 0x75 - CANID
-	// ******* not fully implemented as depricated for VLCB *****
-  test_CANID(retrieved_values, CANID) {
+  test_CANID(RetrievedValues, CANID) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN CANID test'});
+      winston.debug({message: 'VLCB: BEGIN CANID_SHORT test: node ' + RetrievedValues.getNodeNumber() + ' CANID ' + CANID});
       this.hasTestPassed = false;
+      var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];
-      var msgData = cbusLib.encodeCANID(retrieved_values.nodeNumber, CANID);
+      var msgData = cbusLib.encodeCANID(RetrievedValues.getNodeNumber(), CANID);
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          // not implemented yet
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.mnemonic == "WRACK"){
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                msgBitField |= 1;   // set bit 0
+              }
+            }
+            if (msg.mnemonic == "GRSP"){
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                  if (msg.result == GRSP.OK){
+                    msgBitField |= 2;   // set bit 1
+                  } else {
+                    winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.OK}); 
+                  }
+                }
+              }
+            }
+          });
+        }
+        if (msgBitField == 3) {
+          // both messages has been received
+          this.hasTestPassed = true;
+        } else {
+          if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both GRSP & WRACK messages missing/incorrect'}); }
+          if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
+          if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: WRACK message missing/incorrect'}); }
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID');
         resolve();
@@ -331,6 +357,88 @@ class opcodes_7x {
   }
 	
 	
+	// 0x75 - CANID
+  test_CANID_INVALID_VALUE(RetrievedValues, CANID) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN CANID_INVALID_VALUE test: node ' + RetrievedValues.getNodeNumber() + ' CANID ' + CANID});
+      this.hasTestPassed = false;
+      var msgBitField = 0;	// bit field to capture when each message has been received
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeCANID(RetrievedValues.getNodeNumber(), CANID);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.mnemonic == "CMDERR"){
+              if (msg.errorNumber == GRSP.InvalidEvent) {
+                msgBitField |= 1;			// set bit 0
+              } else {
+                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
+              }
+          }
+            if (msg.mnemonic == "GRSP"){
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                  if (msg.result == GRSP.Invalid_parameter){
+                    msgBitField |= 2;   // set bit 1
+                  } else {
+                    winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_parameter}); 
+                  }
+                }
+              }
+            }
+          });
+        }
+        if (msgBitField == 3) {
+          // both messages has been received
+          this.hasTestPassed = true;
+        } else {
+          if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both CMDERR & GRSP messages missing/incorrect'}); }
+          if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
+          if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID_INVALID_VALUE');
+        resolve();
+      }, 250 );
+    }.bind(this));
+  }
+	
+	
+	// 0x75 - CANID
+  test_CANID_SHORT(RetrievedValues, CANID) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN CANID_SHORT test: node ' + RetrievedValues.getNodeNumber() + ' CANID ' + CANID});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeCANID(RetrievedValues.getNodeNumber(), CANID);
+			// :SB780N75FFFF00;
+			// 1234567890123456
+			// truncate the 16 byte message to remove the last byte - remove last three characters & add ';' to end
+			msgData = msgData.substring(0,13) + ';'
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.mnemonic == "GRSP"){
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                  if (msg.result == GRSP.Invalid_Command){
+                    this.hasTestPassed = true;
+                  }
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID_SHORT');
+        resolve();
+      }, 250 );
+    }.bind(this));
+  }
+
+
   // 0x76 - MODE
   test_MODE(RetrievedValues, MODE) {
     return new Promise(function (resolve, reject) {

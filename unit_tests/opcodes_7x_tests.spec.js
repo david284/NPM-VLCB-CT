@@ -181,10 +181,71 @@ describe('opcodes_7x tests', function(){
 		RetrievedValues.setNodeNumber(0);
   	await tests.test_RQNPN_SHORT(RetrievedValues, test_module_descriptor, 21);
     expect(tests.hasTestPassed).to.equal(true);
-//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
 		winston.info({message: 'UNIT TEST:: END RQNPN_SHORT test'});
 	})
 
+
+  function GetTestCase_CANID() {
+		var arg1, arg2, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) {arg1 = 0}
+			if (a == 2) {arg1 = 1}
+			if (a == 3) {arg1 = 65535}
+			for (var b = 1; b < 3; b++) {
+				if (b == 1) {arg2 = 1}
+				if (b == 2) {arg2 = 99}
+				testCases.push({'nodeNumber':arg1, 'CANID':arg2});
+			}
+		}
+		return testCases;
+	}
+
+
+  // 0x75 - CANID
+  itParam("CANID test ${JSON.stringify(value)}", GetTestCase_CANID(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN CANID test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+  	await tests.test_CANID(RetrievedValues, value.CANID);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END CANID test'});    
+	})
+
+
+  function GetTestCase_CANID_INVALID_VALUE() {
+		var arg1, arg2, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) {arg1 = 0}
+			if (a == 2) {arg1 = 1}
+			if (a == 3) {arg1 = 65535}
+			for (var b = 1; b < 4; b++) {
+				if (b == 1) {arg2 = 0}
+				if (b == 2) {arg2 = 100}
+				if (b == 3) {arg2 = 255}
+				testCases.push({'nodeNumber':arg1, 'CANID':arg2});
+			}
+		}
+		return testCases;
+	}
+
+
+  // 0x75 - CANID_INVALID_VALUE
+  itParam("CANID_INVALID_VALUE test ${JSON.stringify(value)}", GetTestCase_CANID_INVALID_VALUE(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN CANID_INVALID_VALUE test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+  	await tests.test_CANID_INVALID_VALUE(RetrievedValues, value.CANID);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END CANID_INVALID_VALUE test'});    
+	})
+
+
+  // 0x75 - CANID_SHORT
+  it("CANID_SHORT test", async function () {
+		winston.info({message: 'UNIT TEST:: BEGIN CANID_SHORT test'});
+		RetrievedValues.setNodeNumber(0);
+  	await tests.test_CANID_SHORT(RetrievedValues, 21);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END CANID_SHORT test'});
+	})
 
 
   function GetTestCase_MODE() {
