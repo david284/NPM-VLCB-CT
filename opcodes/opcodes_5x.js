@@ -59,6 +59,30 @@ class opcodes_5x {
 	}
 
 
+  // 0x5D - ENUM
+  test_ENUM(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN ENUM test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        this.network.messagesIn.forEach(element => {
+          var msg = cbusLib.decode(element);
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "NNACK"){
+              this.hasTestPassed = true;
+            }
+          }
+        })
+        if (this.hasTestPassed){ utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM'); }
+        resolve();
+      } , 200 );
+    }.bind(this));
+  }
+
+
   // 0x5E - NNRST
   test_NNRST(RetrievedValues, serviceIndex) {
     winston.debug({message: 'VLCB: BEGIN NNRST test'});

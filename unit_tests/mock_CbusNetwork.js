@@ -252,6 +252,11 @@ class mock_CbusNetwork {
           // Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>>
           winston.debug({message: 'Mock CBUS Network: received BOOTM: node ' + cbusMsg.nodeNumber });
           break;
+        case '5D': //ENUM
+          // Format: [<MjPri><MinPri=3><CANID>]<5D><NN hi><NN lo>>
+          winston.debug({message: 'Mock CBUS Network: received ENUM: node ' + cbusMsg.nodeNumber });
+          this.outputNNACK(cbusMsg.nodeNumber);
+          break;
         case '5E': //NNRST
           // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNRST'});

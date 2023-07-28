@@ -97,6 +97,27 @@ describe('opcodes_5x tests', function(){
 		}, 100);
 	})
 
+
+  function GetTestCase_ENUM() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	// 0x5D - ENUM
+	itParam("ENUM test ${JSON.stringify(value)}", GetTestCase_ENUM(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN ENUM test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_ENUM(RetrievedValues);
+		winston.info({message: 'UNIT TEST:: END ENUM test'});
+	})
+	
+
   function GetTestCase_NNRST() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {

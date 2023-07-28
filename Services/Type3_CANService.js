@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
 
+const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 
@@ -20,6 +21,7 @@ class CANServiceTests {
 		this.network = NETWORK;
 		this.Title = 'CAN Service';
 		
+		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
     }
@@ -53,6 +55,9 @@ class CANServiceTests {
         // now test CANID_SHORT
 				await this.opcodes_7x.test_CANID_SHORT(RetrievedValues, 1);
 				
+				// now test ENUM
+				await this.opcodes_5x.test_ENUM(RetrievedValues);
+
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
