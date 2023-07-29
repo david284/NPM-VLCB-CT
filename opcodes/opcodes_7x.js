@@ -314,7 +314,7 @@ class opcodes_7x {
 	// 0x75 - CANID
   test_CANID(RetrievedValues, CANID) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN CANID_SHORT test: node ' + RetrievedValues.getNodeNumber() + ' CANID ' + CANID});
+      winston.debug({message: 'VLCB: BEGIN CANID test: node ' + RetrievedValues.getNodeNumber() + ' CANID ' + CANID});
       this.hasTestPassed = false;
       var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];

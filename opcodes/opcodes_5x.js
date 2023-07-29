@@ -76,9 +76,9 @@ class opcodes_5x {
             }
           }
         })
-        if (this.hasTestPassed){ utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM'); }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
         resolve();
-      } , 200 );
+      } , 250 );
     }.bind(this));
   }
 
