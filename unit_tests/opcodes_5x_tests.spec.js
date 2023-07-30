@@ -53,6 +53,7 @@ describe('opcodes_5x tests', function(){
       // timeout to allow tests to print
       winston.info({message: ' '});   // blank line to separate tests
       winston.info({message: 'UNIT TEST: tests finished '});
+      winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
@@ -113,12 +114,54 @@ describe('opcodes_5x tests', function(){
 	itParam("NNEVN test ${JSON.stringify(value)}", GetTestCase_NNEVN(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNEVN test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NNEVN(RetrievedValues);
+		await tests.test_NNEVN(RetrievedValues, 1);
     expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END NNEVN test'});
 	})
-	
+  
+  
+  function GetTestCase_NERD() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
 
+	// 0x57 - NERD
+	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NERD(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NERD test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_NERD(RetrievedValues, 1);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END NERD test'});
+	})
+  
+  
+  function GetTestCase_RQEVN() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	// 0x57 - RQEVN
+	itParam("RQEVN test ${JSON.stringify(value)}", GetTestCase_RQEVN(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN RQEVN test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_RQEVN(RetrievedValues, 1);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END RQEVN test'});
+	})
+  
+  
   function GetTestCase_ENUM() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {

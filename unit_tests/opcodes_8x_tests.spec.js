@@ -44,27 +44,26 @@ describe('opcodes_8x tests', function(){
 		winston.info({message: '------------------ opcodes_8x unit tests -------------------'});
 		winston.info({message: '============================================================'});
 		winston.info({message: ' '});
-
-
 	})
     
-    beforeEach (function() {
-   		winston.info({message: ' '});   // blank line to separate tests
-		Network.messagesIn = [];
-    })
+  beforeEach (function() {
+    winston.info({message: ' '});   // blank line to separate tests
+  Network.messagesIn = [];
+  })
 
 	after(function(done) {
         // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: opcodes_8x tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      winston.info({message: ' '});   // blank line to separate tests
+      winston.info({message: 'UNIT TEST: opcodes_8x tests finished '});
+      winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,7 +106,6 @@ describe('opcodes_8x tests', function(){
 		// ok, all setup, now start test - service 0, diagnostics 0
     await tests.test_RDGN(RetrievedValues, 0, 0);
 		winston.info({message: 'UNIT TEST: RDGN ended'});
-		winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
 		expect(tests.hasTestPassed).to.equal(true);
 	})
 

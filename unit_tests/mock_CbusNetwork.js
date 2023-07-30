@@ -238,6 +238,12 @@ class mock_CbusNetwork {
           var nodeNumber = cbusMsg.nodeNumber
           if ( this.getModule(nodeNumber) != undefined) {
             var events = this.getModule(nodeNumber).getStoredEvents();
+            var index = 0;
+            events.forEach(event => {
+              index++;
+              this.outputENRSP(nodeNumber, event.eventName, index);
+            })
+/*
             //for (var i = 0; i < events.length; i++) {
                 //this.outputENRSP(nodeNumber, i);
             //}
@@ -245,6 +251,7 @@ class mock_CbusNetwork {
             if (events.length > 0) {
                 this.outputENRSP(nodeNumber, events[0].eventName, 0);
             }
+            */
           }
           break;
         case '58': //RQEVN
@@ -935,8 +942,8 @@ class CANTEST extends CbusModule{
     this.setNodeFlags(7);
     this.setCputType(13);
         
-    this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventName': "012D0103", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventName': "012D0104", "variables":[ 0, 0, 0, 0 ]})
   }
 }
 

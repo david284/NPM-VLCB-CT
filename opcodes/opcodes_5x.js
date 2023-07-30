@@ -84,7 +84,7 @@ class opcodes_5x {
 
 
   // 0x56 - NNEVN
-  test_NNEVN(RetrievedValues) {
+  test_NNEVN(RetrievedValues, ServiceIndex) {
     winston.debug({message: 'VLCB: BEGIN NNEVN test'});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
@@ -97,10 +97,66 @@ class opcodes_5x {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "EVNLF"){
               this.hasTestPassed = true;
+              // store the returned value
+              RetrievedValues.data.Services[ServiceIndex]["EventSpaceLeft"] = msg.EVSPC;
             }
           }
         })
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN');
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
+
+
+  // 0x57 - NERD
+  test_NERD(RetrievedValues, ServiceIndex) {
+    winston.debug({message: 'VLCB: BEGIN NERD test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        this.network.messagesIn.forEach(element => {
+          var msg = cbusLib.decode(element);
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "ENRSP"){
+              this.hasTestPassed = true;
+              // store the returned value
+              if (RetrievedValues.data.Services[ServiceIndex].events == undefined){RetrievedValues.data.Services[ServiceIndex].events = {} }
+              RetrievedValues.data.Services[ServiceIndex].events[msg.eventIndex] = {};
+              RetrievedValues.data.Services[ServiceIndex].events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
+            }
+          }
+        })
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD');
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
+
+
+  // 0x58 - RQEVN
+  test_RQEVN(RetrievedValues, ServiceIndex) {
+    winston.debug({message: 'VLCB: BEGIN RQEVN test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeRQEVN(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        this.network.messagesIn.forEach(element => {
+          var msg = cbusLib.decode(element);
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "NUMEV"){
+              this.hasTestPassed = true;
+              // store the returned value
+              RetrievedValues.data.Services[ServiceIndex]["StoredEventCount"] = msg.eventCount;
+            }
+          }
+        })
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN');
         resolve();
       } , 250 );
     }.bind(this));

@@ -40,8 +40,18 @@ class TeachingServiceTests {
 				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
 				// now request number of event spaces left
-				await this.opcodes_5x.test_NNEVN(RetrievedValues, serviceIndex, 0);
+				await this.opcodes_5x.test_NNEVN(RetrievedValues, serviceIndex);
+        // save value for later use
+        var initialEventSpaceLeft = RetrievedValues.data.Services[serviceIndex].EventSpaceLeft
 
+				// now request number of events stored
+				await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+        // save value for later use
+        var initialStoredEventCount = RetrievedValues.data.Services[serviceIndex].StoredEventCount
+
+				// now request all events stored
+				await this.opcodes_5x.test_NERD(RetrievedValues, serviceIndex);
+        
 				//
 				// Add more tests.......
 				//
