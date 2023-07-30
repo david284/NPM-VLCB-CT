@@ -98,6 +98,27 @@ describe('opcodes_5x tests', function(){
 	})
 
 
+  function GetTestCase_NNEVN() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	// 0x56 - NNEVN
+	itParam("NNEVN test ${JSON.stringify(value)}", GetTestCase_NNEVN(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NNEVN test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_NNEVN(RetrievedValues);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END NNEVN test'});
+	})
+	
+
   function GetTestCase_ENUM() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
@@ -114,6 +135,7 @@ describe('opcodes_5x tests', function(){
 		winston.info({message: 'UNIT TEST:: BEGIN ENUM test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_ENUM(RetrievedValues);
+    expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END ENUM test'});
 	})
 	
@@ -137,7 +159,7 @@ describe('opcodes_5x tests', function(){
 		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
 		// so need to pass in the service index for the MNS service - 1 in this case
 		await tests.test_NNRST(RetrievedValues, 1);
-
+    expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END NNRST test'});
 	})
 	

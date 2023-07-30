@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
 
+const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 
@@ -20,6 +21,7 @@ class TeachingServiceTests {
 		this.network = NETWORK;
 		this.Title = 'Teaching Service';
 		
+		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
     }
@@ -36,6 +38,9 @@ class TeachingServiceTests {
 								
 				// now request diagnostics just for this service
 				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
+
+				// now request number of event spaces left
+				await this.opcodes_5x.test_NNEVN(RetrievedValues, serviceIndex, 0);
 
 				//
 				// Add more tests.......

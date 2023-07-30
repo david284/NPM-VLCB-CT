@@ -83,6 +83,30 @@ class opcodes_5x {
   }
 
 
+  // 0x56 - NNEVN
+  test_NNEVN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNEVN test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNNEVN(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        this.network.messagesIn.forEach(element => {
+          var msg = cbusLib.decode(element);
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "EVNLF"){
+              this.hasTestPassed = true;
+            }
+          }
+        })
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN');
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
+
+
   // 0x5E - NNRST
   test_NNRST(RetrievedValues, serviceIndex) {
     winston.debug({message: 'VLCB: BEGIN NNRST test'});

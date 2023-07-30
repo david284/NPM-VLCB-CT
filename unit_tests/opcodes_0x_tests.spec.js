@@ -78,8 +78,8 @@ describe('opcodes_0x tests', function(){
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
 		RetrievedValues.setNodeNumber(0);
     await tests.test_QNN(RetrievedValues);
-    winston.info({message: 'UNIT TEST: QNN ended'});
     expect(tests.hasTestPassed).to.equal(true);
+    winston.info({message: 'UNIT TEST: QNN ended'});
 	})
 
 
