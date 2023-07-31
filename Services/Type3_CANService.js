@@ -38,7 +38,10 @@ class CANServiceTests {
 								
 				// now request diagnostics just for this service
 				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
-
+/*
+//
+// CANID & ENUM no longer supported
+//
 				// now test CANID
         // use previously captured CANID, so the test is non-destructive
 				await this.opcodes_7x.test_CANID(RetrievedValues, RetrievedValues.data.CANID);
@@ -57,6 +60,7 @@ class CANServiceTests {
 				
 				// now test ENUM
 				await this.opcodes_5x.test_ENUM(RetrievedValues);
+*/
 
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
