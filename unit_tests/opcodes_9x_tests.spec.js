@@ -67,64 +67,88 @@ describe('opcodes_9x tests', function(){
     });
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// 				Tests
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // 				Tests
+  //
 
-function GetTestCase_NVSET() {
-  var arg1, arg2, arg3, testCases = [];
-  for (var a = 1; a< 4; a++) {
-    if (a == 1) {arg1 = 0}
-    if (a == 2) {arg1 = 1}
-    if (a == 3) {arg1 = 65535}
-    for (var b = 1; b < 4; b++) {
-      if (b == 1) {arg2 = 0}
-      if (b == 2) {arg2 = 1}
-      if (b == 3) {arg2 = 2}
-      for (var c = 1; c < 4; c++) {
-        if (c == 1) {arg3 = 0}
-        if (c == 2) {arg3 = 1}
-        if (c == 3) {arg3 = 2}
-        testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
+  function GetTestCase_EVLRN() {
+    var arg1, testCases = [];
+    for (var a = 1; a< 5; a++) {
+      if (a == 1) {arg1 = "00000000"}
+      if (a == 2) {arg1 = "00000001"}
+      if (a == 3) {arg1 = "00010000"}
+      if (a == 4) {arg1 = "FFFFFFFF"}
+      testCases.push({'eventIdentifier':arg1});
+    }
+    return testCases;
+  }
+
+  // 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_EVLRN(), async function (value) {
+    winston.info({message: 'UNIT TEST:: BEGIN EVULN test ' + JSON.stringify(value)});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_EVULN(RetrievedValues, 1, value.eventIdentifier);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVULN ended'});
+  })
+
+    
+  function GetTestCase_NVSET() {
+    var arg1, arg2, arg3, testCases = [];
+    for (var a = 1; a< 4; a++) {
+      if (a == 1) {arg1 = 0}
+      if (a == 2) {arg1 = 1}
+      if (a == 3) {arg1 = 65535}
+      for (var b = 1; b < 4; b++) {
+        if (b == 1) {arg2 = 0}
+        if (b == 2) {arg2 = 1}
+        if (b == 3) {arg2 = 2}
+        for (var c = 1; c < 4; c++) {
+          if (c == 1) {arg3 = 0}
+          if (c == 2) {arg3 = 1}
+          if (c == 3) {arg3 = 2}
+          testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
+        }
       }
     }
+    return testCases;
   }
-  return testCases;
-}
 
+  // 0x96 - NVSET
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  itParam("NVSET test ${JSON.stringify(value)}", GetTestCase_NVSET(), async function (value) {
+    winston.info({message: 'UNIT TEST:: BEGIN NVSET test'});
+    RetrievedValues.setNodeNumber(value.nodeNumber);
+    await tests.test_NVSET(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
+    expect(tests.hasTestPassed).to.equal(true);  
 
-    // 0x96 - NVSET
-    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-    itParam("NVSET test ${JSON.stringify(value)}", GetTestCase_NVSET(), async function (value) {
-      winston.info({message: 'UNIT TEST:: BEGIN NVSET test'});
-      RetrievedValues.setNodeNumber(value.nodeNumber);
-      await tests.test_NVSET(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
-      expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: NVSET ended'});
+  })
+  
+  // 0x96 - NVSET
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  it("NVSET_INVALID_INDEX", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
+    RetrievedValues.setNodeNumber(0);
+    await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 1, 255, 0);
+    expect(tests.hasTestPassed).to.equal(true);  
 
-      winston.info({message: 'UNIT TEST: NVSET ended'});
-    })
-    
-    // 0x96 - NVSET
-    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-    it("NVSET_INVALID_INDEX", async function () {
-      winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
-      RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 1, 255, 0);
-      expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
+  })
 
-      winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
-    })
+  // 0x96 - NVSET
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  it("NVSET_SHORT", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN NVSET_SHORT test'});
+    RetrievedValues.setNodeNumber(0);
+    await tests.test_NVSET_SHORT(RetrievedValues, 1, 1, 0);
+    expect(tests.hasTestPassed).to.equal(true);  
 
-    // 0x96 - NVSET
-    // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-    it("NVSET_SHORT", async function () {
-      winston.info({message: 'UNIT TEST:: BEGIN NVSET_SHORT test'});
-      RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSET_SHORT(RetrievedValues, 1, 1, 0);
-      expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});
+  })
 
-      winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});
-    })
 })
 

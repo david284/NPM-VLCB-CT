@@ -6,6 +6,7 @@ const utils = require('./../utilities.js');
 const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
+const opcodes_9x = require('./../opcodes/opcodes_9x.js');
 const opcodes_Dx = require('./../opcodes/opcodes_Dx.js');
 
 // Scope:
@@ -25,6 +26,7 @@ class TeachingServiceTests {
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_9x = new opcodes_9x.opcodes_9x(this.network);
 		this.opcodes_Dx = new opcodes_Dx.opcodes_Dx(this.network);
     }
 
@@ -63,6 +65,15 @@ class TeachingServiceTests {
 
           // add new event
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", 1, 2);
+          
+          // now request number of events stored
+          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+          
+          winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
+                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});          
+          
+          // remove added event event
+          await this.opcodes_9x.test_EVULN(RetrievedValues, serviceIndex, "01000200");
           
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);

@@ -398,6 +398,13 @@ class mock_CbusNetwork {
         case '95': //EVULN
           // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
           winston.debug({message: 'Mock CBUS Network: received EVULN'});
+          // 123456789012345678
+          // :SB780N9500000000;
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            this.outputWRACK(this.learningNode);
+          }
           break;
         case '96': //NVSET
           // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>

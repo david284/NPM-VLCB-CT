@@ -25,6 +25,38 @@ class opcodes_9x {
     }
 
 
+	// 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+  test_EVULN(RetrievedValues, ServiceIndex, eventIdentifier) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN EVULN test - ServiceIndex ' + ServiceIndex});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "WRACK"){
+                this.hasTestPassed = true;
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN');
+        resolve();
+      }, 250 );
+    }.bind(this));
+	} // end Test_EVULN
+
+
 	// 0x96 - NVSET
   // Format:  [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
   test_NVSET(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
