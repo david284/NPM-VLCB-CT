@@ -222,10 +222,20 @@ class mock_CbusNetwork {
         case '53': //NNLRN
           // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNLRN'});
+          var nodeNumber = cbusMsg.nodeNumber
+          if ( this.getModule(nodeNumber) != undefined) {
+            // set bit 5 of parameter 8 (in learn mode)
+            this.getModule(nodeNumber).parameters[8] |= 0x20
+          }          
           break;
         case '54': //NNULN
           // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
           winston.debug({message: 'Mock CBUS Network: received NNULN'});
+          var nodeNumber = cbusMsg.nodeNumber
+          if ( this.getModule(nodeNumber) != undefined) {
+            // clear bit 5 of parameter 8 (in learn mode)
+            this.getModule(nodeNumber).parameters[8] &= ~0x20
+          }          
           break;
         case '56': //NNEVN
           // Format: [<MjPri><MinPri=3><CANID>]<56><NN hi><NN lo>

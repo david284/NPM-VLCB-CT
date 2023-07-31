@@ -52,6 +52,13 @@ class TeachingServiceTests {
 				// now request all events stored
 				await this.opcodes_5x.test_NERD(RetrievedValues, serviceIndex);
         
+        //put module into learn mode
+				await this.opcodes_5x.test_NNLRN(RetrievedValues);
+        
+        
+        // take module out of learn mode
+				await this.opcodes_5x.test_NNULN(RetrievedValues);
+        
 				//
 				// Add more tests.......
 				//

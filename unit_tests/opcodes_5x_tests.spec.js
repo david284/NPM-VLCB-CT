@@ -99,6 +99,48 @@ describe('opcodes_5x tests', function(){
 	})
 
 
+  function GetTestCase_NNLRN() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	// 0x53 - NNLRN
+	itParam("NNLRN test ${JSON.stringify(value)}", GetTestCase_NNLRN(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NNLRN test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_NNLRN(RetrievedValues);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END NNLRN test'});
+	})
+  
+  
+  function GetTestCase_NNULN() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 4; a++) {
+			if (a == 1) arg1 = 0;
+			if (a == 2) arg1 = 1;
+			if (a == 3) arg1 = 65535;
+			testCases.push({'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	// 0x54 - NNULN
+	itParam("NNULN test ${JSON.stringify(value)}", GetTestCase_NNULN(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NNULN test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_NNULN(RetrievedValues);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END NNULN test'});
+	})
+  
+  
   function GetTestCase_NNEVN() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {

@@ -59,25 +59,65 @@ class opcodes_5x {
 	}
 
 
-  // 0x5D - ENUM
-  test_ENUM(RetrievedValues) {
-    winston.debug({message: 'VLCB: BEGIN ENUM test'});
+  // 0x53 - NNLRN
+  test_NNLRN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNLRN test'});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
       this.network.messagesIn = [];
-      var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
+      var msgData = cbusLib.encodeNNLRN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "NNACK"){
-              this.hasTestPassed = true;
-            }
+        // to check if it's in learn mode, read node parameter 8
+        msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
+        this.network.write(msgData);
+        setTimeout(()=>{
+          if (this.network.messagesIn.length > 0){
+            this.network.messagesIn.forEach(element => {
+              var msg = cbusLib.decode(element);
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.mnemonic == "PARAN"){
+                  // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
+                  if (msg.parameterValue & 0x20) { this.hasTestPassed = true; }
+                }
+              }
+            })
           }
-        })
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
-        resolve();
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN');
+          resolve();
+        }, 250 );
+      }, 250 );
+    }.bind(this));
+  }
+
+
+  // 0x54 - NNULN
+  test_NNULN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNULN test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNNULN(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        // to check if it's no longer in learn mode, read node parameter 8
+        msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
+        this.network.write(msgData);
+        setTimeout(()=>{
+          if (this.network.messagesIn.length > 0){
+            this.network.messagesIn.forEach(element => {
+              var msg = cbusLib.decode(element);
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+                if (msg.mnemonic == "PARAN"){
+                  // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
+                  if (!(msg.parameterValue & 0x20)) { this.hasTestPassed = true; }
+                }
+              }
+            })
+          }
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN');
+          resolve();
+        }, 250 );
       } , 250 );
     }.bind(this));
   }
@@ -157,6 +197,30 @@ class opcodes_5x {
           }
         })
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN');
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
+
+
+  // 0x5D - ENUM
+  test_ENUM(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN ENUM test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        this.network.messagesIn.forEach(element => {
+          var msg = cbusLib.decode(element);
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "NNACK"){
+              this.hasTestPassed = true;
+            }
+          }
+        })
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
         resolve();
       } , 250 );
     }.bind(this));
