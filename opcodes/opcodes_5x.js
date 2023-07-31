@@ -78,7 +78,10 @@ class opcodes_5x {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "PARAN"){
                   // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
-                  if (msg.parameterValue & 0x20) { this.hasTestPassed = true; }
+                  if (msg.parameterValue & 0x20) { 
+                    RetrievedValues.data.inLearnMode = true;
+                    this.hasTestPassed = true; 
+                  }
                 }
               }
             })
@@ -110,7 +113,10 @@ class opcodes_5x {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "PARAN"){
                   // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
-                  if (!(msg.parameterValue & 0x20)) { this.hasTestPassed = true; }
+                  if (!(msg.parameterValue & 0x20)) { 
+                    RetrievedValues.data.inLearnMode = false;
+                    this.hasTestPassed = true; 
+                  }
                 }
               }
             })

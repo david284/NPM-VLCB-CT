@@ -21,10 +21,13 @@ class RetrievedValues {
 		
 		this.data = { "DateTime" : new Date(),	// include datetime of test run start
 								"NAME": null,
+                "DescriptorIdentity": null,
+                "CANID": null,
 								"nodeNumber": null,
 								"TestsPassed": 0,
 								"TestsFailed": 0,
 								"setup_completed": null,
+                "inLearnMode": false,
 								"HEARTB": 'failed',			// assume HEARTB not received to begin with
 								"nodeParameters": {},
 								"ServicesActualCount": 0,

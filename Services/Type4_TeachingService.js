@@ -55,6 +55,14 @@ class TeachingServiceTests {
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
         
+        if(RetrievedValues.data.inLearnMode){
+          // tests only possible in learn mode
+          winston.info({message: 'VLCB:      --- now in Learn mode ---'});          
+          
+          //
+        } else {
+          winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          
+        }
         
         // take module out of learn mode
 				await this.opcodes_5x.test_NNULN(RetrievedValues);
