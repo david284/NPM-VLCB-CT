@@ -46,7 +46,8 @@ class mock_CbusNetwork {
     constructor(NET_PORT) {
     winston.debug({message: 'Mock CBUS Network: Starting'});
         
-        this.clients = [];
+    this.clients = [];
+		this.learningNode = 0;
 
 
     this.sendArray = [];
@@ -418,6 +419,13 @@ class mock_CbusNetwork {
         case 'D2': //EVLRN
           // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
           winston.debug({message: 'Mock CBUS Network: received EVLRN'});
+          // 1234567890123456789012
+          // :SB780ND2000400030201;
+          if (cbusMsg.encoded.length != 22) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            this.outputWRACK(this.learningNode);
+          }
           break;
         default:
           winston.debug({message: 'Mock CBUS Network: ********************** received unknown opcode ' + cbusMsg.opCode});

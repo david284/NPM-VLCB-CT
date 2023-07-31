@@ -18,7 +18,7 @@ class opcodes_9x {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
-		winston.debug({message:  '----------------- opcodes_8x Constructor'});
+		winston.debug({message:  '----------------- opcodes_9x Constructor'});
 		
 		this.network = NETWORK;
         this.hasTestPassed = false;

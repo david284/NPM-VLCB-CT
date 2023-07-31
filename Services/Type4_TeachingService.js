@@ -6,6 +6,7 @@ const utils = require('./../utilities.js');
 const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
+const opcodes_Dx = require('./../opcodes/opcodes_Dx.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -24,6 +25,7 @@ class TeachingServiceTests {
 		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_Dx = new opcodes_Dx.opcodes_Dx(this.network);
     }
 
 
@@ -58,6 +60,15 @@ class TeachingServiceTests {
         if(RetrievedValues.data.inLearnMode){
           // tests only possible in learn mode
           winston.info({message: 'VLCB:      --- now in Learn mode ---'});          
+
+          // add new event
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", 1, 2);
+          
+          // now request number of events stored
+          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+          
+          winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
+                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});          
           
           //
         } else {
@@ -66,6 +77,14 @@ class TeachingServiceTests {
         
         // take module out of learn mode
 				await this.opcodes_5x.test_NNULN(RetrievedValues);
+
+        if(!RetrievedValues.data.inLearnMode){
+          // tests only possible in learn mode
+          winston.info({message: 'VLCB:      --- back out of Learn mode ---'});
+        } else {
+          winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
+        }
+
         
 				//
 				// Add more tests.......
