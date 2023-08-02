@@ -79,11 +79,11 @@ class opcodes_9x {
             var msg = cbusLib.decode(element);
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
-              if (msg.mnemonic == "GRSP"){
-                if (msg.result == GRSP.InvalidEvent) {
+              if (msg.mnemonic == "CMDERR"){
+                if (msg.errorNumber == GRSP.InvalidEvent) {
                   this.hasTestPassed = true;
                 } else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidEvent}); 
+                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
                 }
               }
             }

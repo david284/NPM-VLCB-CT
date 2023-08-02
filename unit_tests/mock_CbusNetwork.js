@@ -407,7 +407,7 @@ class mock_CbusNetwork {
               // don't bother actually deleting the event.....
               this.outputWRACK(this.learningNode);
             } else {
-              this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
+              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
             }
           }
           break;
