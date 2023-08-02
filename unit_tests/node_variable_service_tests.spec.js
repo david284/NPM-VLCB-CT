@@ -54,7 +54,11 @@ describe('Node variable Service tests', function(){
 		setTimeout(function(){
             // timeout to allow tests to print
             winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
+      winston.info({message: '------------------------------------------------------------'});
+      winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      //                      012345678901234567890123456789987654321098765432109876543210
+      winston.info({message: '----------- Node Variable Service tests finished -----------'});
+      winston.info({message: '------------------------------------------------------------'});
             setTimeout(function(){
                     // timeout to allow the finish text above to print
                      done();
@@ -68,42 +72,42 @@ describe('Node variable Service tests', function(){
 // 				Testing Minimum Node Services (MNS) 
 //
 
-    // 
+  // 
 	it("Node Variable Count test - pass", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN Node Variable Count test'});
 		// setup data	
-		RetrievedValues.data.Services = { "1": { "nodeVariables": {"1": 1, "2":2 } } };
 		RetrievedValues.data.nodeParameters = {"6": { "value": 2 } };
+		RetrievedValues.data.nodeVariables = {"1": 1, "2":2 };
 		RetrievedValues.data.TestsPassed = 0;
 		RetrievedValues.data.TestsFailed = 0;
 		// now run test
-        var result = tests.test_NodeVariableCount(RetrievedValues, 1);
+    var result = tests.test_NodeVariableCount(RetrievedValues, 1);
 		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: Node Variable Count ended'});
+      winston.info({message: 'UNIT TEST: Node Variable Count ended'});
 			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
-            expect(tests.hasTestPassed).to.equal(true);
-            expect(RetrievedValues.data.TestsPassed).to.equal(1);
-            expect(RetrievedValues.data.TestsFailed).to.equal(0);
+      expect(tests.hasTestPassed).to.equal(true);
+      expect(RetrievedValues.data.TestsPassed).to.equal(1);
+      expect(RetrievedValues.data.TestsFailed).to.equal(0);
 			done();
 		}, test_timeout);
 	})
 
-    // 
+  // 
 	it("Node Variable Count test - fail", function (done) {
 		winston.info({message: 'UNIT TEST:: BEGIN Node Variable Count test'});
 		// setup data	
-		RetrievedValues.data.Services = { "1": { "nodeVariables": {"1": 1, "2":2 } } };
 		RetrievedValues.data.nodeParameters = {"6": { "value": 3 } };
+		RetrievedValues.data.nodeVariables = {"1": 1, "2":2 };
 		RetrievedValues.data.TestsPassed = 0;
 		RetrievedValues.data.TestsFailed = 0;
 		// now run test
-        var result = tests.test_NodeVariableCount(RetrievedValues, 1);
+    var result = tests.test_NodeVariableCount(RetrievedValues, 1);
 		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: Node Variable Count ended'});
+      winston.info({message: 'UNIT TEST: Node Variable Count ended'});
 			winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
-            expect(tests.hasTestPassed).to.equal(false);
-            expect(RetrievedValues.data.TestsPassed).to.equal(0);
-            expect(RetrievedValues.data.TestsFailed).to.equal(1);
+      expect(tests.hasTestPassed).to.equal(false);
+      expect(RetrievedValues.data.TestsPassed).to.equal(0);
+      expect(RetrievedValues.data.TestsFailed).to.equal(1);
 			done();
 		}, test_timeout);
 	})

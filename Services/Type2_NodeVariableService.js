@@ -58,11 +58,11 @@ class NodeVariableServiceTests {
 				await this.opcodes_7x.test_NVRD_SHORT(RetrievedValues, serviceIndex, 1);
 
 				// set node variable 1 with existing value (non-destructive)
-        var value1 = RetrievedValues.data.Services[serviceIndex].nodeVariables[1]
+        var value1 = RetrievedValues.data.nodeVariables[1]
 				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, value1);
 
 				// set last node variable with existing value (non-destructive) 
-        var lastValue = RetrievedValues.data.Services[serviceIndex].nodeVariables[RetrievedValues.data.nodeParameters[6].value]
+        var lastValue = RetrievedValues.data.nodeVariables[RetrievedValues.data.nodeParameters[6].value]
 				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
 
 				// set last node variable + 1, value doesn't matter, as we're expecting the command to be rejected with an error response
@@ -112,7 +112,7 @@ class NodeVariableServiceTests {
 	
 	test_NodeVariableCount(RetrievedValues, serviceIndex) {
 		this.hasTestPassed = false;
-		var nodeVariableCount = RetrievedValues.getNodeVariableCount(serviceIndex);
+		var nodeVariableCount = RetrievedValues.getNodeVariableCount();
 		winston.debug({message: 'VLCB: NVRD Node Variable Count test '
 						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
 						+ '\n      actual   ' + nodeVariableCount 

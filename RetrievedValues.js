@@ -30,6 +30,7 @@ class RetrievedValues {
                 "inLearnMode": false,
 								"HEARTB": 'failed',			// assume HEARTB not received to begin with
 								"nodeParameters": {},
+                "nodeVariables":{},
                 "events": {},
 								"ServicesActualCount": 0,
 								"ServicesReportedCount":null,
@@ -60,17 +61,13 @@ class RetrievedValues {
   //
 
 	
-	getNodeVariableCount(serviceIndex) {
+	getNodeVariableCount() {
 		var count = 0;
-		if (this.data.Services[serviceIndex] != null) {
-			if (this.data.Services[serviceIndex].nodeVariables != null) {
-				for (var item in this.data.Services[serviceIndex].nodeVariables) {
+				for (var item in this.data.nodeVariables) {
 					if (item != 0) {	// ignore node variable 0 from count
 						count++;
 					}
 				}
-			}
-		}		
 		return count;
 	}
 

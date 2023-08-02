@@ -39,9 +39,6 @@ class opcodes_7x {
           winston.info({message: 'VLCB: FAILURE:  Node Parameter[6] - number of node variables not found '});
         }
       }
-      if (RetrievedValues.data.Services[ServiceIndex].nodeVariables == null) {
-        RetrievedValues.data.Services[ServiceIndex]["nodeVariables"] = {};
-      }
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNVRD(RetrievedValues.getNodeNumber(), NodeVariableIndex);
@@ -53,7 +50,7 @@ class opcodes_7x {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "NVANS"){
                 this.hasTestPassed = true;
-                RetrievedValues.data.Services[ServiceIndex].nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
+                RetrievedValues.data.nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
               }
             }
           });
