@@ -27,9 +27,9 @@ class opcodes_Dx {
 
 	// 0xD2 - EVLRN
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-  test_EVLRN(RetrievedValues, ServiceIndex, eventIdentifier, eventVariableIndex, eventVariableValue) {
+  test_EVLRN(RetrievedValues, eventIdentifier, eventVariableIndex, eventVariableValue) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN EVLRN test - ServiceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN EVLRN test'});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test
@@ -53,6 +53,46 @@ class opcodes_Dx {
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN
+
+
+	// 0xD2 - EVLRN
+  // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+  test_EVLRN_SHORT(RetrievedValues, eventIdentifier, eventVariableIndex, eventVariableValue) {
+    return new Promise(function (resolve, reject) {
+      
+      winston.debug({message: 'VLCB: BEGIN EVLRN_SHORT test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      var msgData = cbusLib.encodeEVLRN(eventNodeNumber, eventNumber, eventVariableIndex, eventVariableValue);
+			// :SB780ND2000000010101;
+			// 1234567890123456789012
+			// truncate the 22 byte message to remove the last byte - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,19) + ';'
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_SHORT');
+        resolve();
+      } , 250 );
+    }.bind(this));
+	} // end Test_EVLRN_SHORT
 
 
 

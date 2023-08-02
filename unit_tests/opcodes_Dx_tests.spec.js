@@ -105,10 +105,23 @@ describe('opcodes_Dx tests', function(){
     winston.info({message: 'UNIT TEST:: BEGIN EVLRN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
-    await tests.test_EVLRN(RetrievedValues, 1, value.eventIdentifier, value.eventVariableIndex, value.eventVariableValue);
+    await tests.test_EVLRN(RetrievedValues, value.eventIdentifier, value.eventVariableIndex, value.eventVariableValue);
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVLRN ended'});
   })
     
+
+  // 0xD2 - EVLRN
+  // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+  it("EVLRN_SHORT}", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN EVLRN_SHORT test'});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVLRN_SHORT ended'});
+  })
+
+
 })
 

@@ -66,13 +66,16 @@ class TeachingServiceTests {
           winston.info({message: 'VLCB:      --- now in Learn mode ---'});          
 
           // add new event & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", 1, 1);
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
           
           // update last event variable with it's own index number
           // number of event variables in node parameter 5
           var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", eventVariableCount, eventVariableCount);
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", eventVariableCount, eventVariableCount);
           
+          // check EVLRN_SHORT error response
+          await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
+
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           

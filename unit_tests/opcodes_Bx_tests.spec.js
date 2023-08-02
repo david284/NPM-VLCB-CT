@@ -112,6 +112,7 @@ describe('opcodes_Bx tests', function(){
   it("REQEV_SHORT", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN REQEV_SHORT test'});
     RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
     await tests.test_REQEV_SHORT(RetrievedValues, "00010000", 0);
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: REQEV_SHORT ended'});

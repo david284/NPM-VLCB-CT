@@ -75,7 +75,6 @@ class opcodes_Bx {
 			msgData = msgData.substring(0,17) + ';'
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);

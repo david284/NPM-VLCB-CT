@@ -429,7 +429,7 @@ class mock_CbusNetwork {
           // 12345678901234567890
           // :SB780NB200000000FF;
           if (cbusMsg.encoded.length != 20) {
-            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+            this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
             this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
           }
@@ -440,7 +440,7 @@ class mock_CbusNetwork {
           // 1234567890123456789012
           // :SB780ND2000400030201;
           if (cbusMsg.encoded.length != 22) {
-            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+            this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
             this.outputWRACK(this.learningNode);
           }
