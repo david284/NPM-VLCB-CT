@@ -201,9 +201,9 @@ class opcodes_8x {
 
 
 	// 0x8E - NVSETRD
-	test_NVSETRD(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+	test_NVSETRD(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
 		return new Promise(function (resolve, reject) {
-			winston.debug({message: 'VLCB: BEGIN NVSETRD test - ServiceIndex ' + ServiceIndex});
+			winston.debug({message: 'VLCB: BEGIN NVSETRD test'});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
       // now create message and start test
@@ -232,9 +232,9 @@ class opcodes_8x {
 
 
 	// 0x8E - NVSETRD
-	test_NVSETRD_INVALID_INDEX(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+	test_NVSETRD_INVALID_INDEX(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
 		return new Promise(function (resolve, reject) {
-			winston.debug({message: 'VLCB: BEGIN NVSETRD_INVALID_INDEX test - ServiceIndex ' + ServiceIndex});
+			winston.debug({message: 'VLCB: BEGIN NVSETRD_INVALID_INDEX test'});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
       // now create message and start test
@@ -268,9 +268,9 @@ class opcodes_8x {
 
 
 	// 0x8E - NVSETRD
-	test_NVSETRD_SHORT(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+	test_NVSETRD_SHORT(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
 		return new Promise(function (resolve, reject) {
-			winston.debug({message: 'VLCB: BEGIN NVSETRD_SHORT test - ServiceIndex ' + ServiceIndex});
+			winston.debug({message: 'VLCB: BEGIN NVSETRD_SHORT test'});
 			this.hasTestPassed = false;
 			this.network.messagesIn = [];
       // now create message and start test

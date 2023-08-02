@@ -192,7 +192,7 @@ describe('opcodes_8x tests', function(){
       itParam("NVSETRD test ${JSON.stringify(value)}", GetTestCase_NVSETRD(), async function (value) {
         winston.info({message: 'UNIT TEST:: BEGIN NVSETRD test'});
         RetrievedValues.setNodeNumber(value.nodeNumber);
-        await tests.test_NVSETRD(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
+        await tests.test_NVSETRD(RetrievedValues, value.nodeVariableIndex, value.nodeVariableValue);
         expect(tests.hasTestPassed).to.equal(true);  
   
         winston.info({message: 'UNIT TEST: NVSETRD ended'});
@@ -203,7 +203,7 @@ describe('opcodes_8x tests', function(){
       it("NVSETRD_INVALID_INDEX", async function () {
       winston.info({message: 'UNIT TEST:: BEGIN NVSETRD_INVALID_INDEX test'});
       RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSETRD_INVALID_INDEX(RetrievedValues, 1, 255, 0);
+      await tests.test_NVSETRD_INVALID_INDEX(RetrievedValues, 255, 0);
       expect(tests.hasTestPassed).to.equal(true);  
 
       winston.info({message: 'UNIT TEST: NVSETRD_INVALID_INDEX ended'});
@@ -214,7 +214,7 @@ describe('opcodes_8x tests', function(){
     it("NVSETRD_SHORT", async function () {
       winston.info({message: 'UNIT TEST:: BEGIN NVSETRD_SHORT test'});
       RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSETRD_SHORT(RetrievedValues, 1, 1, 0);
+      await tests.test_NVSETRD_SHORT(RetrievedValues, 1, 0);
       expect(tests.hasTestPassed).to.equal(true);  
 
       winston.info({message: 'UNIT TEST: NVSETRD_SHORT ended'});

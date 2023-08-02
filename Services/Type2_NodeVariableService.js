@@ -72,16 +72,16 @@ class NodeVariableServiceTests {
 				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, RetrievedValues.data.nodeParameters[6].value, 0);
 				
 				// set & read the first node variable with existing value (non-destructive)
-				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, 1, value1);
+				await this.opcodes_8x.test_NVSETRD(RetrievedValues, 1, value1);
 				
 				// set & read the last node variable with existing value (non-destructive)
-				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
+				await this.opcodes_8x.test_NVSETRD(RetrievedValues, RetrievedValues.data.nodeParameters[6].value, lastValue);
 				
 				// now test the last node variable + 1, expecting an error message
-				await this.opcodes_8x.test_NVSETRD_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1, 0);
+				await this.opcodes_8x.test_NVSETRD_INVALID_INDEX(RetrievedValues, RetrievedValues.data.nodeParameters[6].value + 1, 0);
 				
 				// now test a short message, expecting an error message
-				await this.opcodes_8x.test_NVSETRD_SHORT(RetrievedValues, serviceIndex, 1, 0);
+				await this.opcodes_8x.test_NVSETRD_SHORT(RetrievedValues, 1, 0);
 
         // now request diagnostics just for this service
         await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
