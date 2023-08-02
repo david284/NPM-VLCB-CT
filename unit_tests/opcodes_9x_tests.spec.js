@@ -94,7 +94,7 @@ describe('opcodes_9x tests', function(){
     winston.info({message: 'UNIT TEST:: BEGIN EVULN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
-    await tests.test_EVULN(RetrievedValues, 1, value.eventIdentifier);
+    await tests.test_EVULN(RetrievedValues, value.eventIdentifier);
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVULN ended'});
   })
@@ -126,7 +126,7 @@ describe('opcodes_9x tests', function(){
   itParam("NVSET test ${JSON.stringify(value)}", GetTestCase_NVSET(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN NVSET test'});
     RetrievedValues.setNodeNumber(value.nodeNumber);
-    await tests.test_NVSET(RetrievedValues, 1, value.nodeVariableIndex, value.nodeVariableValue);
+    await tests.test_NVSET(RetrievedValues, value.nodeVariableIndex, value.nodeVariableValue);
     expect(tests.hasTestPassed).to.equal(true);  
 
     winston.info({message: 'UNIT TEST: NVSET ended'});
@@ -137,7 +137,7 @@ describe('opcodes_9x tests', function(){
   it("NVSET_INVALID_INDEX", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
     RetrievedValues.setNodeNumber(0);
-    await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 1, 255, 0);
+    await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 255, 0);
     expect(tests.hasTestPassed).to.equal(true);  
 
     winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
@@ -148,7 +148,7 @@ describe('opcodes_9x tests', function(){
   it("NVSET_SHORT", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN NVSET_SHORT test'});
     RetrievedValues.setNodeNumber(0);
-    await tests.test_NVSET_SHORT(RetrievedValues, 1, 1, 0);
+    await tests.test_NVSET_SHORT(RetrievedValues, 1, 0);
     expect(tests.hasTestPassed).to.equal(true);  
 
     winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});

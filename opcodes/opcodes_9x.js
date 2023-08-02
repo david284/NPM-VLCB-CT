@@ -27,9 +27,9 @@ class opcodes_9x {
 
 	// 0x95 - EVULN
   // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
-  test_EVULN(RetrievedValues, ServiceIndex, eventIdentifier) {
+  test_EVULN(RetrievedValues,eventIdentifier) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN EVULN test - ServiceIndex ' + ServiceIndex + ' eventIdentifier ' + eventIdentifier});
+      winston.debug({message: 'VLCB: BEGIN EVULN test - eventIdentifier ' + eventIdentifier});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test
@@ -61,9 +61,9 @@ class opcodes_9x {
 
 	// 0x96 - NVSET
   // Format:  [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-  test_NVSET(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+  test_NVSET(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NVSET test - ServiceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN NVSET test'});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test
@@ -91,9 +91,9 @@ class opcodes_9x {
 
 	// 0x96 - NVSET
   // Format:  [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-  test_NVSET_INVALID_INDEX(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+  test_NVSET_INVALID_INDEX(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NVSET_INVALID_INDEX test - ServiceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN NVSET_INVALID_INDEX test'});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test
@@ -128,9 +128,9 @@ class opcodes_9x {
 
 	// 0x96 - NVSET
   // Format:  [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-  test_NVSET_SHORT(RetrievedValues, ServiceIndex, nodeVariableIndex, nodeVariableValue) {
+  test_NVSET_SHORT(RetrievedValues, nodeVariableIndex, nodeVariableValue) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NVSET_SHORT test - ServiceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN NVSET_SHORT test'});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test

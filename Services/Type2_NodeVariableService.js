@@ -59,17 +59,17 @@ class NodeVariableServiceTests {
 
 				// set node variable 1 with existing value (non-destructive)
         var value1 = RetrievedValues.data.nodeVariables[1]
-				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, 1, value1);
+				await this.opcodes_9x.test_NVSET(RetrievedValues, 1, value1);
 
 				// set last node variable with existing value (non-destructive) 
         var lastValue = RetrievedValues.data.nodeVariables[RetrievedValues.data.nodeParameters[6].value]
-				await this.opcodes_9x.test_NVSET(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, lastValue);
+				await this.opcodes_9x.test_NVSET(RetrievedValues, RetrievedValues.data.nodeParameters[6].value, lastValue);
 
 				// set last node variable + 1, value doesn't matter, as we're expecting the command to be rejected with an error response
-				await this.opcodes_9x.test_NVSET_INVALID_INDEX(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value + 1, 0);
+				await this.opcodes_9x.test_NVSET_INVALID_INDEX(RetrievedValues, RetrievedValues.data.nodeParameters[6].value + 1, 0);
 
 				// now test a short message,  value doesn't matter, as we're expecting the command to be rejected with an error response
-				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, serviceIndex, RetrievedValues.data.nodeParameters[6].value, 0);
+				await this.opcodes_9x.test_NVSET_SHORT(RetrievedValues, RetrievedValues.data.nodeParameters[6].value, 0);
 				
 				// set & read the first node variable with existing value (non-destructive)
 				await this.opcodes_8x.test_NVSETRD(RetrievedValues, serviceIndex, 1, value1);

@@ -89,7 +89,7 @@ class TeachingServiceTests {
           await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, "01000200", 1);
           
           // remove added event event
-          await this.opcodes_9x.test_EVULN(RetrievedValues, serviceIndex, "01000200");
+          await this.opcodes_9x.test_EVULN(RetrievedValues, "01000200");
           
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
