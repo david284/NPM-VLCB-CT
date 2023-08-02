@@ -56,15 +56,19 @@ describe('opcodes_7x tests', function(){
 	after(function(done) {
         // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      winston.info({message: ' '});   // blank line to separate tests
+      winston.info({message: '------------------------------------------------------------'});
+      winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      //                      012345678901234567890123456789987654321098765432109876543210
+      winston.info({message: '-------------- opcodes_7x unit tests finished --------------'});
+      winston.info({message: '------------------------------------------------------------'});
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////

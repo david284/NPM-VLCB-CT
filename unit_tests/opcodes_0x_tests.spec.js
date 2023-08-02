@@ -57,7 +57,11 @@ describe('opcodes_0x tests', function(){
 		setTimeout(function(){
             // timeout to allow tests to print
             winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
+      winston.info({message: '------------------------------------------------------------'});
+      winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      //                      012345678901234567890123456789987654321098765432109876543210
+      winston.info({message: '-------------- opcodes_0x unit tests finished --------------'});
+      winston.info({message: '------------------------------------------------------------'});
             setTimeout(function(){
                     // timeout to allow the finish text above to print
                      done();

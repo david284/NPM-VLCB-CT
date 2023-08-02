@@ -29,17 +29,21 @@ describe('RetrievedValues tests', function(){
     })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      winston.info({message: ' '});   // blank line to separate tests
+      winston.info({message: '------------------------------------------------------------'});
+      winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      //                      012345678901234567890123456789987654321098765432109876543210
+      winston.info({message: '----------- Retrieved Values unit tests finished -----------'});
+      winston.info({message: '------------------------------------------------------------'});
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,15 +53,15 @@ describe('RetrievedValues tests', function(){
 
     //
 	it("RetrievedValues Constructor test", function () {
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});        
+    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});        
 		expect(RetrievedValues.getNodeNumber()).to.be.null;
-    })
+  })
 
     //
 	it("Node Number test", function () {
-        RetrievedValues.setNodeNumber(300);
+    RetrievedValues.setNodeNumber(300);
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);
-    })
+  })
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,12 +73,12 @@ describe('RetrievedValues tests', function(){
     //
 	it("Add Node Parameter test", function () {
 		winston.info({message: 'UNIT TEST: BEGIN Add Node Parameter test'});
-        RetrievedValues.addNodeParameter(1,2);
-        winston.info({message: 'UNIT TEST: Node Parameters\n' + JSON.stringify(RetrievedValues.data.nodeParameters, null, '    ')});        
+    RetrievedValues.addNodeParameter(1,2);
+    winston.info({message: 'UNIT TEST: Node Parameters\n' + JSON.stringify(RetrievedValues.data.nodeParameters, null, '    ')});        
 		expect(RetrievedValues.data.nodeParameters[1].name).to.equal("Manufacturer’s Id");
 		expect(RetrievedValues.data.nodeParameters[1].value).to.equal(2);
 		winston.info({message: 'UNIT TEST: END Add Node Parameter test'});
-    })
+  })
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,29 +89,29 @@ describe('RetrievedValues tests', function(){
 
     //
 	it("Add Service test", function () {
-        RetrievedValues.addService(1,2,3);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
+    RetrievedValues.addService(1,2,3);
+    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
 		expect(RetrievedValues.data.Services[1].ServiceType).to.equal(2);
 		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
-    })
+  })
 
 
     //
 	it("Add Service Data test", function () {
-        RetrievedValues.addService(2,2,3);
+    RetrievedValues.addService(2,2,3);
 		//
-        RetrievedValues.addServiceData(2,3,4,5,6);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
+    RetrievedValues.addServiceData(2,3,4,5,6);
+    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[2].ServiceIndex).to.equal(2);
 		expect(RetrievedValues.data.Services[2].Data1).to.equal(3);
 		expect(RetrievedValues.data.Services[2].Data2).to.equal(4);
 		expect(RetrievedValues.data.Services[2].Data3).to.equal(5);
 		expect(RetrievedValues.data.Services[2].Data4).to.equal(6);
-    })
+  })
 
 
-    function GetTestCase_ServiceToString() {
+  function GetTestCase_ServiceToString() {
 		var arg1, arg2, testCases = [];
 		for (var a = 1; a< 3; a++) {
 			if (a == 1) {arg1 = 888; arg2 = "ServiceIndex 888 No matching service found";}
@@ -141,9 +145,9 @@ describe('RetrievedValues tests', function(){
 
 	itParam("Service Data To String test ${JSON.stringify(value)}", GetTestCase_ServiceDataToString(), function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN Service Data To String test'});
-        RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
-        RetrievedValues.addServiceData(5,3,4,5,6);		// add data for index 5
-        RetrievedValues.addService(6,1,1);				// add index 6
+    RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
+    RetrievedValues.addServiceData(5,3,4,5,6);		// add data for index 5
+    RetrievedValues.addService(6,1,1);				// add index 6
 		//
 		var result = RetrievedValues.ServiceDataToString(value.ServiceIndex);
 		winston.info({message: 'UNIT TEST: returned string: ' + result});
@@ -170,18 +174,18 @@ describe('RetrievedValues tests', function(){
 
     //
 	itParam("Add Diagnostic Code test ${JSON.stringify(value)}", GetTestCase_DiagnosticCode(), function (value) {
-        RetrievedValues.addService(5,1,1);		// add index 5, type 1 (MNS), version 1
+    RetrievedValues.addService(5,1,1);		// add index 5, type 1 (MNS), version 1
 		//
-        RetrievedValues.addDiagnosticCode(value.ServiceIndex, 1, 2);
-        winston.info({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
+    RetrievedValues.addDiagnosticCode(value.ServiceIndex, 1, 2);
+    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[value.ServiceIndex].ServiceIndex).to.equal(value.ServiceIndex);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticName).to.equal(value.DiagnosticName);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticCode).to.equal(1);
 		expect(RetrievedValues.data.Services[value.ServiceIndex].diagnostics[1].DiagnosticValue).to.equal(2);
-    })
+  })
 
 
-    function GetTestCase_DiagnosticCodeToString() {
+  function GetTestCase_DiagnosticCodeToString() {
 		var arg1, arg2, arg3, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) {arg1 = 888; arg2 = 1; arg3 = "ServiceIndex 888 - Service not found";}
@@ -195,9 +199,9 @@ describe('RetrievedValues tests', function(){
     //
 	itParam("Diagnostic Code To String test ${JSON.stringify(value)}", GetTestCase_DiagnosticCodeToString(), function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN Diagnostic Code To String test'});
-        RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
-        RetrievedValues.addDiagnosticCode(5, 1, 2); 	// add diagnostic code for serviceIndex 5
-		//
+    RetrievedValues.addService(5,1,1);				// add index 5, type 1 (MNS), version 1
+    RetrievedValues.addDiagnosticCode(5, 1, 2); 	// add diagnostic code for serviceIndex 5
+    //
 		var result = RetrievedValues.DiagnosticCodeToString(value.ServiceIndex, value.DiagnosticCode);
 		winston.info({message: 'UNIT TEST: returned string: ' + result});
 		expect(result).to.equal(value.expectedResult);

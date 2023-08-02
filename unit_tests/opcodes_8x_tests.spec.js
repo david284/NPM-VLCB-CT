@@ -56,8 +56,11 @@ describe('opcodes_8x tests', function(){
 		setTimeout(function(){
       // timeout to allow tests to print
       winston.info({message: ' '});   // blank line to separate tests
-      winston.info({message: 'UNIT TEST: opcodes_8x tests finished '});
-      winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      winston.info({message: '------------------------------------------------------------'});
+      winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      //                      012345678901234567890123456789987654321098765432109876543210
+      winston.info({message: '-------------- opcodes_8x unit tests finished --------------'});
+      winston.info({message: '------------------------------------------------------------'});
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
@@ -123,7 +126,6 @@ describe('opcodes_8x tests', function(){
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 1, diagnostics 99
     await tests.test_RDGN_INVALID_DIAG(RetrievedValues, 1, 99);
-    winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RDGN_INVALID_DIAG ended'});
   })
@@ -141,7 +143,6 @@ describe('opcodes_8x tests', function(){
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
     await tests.test_RDGN_INVALID_SERVICE(RetrievedValues, 5, 0);
-    winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RDGN_INVALID_SERVICE ended'});
   })
@@ -160,7 +161,6 @@ describe('opcodes_8x tests', function(){
     mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
     await tests.test_RDGN_SHORT(RetrievedValues, 5, 0);
-    winston.info({message: 'UNIT TEST: RetrievedValues ' + JSON.stringify(RetrievedValues.data.Services, null, "    ")});
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RDGN_SHORT ended'});
   })
