@@ -252,7 +252,7 @@ class mock_CbusNetwork {
             var index = 0;
             events.forEach(event => {
               index++;
-              this.outputENRSP(nodeNumber, event.eventName, index);
+              this.outputENRSP(nodeNumber, event.eventIdentifier, index);
             })
 /*
             //for (var i = 0; i < events.length; i++) {
@@ -260,7 +260,7 @@ class mock_CbusNetwork {
             //}
             // only output first event (if it exists)
             if (events.length > 0) {
-                this.outputENRSP(nodeNumber, events[0].eventName, 0);
+                this.outputENRSP(nodeNumber, events[0].eventIdentifier, 0);
             }
             */
           }
@@ -422,6 +422,17 @@ class mock_CbusNetwork {
         case '9C': //REVAL
           // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
           winston.debug({message: 'Mock CBUS Network: received REVAL'});
+          break;
+        case 'B2': //REQEV
+          // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+          winston.debug({message: 'Mock CBUS Network: received REQEV'});
+          // 12345678901234567890
+          // :SB780NB200000000FF;
+          if (cbusMsg.encoded.length != 20) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
+          }
           break;
         case 'D2': //EVLRN
           // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
@@ -774,6 +785,15 @@ class mock_CbusNetwork {
   }
 
 
+  // D3
+  outputEVANS(nodeNumber, eventNumber, eventVariableIndex) {
+    // Format: [<MjPri><MinPri=3><CANID>]<D3><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+    var eventVariableValue = 2;
+    var msgData = cbusLib.encodeEVANS(nodeNumber, eventNumber, eventVariableIndex, eventVariableValue);
+    this.broadcast(msgData)
+  }
+
+
   // D8
   outputASON2(nodeNumber, deviceNumber, data1, data2) {
     // Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
@@ -850,9 +870,9 @@ class mock_CbusNetwork {
 
 
   //F2
-  outputENRSP(nodeNumber, eventName, eventIndex) {
+  outputENRSP(nodeNumber, eventIdentifier, eventIndex) {
     // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-    var msgData = cbusLib.encodeENRSP(nodeNumber, eventName, eventIndex)
+    var msgData = cbusLib.encodeENRSP(nodeNumber, eventIdentifier, eventIndex)
     this.broadcast(msgData)
   }
 
@@ -911,6 +931,7 @@ class CbusModule {
   }
 
   getStoredEvents() { return this.events}
+  getStoredEvent(eventIdentifier) { return this.events}
   getStoredEventsCount() { return this.events.length}
   
   getParameter(i) {return this.parameters[i]}
@@ -967,8 +988,8 @@ class CANTEST extends CbusModule{
     this.setNodeFlags(7);
     this.setCputType(13);
         
-    this.events.push({'eventName': "012D0103", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventName': "012D0104", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "012D0103", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "012D0104", "variables":[ 0, 0, 0, 0 ]})
   }
 }
 

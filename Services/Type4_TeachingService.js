@@ -7,6 +7,7 @@ const opcodes_5x = require('./../opcodes/opcodes_5x.js');
 const opcodes_7x = require('./../opcodes/opcodes_7x.js');
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 const opcodes_9x = require('./../opcodes/opcodes_9x.js');
+const opcodes_Bx = require('./../opcodes/opcodes_Bx.js');
 const opcodes_Dx = require('./../opcodes/opcodes_Dx.js');
 
 // Scope:
@@ -27,6 +28,7 @@ class TeachingServiceTests {
 		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
 		this.opcodes_9x = new opcodes_9x.opcodes_9x(this.network);
+		this.opcodes_Bx = new opcodes_Bx.opcodes_Bx(this.network);
 		this.opcodes_Dx = new opcodes_Dx.opcodes_Dx(this.network);
     }
 
@@ -54,7 +56,7 @@ class TeachingServiceTests {
         var initialStoredEventCount = RetrievedValues.data.Services[serviceIndex].StoredEventCount
 
 				// now request all events stored
-				await this.opcodes_5x.test_NERD(RetrievedValues, serviceIndex);
+				await this.opcodes_5x.test_NERD(RetrievedValues);
         
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
@@ -63,14 +65,23 @@ class TeachingServiceTests {
           // tests only possible in learn mode
           winston.info({message: 'VLCB:      --- now in Learn mode ---'});          
 
-          // add new event
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", 1, 2);
+          // add new event & event variable #1
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", 1, 1);
+          
+          // update last event variable with it's own index number
+          // number of event variables in node parameter 5
+          var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, serviceIndex, "01000200", eventVariableCount, eventVariableCount);
           
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
           winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
-                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});          
+                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});
+
+          // now read back event variables just added
+          await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
+          await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", eventVariableCount);
           
           // remove added event event
           await this.opcodes_9x.test_EVULN(RetrievedValues, serviceIndex, "01000200");

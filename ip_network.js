@@ -53,8 +53,8 @@ class IP_Network {
     }
 
 	write(msgData) {
-        this.testClient.write(msgData);
         var decodedMsg = cbusLib.decode(msgData);
+        this.testClient.write(msgData);
         winston.debug({message: 'IP_NETWORK: transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
         winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
       }

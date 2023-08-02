@@ -29,13 +29,15 @@ class opcodes_9x {
   // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
   test_EVULN(RetrievedValues, ServiceIndex, eventIdentifier) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN EVULN test - ServiceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN EVULN test - ServiceIndex ' + ServiceIndex + ' eventIdentifier ' + eventIdentifier});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
       // now create message and start test
       var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
       var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      winston.debug({message: 'VLCB: EVULN test: eventNodeNumber ' + eventNodeNumber + ' eventNumber ' + eventNumber});
       var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
+      winston.debug({message: 'VLCB: EVULN test: msgData ' + msgData});
       this.network.write(msgData);
       setTimeout(()=>{
         var nonMatchingCount = 0;

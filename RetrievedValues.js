@@ -30,6 +30,7 @@ class RetrievedValues {
                 "inLearnMode": false,
 								"HEARTB": 'failed',			// assume HEARTB not received to begin with
 								"nodeParameters": {},
+                "events": {},
 								"ServicesActualCount": 0,
 								"ServicesReportedCount":null,
 								"MaxServiceIndex": 0,
@@ -43,20 +44,20 @@ class RetrievedValues {
 	setNodeNumber(nodeNumber) { this.data.nodeNumber = nodeNumber; };
 	
 	
-///////////////////////////////////////////////////////////////////////////////
-//
-// Node Parameter related methods
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // Node Parameter related methods
+  //
 
 	addNodeParameter(parameterIndex, parameterValue) {
 		this.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex]};
 		this.data.nodeParameters[parameterIndex]["value"] = parameterValue;
 	}
 	
-///////////////////////////////////////////////////////////////////////////////
-//
-// Node Variable related methods
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // Node Variable related methods
+  //
 
 	
 	getNodeVariableCount(serviceIndex) {
@@ -74,10 +75,10 @@ class RetrievedValues {
 	}
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Service related methods
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // Service related methods
+  //
 
 	
 	addService(ServiceIndex, ServiceType, ServiceVersion){
@@ -143,11 +144,12 @@ class RetrievedValues {
 			return 'ServiceIndex ' + ServiceIndex + ' No matching service found';
 		}
 	}
+
 	
-///////////////////////////////////////////////////////////////////////////////
-//
-// Diagnostics related methods
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // Diagnostics related methods
+  //
 
 
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
@@ -222,10 +224,41 @@ class RetrievedValues {
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// File related methods
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // events related methods
+  //
+
+
+  storeEventVariableValue(eventIdentifier, eventVariableIndex, eventVariableValue){
+    var selectedEvent = null;
+    var eventCount = 0;
+    // find out if the event already exists
+    for (var event in this.data.events) {
+      eventCount++
+      if (this.data.events[event].eventIdentifier == eventIdentifier) {
+        selectedEvent = this.data.events[event]
+        winston.debug({message: 'VLCB: storeEventVariable: matching event found'});
+      }
+    }
+    // if it doesn't, then create it
+    if (selectedEvent == null) { 
+      this.data.events[eventCount+1] = {}
+      selectedEvent = this.data.events[eventCount+1]
+      selectedEvent.eventIdentifier = eventIdentifier
+      winston.debug({message: 'VLCB: storeEventVariable: new event added'});
+    }
+    // add variables array if it doesn't exist
+    if (selectedEvent.eventVariables == undefined) {selectedEvent.eventVariables = {}}
+    // now store value
+    selectedEvent.eventVariables[eventVariableIndex] = eventVariableValue
+    winston.debug({message: 'VLCB: event Variable stored' + JSON.stringify(selectedEvent)});
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // File related methods
+  //
 
 	
 	writeToDisk(path) {

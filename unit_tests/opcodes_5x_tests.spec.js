@@ -177,7 +177,7 @@ describe('opcodes_5x tests', function(){
 	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NERD(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NERD test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NERD(RetrievedValues, 1);
+		await tests.test_NERD(RetrievedValues);
     expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END NERD test'});
 	})

@@ -156,7 +156,7 @@ class opcodes_5x {
 
 
   // 0x57 - NERD
-  test_NERD(RetrievedValues, ServiceIndex) {
+  test_NERD(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NERD test'});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
@@ -170,9 +170,8 @@ class opcodes_5x {
             if (msg.mnemonic == "ENRSP"){
               this.hasTestPassed = true;
               // store the returned value
-              if (RetrievedValues.data.Services[ServiceIndex].events == undefined){RetrievedValues.data.Services[ServiceIndex].events = {} }
-              RetrievedValues.data.Services[ServiceIndex].events[msg.eventIndex] = {};
-              RetrievedValues.data.Services[ServiceIndex].events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
+              if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
+              RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
             }
           }
         })
