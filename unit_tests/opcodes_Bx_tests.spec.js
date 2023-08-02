@@ -104,6 +104,19 @@ describe('opcodes_Bx tests', function(){
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: REQEV ended'});
   })
+  
+  
+  
+  // 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  it("REQEV_SHORT", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN REQEV_SHORT test'});
+    RetrievedValues.setNodeNumber(1);
+    await tests.test_REQEV_SHORT(RetrievedValues, "00010000", 0);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: REQEV_SHORT ended'});
+  })
+
     
 })
 

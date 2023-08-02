@@ -82,6 +82,8 @@ class TeachingServiceTests {
           // now read back event variables just added
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", eventVariableCount);
+          // test REQEV short message
+          await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, "01000200", 1);
           
           // remove added event event
           await this.opcodes_9x.test_EVULN(RetrievedValues, serviceIndex, "01000200");

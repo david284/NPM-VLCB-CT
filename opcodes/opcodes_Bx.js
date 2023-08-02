@@ -58,6 +58,46 @@ class opcodes_Bx {
 	} // end Test_EVLRN
 
 
+	// 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  test_REQEV_SHORT(RetrievedValues, eventIdentifier, eventVariableIndex) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN REQEV_SHORT test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
+			// :SB780NB200000001FF;
+			// 12345678901234567890
+			// truncate the 20 byte message to remove the last byte - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,17) + ';'
+      this.network.write(msgData);
+      setTimeout(()=>{
+        var nonMatchingCount = 0;
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_SHORT');
+        resolve();
+      } , 250 );
+    }.bind(this));
+	} // end Test_REQEV_SHORT
+
+
 
 
 } // end class
