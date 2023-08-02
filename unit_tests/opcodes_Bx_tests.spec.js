@@ -86,7 +86,7 @@ describe('opcodes_Bx tests', function(){
       for (var b = 1; b < 4; b++) {
         if (b == 1) {arg2 = 0}
         if (b == 2) {arg2 = 1}
-        if (b == 3) {arg2 = 255}
+        if (b == 3) {arg2 = 32}
         testCases.push({'eventIdentifier':arg1, 'eventVariableIndex': arg2});
       }
     }
@@ -106,7 +106,30 @@ describe('opcodes_Bx tests', function(){
   })
   
   
-  
+  // 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  it("REQEV_INVALID_EVENT", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN REQEV_INVALID_EVENT test'});
+    RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_REQEV_INVALID_EVENT(RetrievedValues, "FF00FF00", 0);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: REQEV_INVALID_EVENT ended'});
+  })
+
+    
+  // 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  it("REQEV_INVALID_INDEX", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN REQEV_INVALID_INDEX test'});
+    RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_REQEV_INVALID_INDEX(RetrievedValues, "00000001", 255);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: REQEV_INVALID_INDEX ended'});
+  })
+
+    
   // 0xB2 - REQEV
   // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
   it("REQEV_SHORT", async function () {

@@ -437,7 +437,23 @@ class mock_CbusNetwork {
           if (cbusMsg.encoded.length != 20) {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
-            this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
+            if ( this.getModule(this.learningNode) != undefined) {
+              var events = this.getModule(this.learningNode).getStoredEvents();
+              var match = false;
+              // find matching event
+              events.forEach(event => {
+                if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
+              })
+            }
+            if (match) {
+              if (cbusMsg.eventVariableIndex <= this.getModule(this.learningNode).parameters[5]) {
+                this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
+              } else {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEventVariableIndex)
+              }
+            } else {
+              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+            }
           }
           break;
         case 'D2': //EVLRN
@@ -920,7 +936,7 @@ class CbusModule {
       117,    // param 2 Minor code version
       0,      // param 3 module Id
       0,      // param 4 number of supported events
-      0,      // param 5 number of event variables
+      32,      // param 5 number of event variables
       0,      // param 6 number of supported node variables
       2,      // param 7 major version
       13,     // param 8 node flags

@@ -38,7 +38,6 @@ class opcodes_Bx {
       var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
@@ -56,6 +55,76 @@ class opcodes_Bx {
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN
+
+
+	// 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  test_REQEV_INVALID_EVENT(RetrievedValues, eventIdentifier, eventVariableIndex) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN REQEV_INVALID_EVENT test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "CMDERR"){
+                if (msg.errorNumber == GRSP.InvalidEvent) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_EVENT');
+        resolve();
+      } , 250 );
+    }.bind(this));
+	} // end Test_REQEV_INVALID_EVENT
+
+
+	// 0xB2 - REQEV
+  // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+  test_REQEV_INVALID_INDEX(RetrievedValues, eventIdentifier, eventVariableIndex) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN REQEV_INVALID_INDEX test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "CMDERR"){
+                if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEventVariableIndex}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_INDEX');
+        resolve();
+      } , 250 );
+    }.bind(this));
+	} // end Test_REQEV_INVALID_INDEX
 
 
 	// 0xB2 - REQEV

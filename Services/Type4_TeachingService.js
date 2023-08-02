@@ -85,6 +85,10 @@ class TeachingServiceTests {
           // now read back event variables just added
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", eventVariableCount);
+          // test REQEV invalid event
+          await this.opcodes_Bx.test_REQEV_INVALID_EVENT(RetrievedValues, "FF00FF00", 1);
+          // test REQEV invalid event variable index
+          await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", 255);
           // test REQEV short message
           await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, "01000200", 1);
           
