@@ -59,6 +59,84 @@ class opcodes_9x {
 	} // end Test_EVULN
 
 
+	// 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+  test_EVULN_INVALID_EVENT(RetrievedValues,eventIdentifier) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN EVULN_INVALID_EVENT test - eventIdentifier ' + eventIdentifier});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      winston.debug({message: 'VLCB: EVULN_INVALID_EVENT test: eventNodeNumber ' + eventNodeNumber + ' eventNumber ' + eventNumber});
+      var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
+      winston.debug({message: 'VLCB: EVULN_INVALID_EVENT test: msgData ' + msgData});
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                if (msg.result == GRSP.InvalidEvent) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidEvent}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT');
+        resolve();
+      }, 250 );
+    }.bind(this));
+	} // end test_EVULN_INVALID_EVENT
+
+
+	// 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+  test_EVULN_SHORT(RetrievedValues,eventIdentifier) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN EVULN_SHORT test - eventIdentifier ' + eventIdentifier});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
+      var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
+      winston.debug({message: 'VLCB: EVULN_SHORT test: eventNodeNumber ' + eventNodeNumber + ' eventNumber ' + eventNumber});
+      var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
+      winston.debug({message: 'VLCB: EVULN_SHORT test: msgData ' + msgData});
+			// :SB780N9500000000;
+			// 123456789012345678
+			// truncate the 18 byte message to remove the last byte - remove last three bytes & add ';' to end
+			msgData = msgData.substring(0,15) + ';'
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              // ok - it's the right node
+              if (msg.mnemonic == "GRSP"){
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                }
+              }
+            }
+          });
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_SHORT');
+        resolve();
+      }, 250 );
+    }.bind(this));
+	} // end test_EVULN_SHORT
+
+
 	// 0x96 - NVSET
   // Format:  [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
   test_NVSET(RetrievedValues, nodeVariableIndex, nodeVariableValue) {

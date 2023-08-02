@@ -254,15 +254,6 @@ class mock_CbusNetwork {
               index++;
               this.outputENRSP(nodeNumber, event.eventIdentifier, index);
             })
-/*
-            //for (var i = 0; i < events.length; i++) {
-                //this.outputENRSP(nodeNumber, i);
-            //}
-            // only output first event (if it exists)
-            if (events.length > 0) {
-                this.outputENRSP(nodeNumber, events[0].eventIdentifier, 0);
-            }
-            */
           }
           break;
         case '58': //RQEVN
@@ -397,13 +388,27 @@ class mock_CbusNetwork {
           break;
         case '95': //EVULN
           // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+          // learn mode opcode
           winston.debug({message: 'Mock CBUS Network: received EVULN'});
           // 123456789012345678
           // :SB780N9500000000;
           if (cbusMsg.encoded.length != 18) {
-            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+            this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
-            this.outputWRACK(this.learningNode);
+            if ( this.getModule(this.learningNode) != undefined) {
+              var events = this.getModule(this.learningNode).getStoredEvents();
+              var match = false;
+              // find matching event
+              events.forEach(event => {
+                if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
+              })
+            }
+            if (match) {
+              // don't bother actually deleting the event.....
+              this.outputWRACK(this.learningNode);
+            } else {
+              this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
+            }
           }
           break;
         case '96': //NVSET
@@ -425,6 +430,7 @@ class mock_CbusNetwork {
           break;
         case 'B2': //REQEV
           // Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+          // learn mode opcode
           winston.debug({message: 'Mock CBUS Network: received REQEV'});
           // 12345678901234567890
           // :SB780NB200000000FF;
@@ -436,6 +442,7 @@ class mock_CbusNetwork {
           break;
         case 'D2': //EVLRN
           // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+          // learn mode opcode
           winston.debug({message: 'Mock CBUS Network: received EVLRN'});
           // 1234567890123456789012
           // :SB780ND2000400030201;
@@ -990,6 +997,10 @@ class CANTEST extends CbusModule{
         
     this.events.push({'eventIdentifier': "012D0103", "variables":[ 0, 0, 0, 0 ]})
     this.events.push({'eventIdentifier': "012D0104", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "00000000", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "00000001", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "00010000", "variables":[ 0, 0, 0, 0 ]})
+    this.events.push({'eventIdentifier': "FFFFFFFF", "variables":[ 0, 0, 0, 0 ]})
   }
 }
 

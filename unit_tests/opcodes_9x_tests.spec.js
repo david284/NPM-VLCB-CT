@@ -76,7 +76,7 @@ describe('opcodes_9x tests', function(){
   // 				Tests
   //
 
-  function GetTestCase_EVLRN() {
+  function GetTestCase_EVULN() {
     var arg1, testCases = [];
     for (var a = 1; a< 5; a++) {
       if (a == 1) {arg1 = "00000000"}
@@ -90,13 +90,37 @@ describe('opcodes_9x tests', function(){
 
   // 0x95 - EVULN
   // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-  itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_EVLRN(), async function (value) {
+  itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_EVULN(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
     await tests.test_EVULN(RetrievedValues, value.eventIdentifier);
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVULN ended'});
+  })
+
+    
+  // 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  it("EVULN_INVALID_EVENT test", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN EVULN_INVALID_EVENT test'});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVULN_INVALID_EVENT ended'});
+  })
+
+  
+  // 0x95 - EVULN
+  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+  it("EVULN_SHORT test", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN EVULN_SHORT test'});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "00010001");
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVULN_SHORT ended'});
   })
 
     

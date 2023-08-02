@@ -91,11 +91,17 @@ class TeachingServiceTests {
           // remove added event event
           await this.opcodes_9x.test_EVULN(RetrievedValues, "01000200");
           
-          // now request number of events stored
+          // now request number of events stored so we can check if event has been removed
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
           winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
                                             ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});          
+          
+          // check EVULN invalid event error response
+          await this.opcodes_9x.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
+          
+          // check EVULN short message error response
+          await this.opcodes_9x.test_EVULN_SHORT(RetrievedValues, "FFF0FFF0");
           
           //
         } else {
