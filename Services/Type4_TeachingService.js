@@ -18,7 +18,7 @@ const opcodes_Dx = require('./../opcodes/opcodes_Dx.js');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
-class TeachingServiceTests {
+exports.TeachingServiceTests = class TeachingServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
@@ -60,9 +60,9 @@ class TeachingServiceTests {
         
         if(RetrievedValues.data.inLearnMode){
 
-          // tests only possible in learn mode
-          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
-          winston.info({message: 'VLCB:      COMMENT: ------------------------------ now in Learn mode -------------------------------'});          
+          // following tests only possible in learn mode
+          
+          utils.DisplayComment("now in Learn mode")
 
           // add new event & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
@@ -92,8 +92,7 @@ class TeachingServiceTests {
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
-          winston.info({message: 'VLCB:      COMMENT: number of events - before ' + initialStoredEventCount +
-                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});
+          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount)
 
           // now read back event variables just added
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
@@ -118,20 +117,17 @@ class TeachingServiceTests {
           // now request number of events stored so we can check if event has been removed
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
-          winston.info({message: 'VLCB:      COMMENT: number of events - before ' + initialStoredEventCount +
-                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});    
+          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount)
 
           // now fill the event store, so we can test exceeding the storage limit
           // number of events supported is in node parameter[4]
-          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
-          winston.info({message: 'VLCB:      COMMENT: ----------- Starting process to completely fill stored events table ------------'});          
+          utils.DisplayComment("Starting process to completely fill stored events table")
           var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.Services[serviceIndex].StoredEventCount
           for (var i = 0; i < numEventsToAdd; i++) {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
-          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
-          winston.info({message: 'VLCB:      COMMENT: -------------- stored events table should now be fully populated ---------------'});          
+          utils.DisplayComment("stored events table should now be fully populated")
           
           // event store should now be full, so expect an error reponse when adding another
           await this.opcodes_Dx.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
@@ -156,17 +152,11 @@ class TeachingServiceTests {
 				await this.opcodes_5x.test_NNULN(RetrievedValues);
 
         if(!RetrievedValues.data.inLearnMode){
-          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
-          winston.info({message: 'VLCB:      COMMENT: ---------------------------- back out of Learn mode ----------------------------'});
+          utils.DisplayComment("back out of Learn mode")
         } else {
           winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
         }
 
-        
-				//
-				// Add more tests.......
-				//
-				
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
@@ -178,6 +168,3 @@ class TeachingServiceTests {
 
 }
 
-module.exports = {
-    TeachingServiceTests: TeachingServiceTests
-}

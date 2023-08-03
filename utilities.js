@@ -53,6 +53,23 @@ function AssembleDivider(name){
 		return name;
 }
 
+function AssembleComment(text){
+		// target width is 80 characters
+		var width = 80;
+		text = ' ' + text + ' ';
+		var startPadding = (width + text.length)/2;  // we want mid point plus half the name
+		// padStart first argument is the total length after padding added at the start
+		text = text.padStart(startPadding, '-');
+		// padEnd first argument is the total length after padding added at the end
+		text = text.padEnd(width, '-');
+    text = "VLCB:      COMMENT: " + text
+		return text;
+}
+
+exports.DisplayComment = function DsiplayComment(text){
+		var comment = AssembleComment(text);
+        winston.info({message:comment});
+}
 
 exports.sleep = function sleep(timeout) {
 	return new Promise(function (resolve, reject) {
