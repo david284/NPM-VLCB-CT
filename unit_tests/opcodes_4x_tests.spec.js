@@ -70,12 +70,15 @@ describe('opcodes_4x tests', function(){
     });
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// 				Tests
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // 				Tests
+  //
 
-    function GetTestCase_SNN() {
+  //
+  // most of the opcodes in this section have a single nodeNumber parameter, so can use this common testcase structure
+  //
+  function GetTestCase_NodeNumber() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
@@ -89,7 +92,7 @@ describe('opcodes_4x tests', function(){
 
 	// 0x42 - SNN
     //
-    itParam("SNN test ${JSON.stringify(value)}", GetTestCase_SNN(), async function (value) {
+    itParam("SNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
     mock_Cbus.enterSetup(0);
@@ -99,21 +102,9 @@ describe('opcodes_4x tests', function(){
     mock_Cbus.exitSetup(0);
 	})
 
-
-    function GetTestCase_NNRSM() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
-    
+  
     // 0x4F - NNRSM
-    itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NNRSM(), async function (value) {
+    itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRSM test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
     await tests.test_NNRSM(RetrievedValues);
