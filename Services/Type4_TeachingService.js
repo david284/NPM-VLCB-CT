@@ -73,6 +73,17 @@ class TeachingServiceTests {
           var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", eventVariableCount, eventVariableCount);
           
+          // now test response to invalid event variable index, but only if there is an invalid index (i.e. there are less than 255 indexes supported)
+          if (eventVariableCount < 255) {
+            // check error response to first invalid event variable index
+            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", eventVariableCount+1, 1);
+            // check error response to last invalid event variable index
+            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", 255, 1);
+          }
+
+          // check EVLRN_SHORT error response
+          await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
+
           // check EVLRN_SHORT error response
           await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
 
@@ -87,8 +98,15 @@ class TeachingServiceTests {
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", eventVariableCount);
           // test REQEV invalid event
           await this.opcodes_Bx.test_REQEV_INVALID_EVENT(RetrievedValues, "FF00FF00", 1);
-          // test REQEV invalid event variable index
-          await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", 255);
+          
+          // now test response to invalid event variable index, but only if there is an invalid index (i.e. there are less than 255 indexes supported)
+          if (eventVariableCount < 255) {
+            // test REQEV first invalid event variable index
+            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", eventVariableCount+1);
+            // test REQEV last invalid event variable index
+            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", 255);
+          }
+          
           // test REQEV short message
           await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, "01000200", 1);
           
@@ -99,10 +117,24 @@ class TeachingServiceTests {
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
           winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
-                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});          
+                                            ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});    
+
+          // now fill the event store, so we can test exceeding the storage limit
+          // number of events supported is in node parameter[4]
+          winston.info({message: 'VLCB:      --- Starting process to completely fill stored events table ---'});          
+          var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.Services[serviceIndex].StoredEventCount
+          for (var i = 0; i < numEventsToAdd; i++) {
+            var eventIdentifier = "F000" + utils.decToHex(i, 4)
+            await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
+          }
+          winston.info({message: 'VLCB:      --- stored events table should now be fully populated ---'});          
           
+          // event store should now be full, so expect an error reponse when adding another
+          await this.opcodes_Dx.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
+
           // check EVULN invalid event error response
           await this.opcodes_9x.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
+          
           
           // check EVULN short message error response
           await this.opcodes_9x.test_EVULN_SHORT(RetrievedValues, "FFF0FFF0");

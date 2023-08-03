@@ -48,7 +48,7 @@ class mock_CbusNetwork {
         
     this.clients = [];
 		this.learningNode = 0;
-
+    this.eventLimitReached = false;
 
     this.sendArray = [];
     this.socket;
@@ -465,7 +465,16 @@ class mock_CbusNetwork {
           if (cbusMsg.encoded.length != 22) {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
-            this.outputWRACK(this.learningNode);
+            if (this.eventLimitReached) {
+              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+              this.eventLimitReached = false
+            } else {
+              if (cbusMsg.eventVariableIndex < 255) {
+                this.outputWRACK(this.learningNode);
+              } else {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEventVariableIndex)
+              }
+            }
           }
           break;
         default:

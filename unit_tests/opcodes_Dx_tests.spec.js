@@ -86,7 +86,7 @@ describe('opcodes_Dx tests', function(){
       for (var b = 1; b < 4; b++) {
         if (b == 1) {arg2 = 0}
         if (b == 2) {arg2 = 1}
-        if (b == 3) {arg2 = 255}
+        if (b == 3) {arg2 = 254}    // note 255 is used for Invalid Event Variable Index test
         for (var c = 1; c < 4; c++) {
           if (c == 1) {arg3 = 0}
           if (c == 2) {arg3 = 1}
@@ -113,7 +113,34 @@ describe('opcodes_Dx tests', function(){
 
   // 0xD2 - EVLRN
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-  it("EVLRN_SHORT}", async function () {
+  it("EVLRN_INVALID_EVENT", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN EVLRN_INVALID_EVENT test'});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    mock_Cbus.eventLimitReached = true;   // set to ensure error condition is met
+    await tests.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVLRN_INVALID_EVENT ended'});
+  })
+
+
+
+
+  // 0xD2 - EVLRN
+  // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+  it("EVLRN_INVALID_INDEX", async function () {
+    winston.info({message: 'UNIT TEST:: BEGIN EVLRN_INVALID_INDEX test'});
+		RetrievedValues.setNodeNumber(1);
+    mock_Cbus.learningNode = 1;
+    await tests.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", 255, 1);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: EVLRN_INVALID_INDEX ended'});
+  })
+
+
+  // 0xD2 - EVLRN
+  // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+  it("EVLRN_SHORT", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN EVLRN_SHORT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
