@@ -55,19 +55,21 @@ class TeachingServiceTests {
         // save value for later use
         var initialStoredEventCount = RetrievedValues.data.Services[serviceIndex].StoredEventCount
 
-				// now request all events stored
-				await this.opcodes_5x.test_NERD(RetrievedValues);
-        
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
         
         if(RetrievedValues.data.inLearnMode){
+
           // tests only possible in learn mode
-          winston.info({message: 'VLCB:      --- now in Learn mode ---'});          
+          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
+          winston.info({message: 'VLCB:      COMMENT: ------------------------------ now in Learn mode -------------------------------'});          
 
           // add new event & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
           
+          // now request all events stored, as we know there should be at least one event
+          await this.opcodes_5x.test_NERD(RetrievedValues);
+        
           // update last event variable with it's own index number
           // number of event variables in node parameter 5
           var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
@@ -90,7 +92,7 @@ class TeachingServiceTests {
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
-          winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
+          winston.info({message: 'VLCB:      COMMENT: number of events - before ' + initialStoredEventCount +
                                             ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});
 
           // now read back event variables just added
@@ -116,18 +118,20 @@ class TeachingServiceTests {
           // now request number of events stored so we can check if event has been removed
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
           
-          winston.info({message: 'VLCB:      number of events - before ' + initialStoredEventCount +
+          winston.info({message: 'VLCB:      COMMENT: number of events - before ' + initialStoredEventCount +
                                             ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount});    
 
           // now fill the event store, so we can test exceeding the storage limit
           // number of events supported is in node parameter[4]
-          winston.info({message: 'VLCB:      --- Starting process to completely fill stored events table ---'});          
+          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
+          winston.info({message: 'VLCB:      COMMENT: ----------- Starting process to completely fill stored events table ------------'});          
           var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.Services[serviceIndex].StoredEventCount
           for (var i = 0; i < numEventsToAdd; i++) {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
-          winston.info({message: 'VLCB:      --- stored events table should now be fully populated ---'});          
+          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
+          winston.info({message: 'VLCB:      COMMENT: -------------- stored events table should now be fully populated ---------------'});          
           
           // event store should now be full, so expect an error reponse when adding another
           await this.opcodes_Dx.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
@@ -139,6 +143,10 @@ class TeachingServiceTests {
           // check EVULN short message error response
           await this.opcodes_9x.test_EVULN_SHORT(RetrievedValues, "FFF0FFF0");
           
+          
+          // before leaving learn mode, test erase all events
+          await this.opcodes_5x.test_NNCLR(RetrievedValues);
+          
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          
@@ -148,8 +156,8 @@ class TeachingServiceTests {
 				await this.opcodes_5x.test_NNULN(RetrievedValues);
 
         if(!RetrievedValues.data.inLearnMode){
-          // tests only possible in learn mode
-          winston.info({message: 'VLCB:      --- back out of Learn mode ---'});
+          //                                          12345678901234567890123456789012345678900987654321098765432109876543210987654321
+          winston.info({message: 'VLCB:      COMMENT: ---------------------------- back out of Learn mode ----------------------------'});
         } else {
           winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
         }

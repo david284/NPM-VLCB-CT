@@ -238,6 +238,11 @@ class mock_CbusNetwork {
             this.getModule(nodeNumber).parameters[8] &= ~0x20
           }          
           break;
+        case '55': //NNCLR
+          // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+          winston.debug({message: 'Mock CBUS Network: received NNULN'});
+          this.outputWRACK(cbusMsg.nodeNumber);                
+          break;
         case '56': //NNEVN
           // Format: [<MjPri><MinPri=3><CANID>]<56><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNEVN'});

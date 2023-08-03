@@ -43,13 +43,13 @@ exports.DisplayEndDivider = function DisplayDivider(name){
 
 function AssembleDivider(name){
 		// target width is 80 characters
-		var width = 80;
+		var width = 100;
 		name = ' ' + name + ' ';
 		var startPadding = (width + name.length)/2;  // we want mid point plus half the name
 		// padStart first argument is the total length after padding added at the start
-		name = name.padStart(startPadding, '-');
+		name = name.padStart(startPadding, '=');
 		// padEnd first argument is the total length after padding added at the end
-		name = name.padEnd(width, '-');
+		name = name.padEnd(width, '=');
 		return name;
 }
 

@@ -129,6 +129,32 @@ class opcodes_5x {
   }
 
 
+  // 0x54 - NNCLR
+  test_NNCLR(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNCLR test'});
+    return new Promise(function (resolve, reject) {
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      var msgData = cbusLib.encodeNNCLR(RetrievedValues.getNodeNumber());
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              if (msg.mnemonic == "WRACK"){
+                this.hasTestPassed = true; 
+              }
+            }
+          })
+        }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR');
+        resolve();
+      } , 250 );
+    }.bind(this));
+  }
+
+
   // 0x56 - NNEVN
   test_NNEVN(RetrievedValues, ServiceIndex) {
     winston.debug({message: 'VLCB: BEGIN NNEVN test'});

@@ -65,14 +65,15 @@ describe('opcodes_5x tests', function(){
   });
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// 				Tests
-//
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  // 				Tests
+  //
 
-
-
-  function GetTestCase_RQNN() {
+  //
+  // most of the opcodes in this section have a single nodeNumber parameter, so can use this common testcase structure
+  //
+  function GetTestCase_NodeNumber() {
 		var arg1, testCases = [];
 		for (var a = 1; a< 4; a++) {
 			if (a == 1) arg1 = 0;
@@ -87,7 +88,7 @@ describe('opcodes_5x tests', function(){
   // 0x50 RQNN
   // need to use a timeout here, as we send a RQNN from the mock_cbus, and need to wait for it to be received
   // 
-  itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_RQNN(), function (done, value) {
+  itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), function (done, value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
     mock_Cbus.enterSetup(value.nodeNumber);
 		var retrieved_values = {};
@@ -102,19 +103,8 @@ describe('opcodes_5x tests', function(){
 	})
 
 
-  function GetTestCase_NNLRN() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x53 - NNLRN
-	itParam("NNLRN test ${JSON.stringify(value)}", GetTestCase_NNLRN(), async function (value) {
+	itParam("NNLRN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNLRN test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_NNLRN(RetrievedValues);
@@ -123,19 +113,8 @@ describe('opcodes_5x tests', function(){
 	})
   
   
-  function GetTestCase_NNULN() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x54 - NNULN
-	itParam("NNULN test ${JSON.stringify(value)}", GetTestCase_NNULN(), async function (value) {
+	itParam("NNULN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNULN test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_NNULN(RetrievedValues);
@@ -144,19 +123,18 @@ describe('opcodes_5x tests', function(){
 	})
   
   
-  function GetTestCase_NNEVN() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
+	// 0x55 - NNCLR
+	itParam("NNCLR test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
+		winston.info({message: 'UNIT TEST:: BEGIN NNCLR test'});
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+		await tests.test_NNCLR(RetrievedValues);
+    expect(tests.hasTestPassed).to.equal(true);
+		winston.info({message: 'UNIT TEST:: END NNCLR test'});
+	})
+  
+  
 	// 0x56 - NNEVN
-	itParam("NNEVN test ${JSON.stringify(value)}", GetTestCase_NNEVN(), async function (value) {
+	itParam("NNEVN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNEVN test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_NNEVN(RetrievedValues, 1);
@@ -165,19 +143,8 @@ describe('opcodes_5x tests', function(){
 	})
   
   
-  function GetTestCase_NERD() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x57 - NERD
-	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NERD(), async function (value) {
+	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NERD test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_NERD(RetrievedValues);
@@ -186,19 +153,8 @@ describe('opcodes_5x tests', function(){
 	})
   
   
-  function GetTestCase_RQEVN() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x57 - RQEVN
-	itParam("RQEVN test ${JSON.stringify(value)}", GetTestCase_RQEVN(), async function (value) {
+	itParam("RQEVN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN RQEVN test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_RQEVN(RetrievedValues, 1);
@@ -207,19 +163,8 @@ describe('opcodes_5x tests', function(){
 	})
   
   
-  function GetTestCase_ENUM() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x5D - ENUM
-	itParam("ENUM test ${JSON.stringify(value)}", GetTestCase_ENUM(), async function (value) {
+	itParam("ENUM test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN ENUM test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		await tests.test_ENUM(RetrievedValues);
@@ -228,22 +173,10 @@ describe('opcodes_5x tests', function(){
 	})
 	
 
-  function GetTestCase_NNRST() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
 	// 0x5E - NNRST
-	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NNRST(), async function (value) {
+	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-
 		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
 		// so need to pass in the service index for the MNS service - 1 in this case
 		await tests.test_NNRST(RetrievedValues, 1);
