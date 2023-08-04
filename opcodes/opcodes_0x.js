@@ -62,6 +62,7 @@ class opcodes_0x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PNN'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
         resolve();
       } , 500 );

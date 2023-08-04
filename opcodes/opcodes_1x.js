@@ -55,6 +55,7 @@ class opcodes_1x {
             }
           })
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAMS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
         resolve();
       }, 100 );
@@ -80,6 +81,7 @@ class opcodes_1x {
             }
           })
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NAME'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
         resolve();
       }, 100 )

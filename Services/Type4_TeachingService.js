@@ -86,8 +86,8 @@ exports.TeachingServiceTests = class TeachingServiceTests {
           // check EVLRN_SHORT error response
           await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
 
-          // check EVLRN_SHORT error response
-          await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
+          // now request all events stored, as a double check
+          await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // now request number of events stored
           await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
@@ -123,12 +123,14 @@ exports.TeachingServiceTests = class TeachingServiceTests {
           // number of events supported is in node parameter[4]
           utils.DisplayComment("Starting process to completely fill stored events table")
           var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.Services[serviceIndex].StoredEventCount
-          for (var i = 0; i < numEventsToAdd; i++) {
+          for (var i = 1; i <= numEventsToAdd; i++) {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
-          utils.DisplayComment("stored events table should now be fully populated")
-          
+          // now request number of events stored
+          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);          
+          utils.DisplayComment("stored events table should now be fully populated with " + RetrievedValues.data.nodeParameters[4].value + " events")
+
           // event store should now be full, so expect an error reponse when adding another
           await this.opcodes_Dx.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
 

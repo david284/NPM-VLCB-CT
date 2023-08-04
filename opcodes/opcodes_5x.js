@@ -86,6 +86,7 @@ class opcodes_5x {
               }
             })
           }
+          if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN');
           resolve();
         }, 250 );
@@ -121,6 +122,7 @@ class opcodes_5x {
               }
             })
           }
+          if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN');
           resolve();
         }, 250 );
@@ -148,6 +150,7 @@ class opcodes_5x {
             }
           })
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR');
         resolve();
       } , 250 );
@@ -174,6 +177,7 @@ class opcodes_5x {
             }
           }
         })
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected EVNLF'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN');
         resolve();
       } , 250 );
@@ -201,6 +205,7 @@ class opcodes_5x {
             }
           }
         })
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ENRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD');
         resolve();
       } , 250 );
@@ -227,6 +232,7 @@ class opcodes_5x {
             }
           }
         })
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NUMEV'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN');
         resolve();
       } , 250 );
@@ -251,6 +257,7 @@ class opcodes_5x {
             }
           }
         })
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
         resolve();
       } , 250 );

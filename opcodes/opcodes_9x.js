@@ -52,6 +52,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN');
         resolve();
       }, 250 );
@@ -89,6 +90,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT');
         resolve();
       }, 250 );
@@ -130,6 +132,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_SHORT');
         resolve();
       }, 250 );
@@ -160,6 +163,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET');
         resolve();
       } , 250 );
@@ -197,6 +201,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_INVALID_INDEX');
         resolve();
       } , 250 );
@@ -238,6 +243,7 @@ class opcodes_9x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_SHORT');
         resolve();
       } , 250 );

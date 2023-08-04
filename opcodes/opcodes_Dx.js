@@ -47,6 +47,7 @@ class opcodes_Dx {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN');
         resolve();
       } , 250 );
@@ -82,6 +83,7 @@ class opcodes_Dx {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_EVENT');
         resolve();
       } , 250 );
@@ -117,6 +119,7 @@ class opcodes_Dx {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_INDEX');
         resolve();
       } , 250 );
@@ -156,6 +159,7 @@ class opcodes_Dx {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_SHORT');
         resolve();
       } , 250 );

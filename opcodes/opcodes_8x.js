@@ -114,6 +114,7 @@ class opcodes_8x {
 						}
 					});
 				}
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_DIAG');
 				resolve();
 				;} , 250
@@ -151,6 +152,7 @@ class opcodes_8x {
 						}
 					});
 				}
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_SERVICE');
 				resolve();
 				;} , 250
@@ -192,6 +194,7 @@ class opcodes_8x {
 						}
 					});
 				}
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_SHORT');
 				resolve();
 				;} , 250
@@ -224,6 +227,7 @@ class opcodes_8x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NVANS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD');
         resolve();
 			} , 250 );
@@ -260,6 +264,7 @@ class opcodes_8x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_INVALID_INDEX');
         resolve();
 			} , 250 );
@@ -300,6 +305,7 @@ class opcodes_8x {
             }
           });
         }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_SHORT');
         resolve();
 			} , 250 );
