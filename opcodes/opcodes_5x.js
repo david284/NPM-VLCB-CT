@@ -131,7 +131,7 @@ class opcodes_5x {
   }
 
 
-  // 0x54 - NNCLR
+  // 0x55 - NNCLR
   test_NNCLR(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNCLR test'});
     return new Promise(function (resolve, reject) {
