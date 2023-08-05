@@ -10,6 +10,7 @@
   "author": "David Ellis",
   "license": "MIT",
   "dependencies": {
+    "adm-zip": "^0.5.10",
     "cbuslibrary": "^2.1.1",
     "chai": "^4.2.0",
     "jsonfile": "^6.0.1",
