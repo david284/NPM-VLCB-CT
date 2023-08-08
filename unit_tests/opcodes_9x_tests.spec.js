@@ -43,9 +43,8 @@ describe('opcodes_9x tests', function(){
 		winston.info({message: '============================================================'});
 		winston.info({message: '------------------ opcodes_9x unit tests -------------------'});
 		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
+		winston.info({message: ' '});    
+    Network.testStarted = true;
 	})
     
     beforeEach (function() {
@@ -76,7 +75,23 @@ describe('opcodes_9x tests', function(){
   // 				Tests
   //
 
-  function GetTestCase_EVULN() {
+  function GetTestCase_ARON() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a< 4; a++) {
+      if (a == 1) {arg1 = 0}
+      if (a == 2) {arg1 = 1}
+      if (a == 3) {arg1 = 65535}
+      for (var b = 1; b < 4; b++) {
+        if (b == 1) {arg2 = 0}
+        if (b == 2) {arg2 = 1}
+        if (b == 3) {arg2 = 65535}
+        testCases.push({'nodeNumber':arg1, 'eventNumber':arg2});
+      }
+    }
+    return testCases;
+  }
+
+  function GetTestCase_eventIdentifier() {
     var arg1, testCases = [];
     for (var a = 1; a< 5; a++) {
       if (a == 1) {arg1 = "00000000"}
@@ -88,9 +103,17 @@ describe('opcodes_9x tests', function(){
     return testCases;
   }
 
+  // 0x92 - AREQ
+  itParam("AREQ test ${JSON.stringify(value)}", GetTestCase_ARON(), async function (value) {
+    winston.info({message: 'UNIT TEST:: BEGIN AREQ test ' + JSON.stringify(value)});
+    await tests.test_AREQ(RetrievedValues, value.nodeNumber, value.eventNumber);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: AREQ ended'});
+  })
+
+    
   // 0x95 - EVULN
-  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-  itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_EVULN(), async function (value) {
+  itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_eventIdentifier(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
@@ -101,7 +124,6 @@ describe('opcodes_9x tests', function(){
 
     
   // 0x95 - EVULN
-  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
   it("EVULN_INVALID_EVENT test", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_INVALID_EVENT test'});
 		RetrievedValues.setNodeNumber(1);
@@ -113,7 +135,6 @@ describe('opcodes_9x tests', function(){
 
   
   // 0x95 - EVULN
-  // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
   it("EVULN_SHORT test", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_SHORT test'});
 		RetrievedValues.setNodeNumber(1);

@@ -391,6 +391,19 @@ class mock_CbusNetwork {
           // Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
           winston.debug({message: 'Mock CBUS Network: received ACOF'});
           break;
+        case '92': //AREQ
+          // Format: [<MjPri><MinPri=3><CANID>]<92><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received AREQ'});
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            if (cbusMsg.eventNumber > 0 ) {
+              this.outputARON(cbusMsg.nodeNumber, cbusMsg.eventNumber)
+            } else {
+              this.outputAROF(cbusMsg.nodeNumber, cbusMsg.eventNumber)
+            }
+          }
+          break;
         case '95': //EVULN
           // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
           // learn mode opcode
@@ -492,7 +505,7 @@ class mock_CbusNetwork {
     broadcast(msgData) {
     if (msgData != null){
       this.clients.forEach(function (client) {
-        winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+        winston.debug({message: 'Mock CBUS Network:      Output ' + cbusLib.decode(msgData).text});
         client.write(msgData);
         winston.debug({message: 'Mock CBUS Network: Transmit >>>> Port: ' + client.remotePort + ' Data: ' + msgData});
       });
@@ -657,6 +670,22 @@ class mock_CbusNetwork {
   outputACOF(nodeNumber, eventNumber) {
     // Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
     var msgData = cbusLib.encodeACOF(nodeNumber, eventNumber);
+    this.broadcast(msgData)
+  }
+
+
+  // 93
+  outputARON(nodeNumber, eventNumber) {
+    // Format: [<MjPri><MinPri=3><CANID>]<93><NN hi><NN lo><EN hi><EN lo>
+    var msgData = cbusLib.encodeARON(nodeNumber, eventNumber);
+    this.broadcast(msgData)
+  }
+
+
+  // 94
+  outputAROF(nodeNumber, eventNumber) {
+    // Format: [<MjPri><MinPri=3><CANID>]<94><NN hi><NN lo><EN hi><EN lo>
+    var msgData = cbusLib.encodeAROF(nodeNumber, eventNumber);
     this.broadcast(msgData)
   }
 

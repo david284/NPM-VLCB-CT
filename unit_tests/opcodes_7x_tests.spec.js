@@ -44,8 +44,7 @@ describe('opcodes_7x tests', function(){
 		winston.info({message: '------------------ opcodes_7x unit tests -------------------'});
 		winston.info({message: '============================================================'});
 		winston.info({message: ' '});
-
-
+    Network.testStarted = true;
 	})
     
     beforeEach (function() {

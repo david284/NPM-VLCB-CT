@@ -25,6 +25,41 @@ class opcodes_9x {
     }
 
 
+	// 0x92 - AREQ
+  // Format: [<MjPri><MinPri=3><CANID>]<92><NN hi><NN lo><EN hi><EN lo>
+  test_AREQ(RetrievedValues, nodeNumber, eventNumber) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN AREQ test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      winston.debug({message: 'VLCB: AREQ test: eventNodeNumber ' + nodeNumber + ' eventNumber ' + eventNumber});
+      var msgData = cbusLib.encodeAREQ(nodeNumber, eventNumber);
+      winston.debug({message: 'VLCB: AREQ test: msgData ' + msgData});
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == nodeNumber) {
+              // ok - it's the right node
+              if (msg.mnemonic == "ARON"){
+                this.hasTestPassed = true;
+              }
+              if (msg.mnemonic == "AROF"){
+                this.hasTestPassed = true;
+              }
+            }
+          });
+        }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARON or AROF'}); }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'AREQ');
+        resolve();
+      }, 250 );
+    }.bind(this));
+	} // end Test_AREQ
+
+
 	// 0x95 - EVULN
   // Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
   test_EVULN(RetrievedValues,eventIdentifier) {
@@ -40,7 +75,6 @@ class opcodes_9x {
       winston.debug({message: 'VLCB: EVULN test: msgData ' + msgData});
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
@@ -151,7 +185,6 @@ class opcodes_9x {
       var msgData = cbusLib.encodeNVSET(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
@@ -182,7 +215,6 @@ class opcodes_9x {
       var msgData = cbusLib.encodeNVSET(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
@@ -224,7 +256,6 @@ class opcodes_9x {
 			msgData = msgData.substring(0,15) + ';'
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
         if (this.network.messagesIn.length > 0){
           this.network.messagesIn.forEach(element => {
             var msg = cbusLib.decode(element);
