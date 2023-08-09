@@ -442,6 +442,19 @@ class mock_CbusNetwork {
             }
           }
           break;
+        case '9A': //ASRQ
+          // Format: [<MjPri><MinPri=3><CANID>]<9A><NN hi><NN lo><EN hi><EN lo>
+          winston.debug({message: 'Mock CBUS Network: received ASRQ'});
+          if (cbusMsg.encoded.length != 18) {
+            this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else {
+            if (cbusMsg.deviceNumber > 0 ) {
+              this.outputARSON(cbusMsg.nodeNumber, cbusMsg.deviceNumber)
+            } else {
+              this.outputARSOF(cbusMsg.nodeNumber, cbusMsg.deviceNumber)
+            }
+          }
+          break;
         case '9C': //REVAL
           // Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
           winston.debug({message: 'Mock CBUS Network: received REVAL'});
@@ -722,6 +735,22 @@ class mock_CbusNetwork {
   }
 
   
+  // 9D
+  outputARSON(nodeNumber, eventNumber) {
+    // Format: [<MjPri><MinPri=3><CANID>]<9D><NN hi><NN lo><EN hi><EN lo>
+    var msgData = cbusLib.encodeARSON(nodeNumber, eventNumber);
+    this.broadcast(msgData)
+  }
+
+
+  // 9E
+  outputARSOF(nodeNumber, eventNumber) {
+    // Format: [<MjPri><MinPri=3><CANID>]<9E><NN hi><NN lo><EN hi><EN lo>
+    var msgData = cbusLib.encodeARSOF(nodeNumber, eventNumber);
+    this.broadcast(msgData)
+  }
+
+
   // AB - HEARTB
   outputHEARTB(nodeNumber) {
     // Format: [<MjPri><MinPri=3><CANID>]<AB><NN hi><NN lo><Sequence><StatusByte1><StatusByte2>

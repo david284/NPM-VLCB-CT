@@ -282,6 +282,41 @@ class opcodes_9x {
 	} // end Test_NVSET_SHORT
 
 
+	// 0x9A - ASRQ
+  // Format: [<MjPri><MinPri=3><CANID>]<9A><NN hi><NN lo><EN hi><EN lo>
+  test_ASRQ(RetrievedValues, nodeNumber, eventNumber) {
+    return new Promise(function (resolve, reject) {
+      winston.debug({message: 'VLCB: BEGIN ASRQ test'});
+      this.hasTestPassed = false;
+      this.network.messagesIn = [];
+      // now create message and start test
+      winston.debug({message: 'VLCB: ASRQ test: eventNodeNumber ' + nodeNumber + ' eventNumber ' + eventNumber});
+      var msgData = cbusLib.encodeASRQ(nodeNumber, eventNumber);
+      winston.debug({message: 'VLCB: ASRQ test: msgData ' + msgData});
+      this.network.write(msgData);
+      setTimeout(()=>{
+        if (this.network.messagesIn.length > 0){
+          this.network.messagesIn.forEach(element => {
+            var msg = cbusLib.decode(element);
+            if (msg.nodeNumber == nodeNumber) {
+              // ok - it's the right node
+              if (msg.mnemonic == "ARSON"){
+                this.hasTestPassed = true;
+              }
+              if (msg.mnemonic == "ARSOF"){
+                this.hasTestPassed = true;
+              }
+            }
+          });
+        }
+        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARSON or ARSOF'}); }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'ASRQ');
+        resolve();
+      }, 250 );
+    }.bind(this));
+	} // end Test_ASRQ
+
+
 } // end class
 
 module.exports = {

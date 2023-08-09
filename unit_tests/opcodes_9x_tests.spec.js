@@ -75,7 +75,7 @@ describe('opcodes_9x tests', function(){
   // 				Tests
   //
 
-  function GetTestCase_ARON() {
+  function GetTestCase_NodeAndEvent() {
     var arg1, arg2, testCases = [];
     for (var a = 1; a< 4; a++) {
       if (a == 1) {arg1 = 0}
@@ -104,7 +104,7 @@ describe('opcodes_9x tests', function(){
   }
 
   // 0x92 - AREQ
-  itParam("AREQ test ${JSON.stringify(value)}", GetTestCase_ARON(), async function (value) {
+  itParam("AREQ test ${JSON.stringify(value)}", GetTestCase_NodeAndEvent(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN AREQ test ' + JSON.stringify(value)});
     await tests.test_AREQ(RetrievedValues, value.nodeNumber, value.eventNumber);
     expect(tests.hasTestPassed).to.equal(true);  
@@ -199,5 +199,15 @@ describe('opcodes_9x tests', function(){
     winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});
   })
 
+
+  // 0x9A - ASRQ
+  itParam("ASRQ test ${JSON.stringify(value)}", GetTestCase_NodeAndEvent(), async function (value) {
+    winston.info({message: 'UNIT TEST:: BEGIN ASRQ test ' + JSON.stringify(value)});
+    await tests.test_ASRQ(RetrievedValues, value.nodeNumber, value.eventNumber);
+    expect(tests.hasTestPassed).to.equal(true);  
+    winston.info({message: 'UNIT TEST: ASRQ ended'});
+  })
+
+    
 })
 
