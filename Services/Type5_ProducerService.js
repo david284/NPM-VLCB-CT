@@ -54,8 +54,10 @@ class ProducerServiceTests {
           
           utils.DisplayComment("now in Learn mode")
 
-          // add new event & event variable #1
+          // add new long event (512) & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
+          // add new short event (1024) & event variable #1
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "00000400", 1, 1);
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          
@@ -70,8 +72,11 @@ class ProducerServiceTests {
           winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
         }
         
+        // get long event 512
         await this.opcodes_9x.test_AREQ(RetrievedValues, 1000, 512);
-				
+				// get short event 1024
+        await this.opcodes_9x.test_ASRQ(RetrievedValues, 1000, 1024);
+        
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});
 			}
