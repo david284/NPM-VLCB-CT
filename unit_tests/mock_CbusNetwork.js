@@ -2,7 +2,7 @@
 var winston = require('winston');   // use config from root instance
 const net = require('net');
 
-const cbusLib = require('cbusLibrary')
+const cbusLib = require('cbuslibrary')
 const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 //

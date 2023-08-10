@@ -1,6 +1,6 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
-const cbusLib = require('cbusLibrary');
+const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
 
 

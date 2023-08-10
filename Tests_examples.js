@@ -1,7 +1,7 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
 const cbusLib = require('cbuslibrary');
-const BaseService = require('./Services/Baseservice.js');
+const BaseService = require('./Services/BaseService.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
