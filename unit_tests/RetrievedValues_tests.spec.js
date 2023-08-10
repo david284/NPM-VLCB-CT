@@ -211,7 +211,7 @@ describe('RetrievedValues tests', function(){
 
     //
 	it("RetrievedValues Write test", function () {
-        RetrievedValues.writeToDisk('./unit_tests/Retrieved Values unit test.txt');
+        RetrievedValues.writeToDisk('./unit_tests/logs/Retrieved Values unit test.txt');
     })
 
 
