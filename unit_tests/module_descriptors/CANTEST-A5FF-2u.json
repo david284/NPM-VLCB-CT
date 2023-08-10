@@ -1,0 +1,21 @@
+{
+    "NAME": "TEST",
+    "nodeParameters": {
+        "1": {
+            "name": "Manufacturer’s Id",
+            "value": "165"
+        },
+        "2": {
+            "name": "Minor Version",
+            "value": "117"
+        },
+        "3": {
+            "name": "Module Type",
+            "value": "255"
+        },
+        "7": {
+            "name": "Major Version",
+            "value": "2"
+        }
+    }
+}
