@@ -2,6 +2,7 @@
 const winston = require('winston');		// use config from root instance
 const jsonfile = require('jsonfile')
 const fs = require('fs');
+const path = require('path')
 const utils = require('./utilities.js');
 
 
@@ -12,6 +13,16 @@ const utils = require('./utilities.js');
 // var has function scope (or global if top level)
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
+function ensureDirectoryExistence(filePath) {
+	winston.debug({message: `VLCB: check path : ` + filePath});
+	var dirname = path.dirname(filePath);
+	if (fs.existsSync(dirname)) {
+		return true;
+	}
+	ensureDirectoryExistence(dirname);
+	winston.debug({message: `VLCB: create dirname : ` + dirname});
+	fs.mkdirSync(dirname);
+  }
 
 //
 // fetch_module_descriptor
@@ -64,7 +75,11 @@ exports.module_descriptor = function module_descriptor(file_path, RetrievedValue
 		}
 		
 		// now write it to disk
+
+		ensureDirectoryExistence(file_path + filename)
+
 		var text = JSON.stringify(module_descriptor, null, '    ');
+		winston.debug({message: `VLCB: writing to disk : ` + file_path + filename});
 		fs.writeFileSync(file_path + filename, text);
 				
 		winston.info({message: `VLCB:      New module descriptor file created : ` + filename +'\n'});
