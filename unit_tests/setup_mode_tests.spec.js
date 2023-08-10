@@ -1,7 +1,6 @@
 'use strict';
 const expect = require('chai').expect;
 const winston = require('./config/winston_test.js');
-const test_module_descriptor = require('./../unit_tests/module_descriptors/CANTEST_165_2_117.json');
 const itParam = require('mocha-param');
 const net = require('net')
 const cbusLib = require('cbuslibrary');
