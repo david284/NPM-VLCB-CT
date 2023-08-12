@@ -112,6 +112,8 @@ if (connection) {
     winston.info({message: ' '});
     runtests();
   });
+} else {
+  process.exit()
 }
 
 

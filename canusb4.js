@@ -24,13 +24,11 @@ class CANUSB4 {
     this.testStarted = false;  
     this.callback = this.dummyFunction;
 
-    /*
+  
     if(USB_PORT == "MOCK_PORT"){
       MockBinding.createPort('MOCK_PORT', { echo: false, record: true })
-      this.serialport.Binding = MockBinding;
-      this.serialPort = new serialport('MOCK_PORT');
+      this.serialPort = new SerialPort({binding: MockBinding, path:'MOCK_PORT', baudRate: 115200});
     } else {
-*/
       
       this.serialPort = new SerialPort({
         path: USB_PORT,
@@ -39,7 +37,7 @@ class CANUSB4 {
         parity: 'none',
         stopBits: 1
       })
-//    }
+    }
 
     winston.debug({message: 'CANUSB4: Connecting to ' + USB_PORT + '\n'});
 
