@@ -48,13 +48,14 @@ describe('canusb4 tests', function(){
 // 						Testing examples tests
 //
 
-    //
+  //
 	it("canusb4", function (done) {
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: Harness ended'});
+    canusb4.serialPort.port.emitData("1234;");
+    setTimeout(function(){
+      winston.info({message: 'UNIT TEST: Harness ended'});
 			done();
 		}, 500);
-    })
+  })
 
 
 })

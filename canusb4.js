@@ -41,15 +41,14 @@ class CANUSB4 {
 
     winston.debug({message: 'CANUSB4: Connecting to ' + USB_PORT + '\n'});
 
-    this.parser = new ReadlineParser({
-        delimiter: ';'
-    })
+    this.parser = this.serialPort.pipe(new ReadlineParser({ delimiter: ';' }))
 
     this.serialPort.on("open", function () {
       winston.info({message: `canUSB4 Serial Port : ${USB_PORT} Open`})
     }.bind(this));
     
     this.parser.on('data', function (data) {
+      winston.info({message: `${USB_PORT} >>> Receive : ${data}`})
       /*
       let message = getValidMessage(data);    // rebuild message as string
       if (message) {
