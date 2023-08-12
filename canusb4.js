@@ -4,10 +4,7 @@ const {SerialPort} = require("serialport");
 const { ReadlineParser } = require('@serialport/parser-readline')
 const { MockBinding } = require('@serialport/binding-mock')
 
-
 const cbusLib = require('cbuslibrary');
-
-
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -44,23 +41,21 @@ class CANUSB4 {
     this.parser = this.serialPort.pipe(new ReadlineParser({ delimiter: ';' }))
 
     this.serialPort.on("open", function () {
-      winston.info({message: `canUSB4 Serial Port : ${USB_PORT} Open`})
+      winston.info({message: `CANUSB4: Serial Port : ${USB_PORT} Open`})
     }.bind(this));
     
     this.parser.on('data', function (data) {
-      winston.info({message: `${USB_PORT} >>> Receive : ${data}`})
-      /*
-      let message = getValidMessage(data);    // rebuild message as string
-      if (message) {
-        let cbusMsg = cbusLib.decode(message)
-        winston.info({message: `${USB_PORT} >>> Receive : ${message} ${cbusMsg.mnemonic} Opcode ${cbusMsg.opCode}`})
-        client.write(message)
+      data += ';'
+      var decodedMsg = cbusLib.decode(data)
+      this.messagesIn.push(data)
+      winston.debug({message: 'CANUSB4: <<< receive ' + data + " " + decodedMsg.text});
+      if (this.testStarted) {
+        winston.info({message: `VLCB     >>> Receive : ${decodedMsg.text}`})
       }
-      */
     }.bind(this));
 
     this.serialPort.on("error", function (err) {
-      winston.error({message: `Serial port ERROR:  : ${err.message}`})
+      winston.error({message: `CANUSB4: Serial port ERROR:  : ${err.message}`})
     }.bind(this));
 
 
