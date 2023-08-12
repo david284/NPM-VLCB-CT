@@ -4,6 +4,7 @@ const fs = require('fs');
 var pjson = require('./package.json');
 const readline = require('readline');
 const files = require('./copy_files.js');
+//const CANUSB4 = require('./canusb4.js')
 		
 
 const utils = require('./utilities.js');
@@ -54,49 +55,64 @@ winston.info({message: '- Test Run : ' + new Date()});
 winston.info({message: '================================================================================'});
 winston.info({message: ' '});
 
-// create network connection for tests to use
-const  Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+let connection = null;
+if (networkSelected()){
+  // create network connection for tests to use
+  connection = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+  winston.info({message: '---- network selected ----'});
+} else {
+  utils.findCANUSB4();
+//  connection = new CANUSB4.CANUSB4('/dev/ttyS3')
+}
+
+// end app if no connection found
+if (connection == null) {
+  winston.info({message: '******** no connection found ******'});
+};
 
 // create instances of tests
-const examples = new example_tests.ExampleTests(Network);
-const callback = new callback_tests.callbackTests(Network);
-const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
+const examples = new example_tests.ExampleTests(connection);
+const callback = new callback_tests.callbackTests(connection);
+const SetupMode = new SetupMode_tests.SetupMode_tests(connection);
 //
-const MNS = new Type1_MNS.MinimumNodeServiceTests(Network);
-const NVS = new Type2_NVS.NodeVariableServiceTests(Network);
-const CAN = new Type3_CAN.CANServiceTests(Network);
-const Teaching = new Type4_Teaching.TeachingServiceTests(Network);
-const Producer = new Type5_Producer.ProducerServiceTests(Network);
-const Consumer = new Type6_Consumer.ConsumerServiceTests(Network);
-const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(Network);
-const Bootloader = new Type10_Bootloader.BootloaderServiceTests(Network);
-const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(Network);
-const FastClock = new Type12_FastClock.FastClockServiceTests(Network);
-const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(Network);
-const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(Network);
-const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(Network);
-const SLiM = new Type16_SLiM.SLiMServiceTests(Network);
-const LongMessage = new Type17_LongMessage.LongMessageServiceTests(Network);
+const MNS = new Type1_MNS.MinimumNodeServiceTests(connection);
+const NVS = new Type2_NVS.NodeVariableServiceTests(connection);
+const CAN = new Type3_CAN.CANServiceTests(connection);
+const Teaching = new Type4_Teaching.TeachingServiceTests(connection);
+const Producer = new Type5_Producer.ProducerServiceTests(connection);
+const Consumer = new Type6_Consumer.ConsumerServiceTests(connection);
+const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(connection);
+const Bootloader = new Type10_Bootloader.BootloaderServiceTests(connection);
+const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(connection);
+const FastClock = new Type12_FastClock.FastClockServiceTests(connection);
+const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(connection);
+const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(connection);
+const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(connection);
+const SLiM = new Type16_SLiM.SLiMServiceTests(connection);
+const LongMessage = new Type17_LongMessage.LongMessageServiceTests(connection);
 
 
-// Now setup for console input to get the node number of the module we're testing
+if (connection) {
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+  // Now setup for console input to get the node number of the module we're testing
 
-winston.info({message: ' ==== enter node number to be tested, followed by enter'});
-winston.info({message: ' ==== or just enter if putting module into setup using the button'});
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
 
-// This will prompt for the node number, and then run the tests
-rl.question('\n Enter Node number > ', function(answer) {
-	RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
-	winston.info({message: ' '});
-	winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
-	winston.info({message: ' '});
-	runtests();
-});
+  winston.info({message: ' ==== enter node number to be tested, followed by enter'});
+  winston.info({message: ' ==== or just enter if putting module into setup using the button'});
+
+  // This will prompt for the node number, and then run the tests
+  rl.question('\n Enter Node number > ', function(answer) {
+    RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
+    winston.info({message: ' '});
+    winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+    winston.info({message: ' '});
+    runtests();
+  });
+}
 
 
 
@@ -108,9 +124,9 @@ async function runtests() {
 	// and is shared with, & updated by, all tests
 
   // tell network we've started tests (enables messages to console)
-  Network.testStarted = true;
+  connection.testStarted = true;
 							
-	// attach callback tests to network, to manage unsolicited messages from modules
+	// attach callback tests to connection, to manage unsolicited messages from modules
 	callback.attach(RetrievedValues);
 
 	// now run setup mode tests
@@ -214,7 +230,7 @@ async function runtests() {
 	
 	await utils.sleep(500);		// delay to allow the log writes to catch up
 
-	Network.closeConnection()
+	connection.closeConnection()
 	winston.info({message: '\nVLCB: test sequence completed'});
 	rl.close();
 	process.stdin.destroy();
@@ -225,8 +241,17 @@ async function runtests() {
 }	// endRunTests()
 
 
-
-
+function networkSelected() {
+	// command line arguments will be 'node' <javascript file started> '--' <arguments starting at index 3>
+	for (var item in process.argv){
+    winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
+    if (process.argv[item].toLowerCase() == 'network'){
+      return true;
+    }
+	}
+  return false;
+}
+  
 
 
 
