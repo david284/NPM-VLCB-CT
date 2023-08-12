@@ -17,6 +17,7 @@
     "mocha": "^8.2.1",
     "mocha-param": "2.0.1",
     "openurl": "^1.1.1",
+    "serialport": "^11.0.1",
     "socket.io": "^2.4.1",
     "winston": "^3.3.3"
   }

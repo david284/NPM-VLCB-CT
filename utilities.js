@@ -1,5 +1,6 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
+const {SerialPort} = require("serialport");
 
 
 // Scope:
@@ -81,5 +82,16 @@ exports.sleep = function sleep(timeout) {
 	});
 };
 	
-
+exports.findCANUSB4 = function findCANUSB4() {
+  winston.debug({message: 'utils: CANUSB4:'});
+  SerialPort.list().then(ports => {
+    ports.forEach(function(port) {
+      winston.debug({message: 'utils: CANUSB4: checking port: ' + JSON.stringify(port)});
+      if (port.vendorId != undefined && port.vendorId.toString().toUpperCase() == '04D8' && port.productId.toString().toUpperCase() == 'F80C') {
+        winston.debug({message: 'utils: CANUSB4 found ' + port.path});
+        return port.path
+      }
+    })
+  })
+}
 
