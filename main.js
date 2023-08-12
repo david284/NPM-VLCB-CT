@@ -4,7 +4,7 @@ const fs = require('fs');
 var pjson = require('./package.json');
 const readline = require('readline');
 const files = require('./copy_files.js');
-//const CANUSB4 = require('./canusb4.js')
+const CANUSB4 = require('./canusb4.js')
 		
 
 const utils = require('./utilities.js');
@@ -92,14 +92,14 @@ const SLiM = new Type16_SLiM.SLiMServiceTests(connection);
 const LongMessage = new Type17_LongMessage.LongMessageServiceTests(connection);
 
 
-if (connection) {
-
   // Now setup for console input to get the node number of the module we're testing
 
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
+
+if (connection) {
 
   winston.info({message: ' ==== enter node number to be tested, followed by enter'});
   winston.info({message: ' ==== or just enter if putting module into setup using the button'});
