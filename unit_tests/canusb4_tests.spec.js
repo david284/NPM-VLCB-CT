@@ -59,7 +59,7 @@ describe('canusb4 tests', function(){
     setTimeout(function(){
       winston.debug({message: 'UNIT TEST: canusb4 mesageIn count ' + canusb4.messagesIn.length});
       winston.info({message: 'UNIT TEST: END canusb4 receive test'});
-      expect(canusb4.messagesIn[0]).to.equal(msgData);
+      expect(canusb4.messagesIn[0].encoded).to.equal(msgData);
 			done();
 		}, 100);
   })

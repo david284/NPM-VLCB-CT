@@ -39,8 +39,7 @@ class opcodes_Dx {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "WRACK"){ this.hasTestPassed = true; }
@@ -69,8 +68,7 @@ class opcodes_Dx {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "CMDERR"){
@@ -105,8 +103,7 @@ class opcodes_Dx {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "CMDERR"){
@@ -145,8 +142,7 @@ class opcodes_Dx {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               // ok - it's the right node
               if (msg.mnemonic == "GRSP"){

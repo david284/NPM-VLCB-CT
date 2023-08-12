@@ -35,8 +35,7 @@ class opcodes_1x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "PARAMS"){
               winston.debug({message: 'VLCB: RQNP valid'});
               this.hasTestPassed = true;
@@ -73,8 +72,7 @@ class opcodes_1x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "NAME"){
               this.hasTestPassed = true;
               RetrievedValues.data["NAME"] = msg.name;

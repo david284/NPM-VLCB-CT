@@ -36,8 +36,7 @@ class opcodes_4x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
               if (msg.mnemonic == "NNACK"){
                 this.hasTestPassed = true;
@@ -64,8 +63,7 @@ class opcodes_4x {
       setTimeout(()=>{
         var GRSPreceived = false;
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "GRSP"){
               GRSPreceived = true;
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {

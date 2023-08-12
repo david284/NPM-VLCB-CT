@@ -73,8 +73,7 @@ class opcodes_5x {
         this.network.write(msgData);
         setTimeout(()=>{
           if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(element => {
-              var msg = cbusLib.decode(element);
+            this.network.messagesIn.forEach(msg => {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "PARAN"){
                   // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
@@ -109,8 +108,7 @@ class opcodes_5x {
         this.network.write(msgData);
         setTimeout(()=>{
           if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(element => {
-              var msg = cbusLib.decode(element);
+            this.network.messagesIn.forEach(msg => {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "PARAN"){
                   // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
@@ -141,8 +139,7 @@ class opcodes_5x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "WRACK"){
                 this.hasTestPassed = true; 
@@ -167,8 +164,7 @@ class opcodes_5x {
       var msgData = cbusLib.encodeNNEVN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
+        this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "EVNLF"){
               this.hasTestPassed = true;
@@ -194,8 +190,7 @@ class opcodes_5x {
       var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
+        this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "ENRSP"){
               this.hasTestPassed = true;
@@ -222,8 +217,7 @@ class opcodes_5x {
       var msgData = cbusLib.encodeRQEVN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
+        this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "NUMEV"){
               this.hasTestPassed = true;
@@ -249,8 +243,7 @@ class opcodes_5x {
       var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
+        this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "NNACK"){
               this.hasTestPassed = true;
@@ -283,8 +276,7 @@ class opcodes_5x {
             var MSB_Uptime 
             var LSB_Uptime 
             if (this.network.messagesIn.length > 0){
-             this.network.messagesIn.forEach(element => {
-                var msg = cbusLib.decode(element);
+             this.network.messagesIn.forEach(msg => {
                 if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
                   if (msg.mnemonic == "DGN"){
                     if (msg.DiagnosticCode == 2) {

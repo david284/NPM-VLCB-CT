@@ -34,8 +34,7 @@ class opcodes_0x {
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
           var i=0;
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "PNN"){
               // allow messages from all nodes as we can build up an array of all the modules
               var newModule = {

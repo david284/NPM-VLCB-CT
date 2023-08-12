@@ -47,11 +47,12 @@ class CANUSB4 {
     this.parser.on('data', function (data) {
       data += ';'
       var decodedMsg = cbusLib.decode(data)
-      this.messagesIn.push(data)
+      this.messagesIn.push(decodedMsg)
       winston.debug({message: 'CANUSB4: <<< receive ' + data + " " + decodedMsg.text});
       if (this.testStarted) {
         winston.info({message: `VLCB     >>> Receive : ${decodedMsg.text}`})
       }
+      this.callback(decodedMsg);
     }.bind(this));
 
     this.serialPort.on("error", function (err) {

@@ -45,8 +45,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "NVANS"){
                 this.hasTestPassed = true;
@@ -78,8 +77,7 @@ class opcodes_7x {
         this.network.write(msgData);
         setTimeout(()=>{
           if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(element => {
-              var msg = cbusLib.decode(element);
+            this.network.messagesIn.forEach(msg => {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "CMDERR"){
                   if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
@@ -136,8 +134,7 @@ class opcodes_7x {
         this.network.write(msgData);
         setTimeout(()=>{
           if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(element => {
-              var msg = cbusLib.decode(element);
+            this.network.messagesIn.forEach(msg => {
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.mnemonic == "GRSP"){
                   if (msg.result == GRSP.Invalid_Command) {
@@ -177,8 +174,7 @@ class opcodes_7x {
         var fail_output = "";
         var warning_output = "";
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "PARAN"){
                 // ok - we have a value, so assume the test has passed - now do additional consistency tests
@@ -236,8 +232,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "CMDERR"){
                 if (msg.errorNumber == GRSP.InvalidParameterIndex) {
@@ -288,8 +283,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "GRSP"){
                 if (msg.result == GRSP.Invalid_Command) {
@@ -323,8 +317,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "WRACK"){
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 msgBitField |= 1;   // set bit 0
@@ -369,8 +362,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "CMDERR"){
               if (msg.errorNumber == GRSP.InvalidEvent) {
                 msgBitField |= 1;			// set bit 0
@@ -420,8 +412,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.mnemonic == "GRSP"){
               if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
                 if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
@@ -451,8 +442,7 @@ class opcodes_7x {
       this.network.write(msgData);
       setTimeout(()=>{
         if (this.network.messagesIn.length > 0){
-        this.network.messagesIn.forEach(element => {
-          var msg = cbusLib.decode(element);
+        this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "GRSP"){
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
@@ -490,8 +480,7 @@ class opcodes_7x {
       setTimeout(()=>{
       var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (ServiceIndex == 0) {
                 // service index is 0, so expecting one or more 'SD' messages
@@ -540,8 +529,7 @@ class opcodes_7x {
       setTimeout(()=>{
         var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
@@ -582,8 +570,7 @@ class opcodes_7x {
       setTimeout(()=>{
         var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
         if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(element => {
-            var msg = cbusLib.decode(element);
+          this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               // expecting a GRSP message
               if (msg.mnemonic == "GRSP"){
