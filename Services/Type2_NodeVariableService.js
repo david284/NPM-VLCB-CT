@@ -24,7 +24,7 @@ exports.NodeVariableServiceTests = class NodeVariableServiceTests {
         this.hasTestPassed = false;
 		
 		this.opcodes_0x = new opcodes_0x(this.network);
-		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
+		this.opcodes_7x = new opcodes_7x(this.network);
 		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
 		this.opcodes_9x = new opcodes_9x.opcodes_9x(this.network);
     }
