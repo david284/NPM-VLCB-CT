@@ -13,7 +13,7 @@ const utils = require('./../utilities.js');
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
-class opcodes_1x {
+module.exports = class opcodes_1x {
 
     constructor(NETWORK) {
     //                        0123456789012345678901234567890123456789
@@ -34,26 +34,24 @@ class opcodes_1x {
       var msgData = cbusLib.encodeRQNP();
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.mnemonic == "PARAMS"){
-              winston.debug({message: 'VLCB: RQNP valid'});
-              this.hasTestPassed = true;
-              RetrievedValues.addNodeParameter(1, msg.param1);
-              RetrievedValues.addNodeParameter(2, msg.param2);
-              RetrievedValues.addNodeParameter(3, msg.param3);
-              RetrievedValues.addNodeParameter(4, msg.param4);
-              RetrievedValues.addNodeParameter(5, msg.param5);
-              RetrievedValues.addNodeParameter(6, msg.param6);
-              RetrievedValues.addNodeParameter(7, msg.param7);
-              for (var i = 1 ; i< 8; i++){
-                winston.info({message: 'VLCB:      RQNP: ' 
-                  + NodeParameterNames[i] + ' : ' 
-                  + RetrievedValues.data.nodeParameters[i].value});
-              }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.mnemonic == "PARAMS"){
+            winston.debug({message: 'VLCB: RQNP valid'});
+            this.hasTestPassed = true;
+            RetrievedValues.addNodeParameter(1, msg.param1);
+            RetrievedValues.addNodeParameter(2, msg.param2);
+            RetrievedValues.addNodeParameter(3, msg.param3);
+            RetrievedValues.addNodeParameter(4, msg.param4);
+            RetrievedValues.addNodeParameter(5, msg.param5);
+            RetrievedValues.addNodeParameter(6, msg.param6);
+            RetrievedValues.addNodeParameter(7, msg.param7);
+            for (var i = 1 ; i< 8; i++){
+              winston.info({message: 'VLCB:      RQNP: ' 
+                + NodeParameterNames[i] + ' : ' 
+                + RetrievedValues.data.nodeParameters[i].value});
             }
-          })
-        }
+          }
+        })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAMS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
         resolve();
@@ -71,14 +69,12 @@ class opcodes_1x {
       var msgData = cbusLib.encodeRQMN();
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.mnemonic == "NAME"){
-              this.hasTestPassed = true;
-              RetrievedValues.data["NAME"] = msg.name;
-            }
-          })
-        }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.mnemonic == "NAME"){
+            this.hasTestPassed = true;
+            RetrievedValues.data["NAME"] = msg.name;
+          }
+        })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NAME'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
         resolve();
@@ -89,6 +85,3 @@ class opcodes_1x {
 
 }
 
-module.exports = {
-    opcodes_1x: opcodes_1x
-}

@@ -29,7 +29,7 @@ const NET_ADDRESS = "127.0.0.1"
 describe('opcodes_0x tests', function(){
 	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
-	const tests = new opcodes_0x.opcodes_0x(Network);
+	const tests = new opcodes_0x(Network);
 
 
     // mns_testss have their own timeouts, so need to reflect that and add a little bit
