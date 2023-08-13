@@ -41,7 +41,7 @@ function  arrayChecksum(array, start) {
 
 
 
-class mock_CbusNetwork {
+module.exports = class mock_CbusNetwork {
 
     constructor(NET_PORT) {
     winston.debug({message: 'Mock CBUS Network: Starting'});
@@ -1092,11 +1092,6 @@ class CANTEST extends CbusModule{
   }
 }
 
-
-
-module.exports = {
-    mock_CbusNetwork: mock_CbusNetwork
-}
 
 
 

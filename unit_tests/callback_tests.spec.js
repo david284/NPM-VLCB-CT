@@ -18,8 +18,8 @@ const NET_ADDRESS = "127.0.0.1"
 
 
 describe('callback tests', function(){
-	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+	const mock_Cbus = new Mock_Cbus(NET_PORT);
+	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const callback = new callback_tests.callbackTests(Network);
 
 

@@ -58,7 +58,7 @@ winston.info({message: ' '});
 let connection = null;
 if (networkSelected()){
   // create network connection for tests to use
-  connection = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+  connection = new IP_Network(NET_ADDRESS, NET_PORT);
   winston.info({message: '---- network selected ----'});
 } else {
   utils.findCANUSB4();
@@ -113,7 +113,8 @@ if (connection) {
     runtests();
   });
 } else {
-//  process.exit()
+  winston.info({message: '\nVLCB: ==== terminating \n'});
+  process.exit()
 }
 
 

@@ -28,8 +28,8 @@ const NET_ADDRESS = "127.0.0.1"
 
 
 describe('opcodes_8x tests', function(){
-	const mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	const Network = new IP_Network.IP_Network(NET_ADDRESS, NET_PORT);
+	const mock_Cbus = new Mock_Cbus(NET_PORT);
+	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const tests = new opcodes_8x(Network);
 
 

@@ -12,7 +12,7 @@ const cbusLib = require('cbuslibrary');
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
-class IP_Network {
+module.exports = class IP_Network {
 
   constructor(NET_ADDRESS, NET_PORT) {
     winston.debug({message: 'IP_NETWORK: Connecting to ' + NET_ADDRESS + ':' + NET_PORT + '\n'});
@@ -45,7 +45,9 @@ class IP_Network {
     }.bind(this));
     
     this.testClient.on('error', function(err) {
-        winston.info({message: 'IP_NETWORK: Socket error ' + err});
+        winston.info({message: '\nIP_NETWORK: Socket error ' + err});
+        winston.info({message: '\nVLCB: ==== terminating \n'});
+        process.exit()
     }.bind(this));
       
   } // end constructor
@@ -66,6 +68,3 @@ class IP_Network {
 	}
 }
 
-module.exports = {
-    IP_Network: IP_Network
-}
