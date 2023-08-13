@@ -21,9 +21,9 @@ exports.CANServiceTests = class CANServiceTests {
 		this.network = NETWORK;
 		this.Title = 'CAN Service';
 		
-		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
-		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
-		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_5x = new opcodes_5x(this.network);
+		this.opcodes_7x = new opcodes_7x(this.network);
+		this.opcodes_8x = new opcodes_8x(this.network);
     }
 
 

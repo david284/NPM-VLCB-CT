@@ -24,12 +24,12 @@ class ProducerServiceTests {
 		this.network = NETWORK;
 		this.Title = 'Producer Service';
 		
-		this.opcodes_5x = new opcodes_5x.opcodes_5x(this.network);
-		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
-		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
-		this.opcodes_9x = new opcodes_9x.opcodes_9x(this.network);
-		this.opcodes_Bx = new opcodes_Bx.opcodes_Bx(this.network);
-		this.opcodes_Dx = new opcodes_Dx.opcodes_Dx(this.network);
+		this.opcodes_5x = new opcodes_5x(this.network);
+		this.opcodes_7x = new opcodes_7x(this.network);
+		this.opcodes_8x = new opcodes_8x(this.network);
+		this.opcodes_9x = new opcodes_9x(this.network);
+		this.opcodes_Bx = new opcodes_Bx(this.network);
+		this.opcodes_Dx = new opcodes_Dx(this.network);
     }
 
 

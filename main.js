@@ -113,7 +113,7 @@ if (connection) {
     runtests();
   });
 } else {
-  process.exit()
+//  process.exit()
 }
 
 

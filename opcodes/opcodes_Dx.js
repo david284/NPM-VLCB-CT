@@ -14,7 +14,7 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
-class opcodes_Dx {
+module.exports = class opcodes_Dx {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
@@ -38,14 +38,12 @@ class opcodes_Dx {
       var msgData = cbusLib.encodeEVLRN(eventNodeNumber, eventNumber, eventVariableIndex, eventVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "WRACK"){ this.hasTestPassed = true; }
-            }
-          });
-        }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "WRACK"){ this.hasTestPassed = true; }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN');
         resolve();
@@ -67,20 +65,18 @@ class opcodes_Dx {
       var msgData = cbusLib.encodeEVLRN(eventNodeNumber, eventNumber, eventVariableIndex, eventVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "CMDERR"){
-                if (msg.errorNumber == GRSP.InvalidEvent) {
-                  this.hasTestPassed = true;
-                } else {
-                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
-                }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "CMDERR"){
+              if (msg.errorNumber == GRSP.InvalidEvent) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
               }
             }
-          });
-        }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_EVENT');
         resolve();
@@ -102,20 +98,18 @@ class opcodes_Dx {
       var msgData = cbusLib.encodeEVLRN(eventNodeNumber, eventNumber, eventVariableIndex, eventVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "CMDERR"){
-                if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
-                  this.hasTestPassed = true;
-                } else {
-                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEventVariableIndex}); 
-                }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "CMDERR"){
+              if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEventVariableIndex}); 
               }
             }
-          });
-        }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_INDEX');
         resolve();
@@ -141,20 +135,18 @@ class opcodes_Dx {
 			msgData = msgData.substring(0,19) + ';'
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "GRSP"){
-                if (msg.result == GRSP.Invalid_Command) {
-                  this.hasTestPassed = true;
-                } else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
-                }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.Invalid_Command) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
               }
             }
-          });
-        }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_SHORT');
         resolve();
@@ -163,11 +155,5 @@ class opcodes_Dx {
 	} // end Test_EVLRN_SHORT
 
 
-
-
-
 } // end class
 
-module.exports = {
-    opcodes_Dx: opcodes_Dx
-}

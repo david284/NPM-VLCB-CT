@@ -14,7 +14,7 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
-class opcodes_8x {
+module.exports = class opcodes_8x {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
@@ -43,30 +43,26 @@ class opcodes_8x {
       var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "DGN"){
-                
-                // lets findout if we have an entry for this service
-                if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
-                {
-                  winston.debug({message: 'VLCB:      No Matching service found for serviceIndex ' + msg.ServiceIndex});
-                  this.hasTestPassed = false;
-                } else {
-                  // we have a matching service entry, so mark as passed
-                  this.hasTestPassed = true;
-                }
-                
-                // store diagnostic code anyway, even if no matching service (will create a new service entry)
-                RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "DGN"){
+              
+              // lets findout if we have an entry for this service
+              if (RetrievedValues.data.Services[msg.ServiceIndex] == null)
+              {
+                winston.debug({message: 'VLCB:      No Matching service found for serviceIndex ' + msg.ServiceIndex});
+                this.hasTestPassed = false;
+              } else {
+                // we have a matching service entry, so mark as passed
+                this.hasTestPassed = true;
               }
+              
+              // store diagnostic code anyway, even if no matching service (will create a new service entry)
+              RetrievedValues.addDiagnosticCode(msg.ServiceIndex, msg.DiagnosticCode, msg.DiagnosticValue);
             }
-          });
-        }
-        
+          }
+        });
         var testType = "\'ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + "\'";
         if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
         if(ServiceIndex != 0) {
@@ -94,24 +90,22 @@ class opcodes_8x {
 			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
 			this.network.write(msgData);
 			setTimeout(()=>{
-				if (this.network.messagesIn.length > 0){
-					this.network.messagesIn.forEach(msg => {
-						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-							// ok - it's the right node
-							// so expecting error message back, not DGN
-							if (msg.mnemonic == "GRSP"){
-								if (msg.result == GRSP.InvalidDiagnosticCode) {
-									this.hasTestPassed = true;
-								} else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidDiagnosticCode}); 
-								}
-							}
-							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
-							}
-						}
-					});
-				}
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            // so expecting error message back, not DGN
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.InvalidDiagnosticCode) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidDiagnosticCode}); 
+              }
+            }
+            if (msg.mnemonic == "DGN"){
+              winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
+            }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_DIAG');
 				resolve();
@@ -131,24 +125,22 @@ class opcodes_8x {
 			var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
 			this.network.write(msgData);
 			setTimeout(()=>{
-				if (this.network.messagesIn.length > 0){
-					this.network.messagesIn.forEach(msg => {
-						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-							// ok - it's the right node
-							// so expecting error message back, not DGN
-							if (msg.mnemonic == "GRSP"){
-								if (msg.result == GRSP.InvalidService) {
-									this.hasTestPassed = true;
-								} else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidService}); 
-								}
-							}
-							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
-							}
-						}
-					});
-				}
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            // so expecting error message back, not DGN
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.InvalidService) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidService}); 
+              }
+            }
+            if (msg.mnemonic == "DGN"){
+              winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
+            }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_SERVICE');
 				resolve();
@@ -172,24 +164,22 @@ class opcodes_8x {
 			msgData = msgData.substring(0,15) + ';'
 			this.network.write(msgData);
 			setTimeout(()=>{
-				if (this.network.messagesIn.length > 0){
-					this.network.messagesIn.forEach(msg => {
-						if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-							// ok - it's the right node
-							// so expecting error message back, not DGN
-							if (msg.mnemonic == "GRSP"){
-								if (msg.result == GRSP.Invalid_Command) {
-									this.hasTestPassed = true;
-								} else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
-								}
-							}
-							if (msg.mnemonic == "DGN"){
-								winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
-							}
-						}
-					});
-				}
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            // so expecting error message back, not DGN
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.Invalid_Command) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+              }
+            }
+            if (msg.mnemonic == "DGN"){
+              winston.info({message: 'VLCB:      FAIL expected error message but received DGN'});
+            }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_SHORT');
 				resolve();
@@ -209,19 +199,16 @@ class opcodes_8x {
       var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "NVANS"){
-                if (msg.nodeVariableIndex == nodeVariableIndex){
-                  this.hasTestPassed = true;
-                }                
-              }
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "NVANS"){
+              if (msg.nodeVariableIndex == nodeVariableIndex){
+                this.hasTestPassed = true;
+              }                
             }
-          });
-        }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NVANS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD');
         resolve();
@@ -240,24 +227,21 @@ class opcodes_8x {
       var msgData = cbusLib.encodeNVSETRD(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "GRSP"){
-                if (msg.result == GRSP.InvalidNodeVariableIndex) {
-                  this.hasTestPassed = true;
-                } else {
-                  winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.InvalidNodeVariableIndex}); 
-                }
-              }
-              if (msg.mnemonic == "NVANS"){
-                winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.InvalidNodeVariableIndex) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.InvalidNodeVariableIndex}); 
               }
             }
-          });
-        }
+            if (msg.mnemonic == "NVANS"){
+              winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+            }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_INVALID_INDEX');
         resolve();
@@ -280,24 +264,21 @@ class opcodes_8x {
 			msgData = msgData.substring(0,15) + ';'
       this.network.write(msgData);
       setTimeout(()=>{
-        var nonMatchingCount = 0;
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              // ok - it's the right node
-              if (msg.mnemonic == "GRSP"){
-                if (msg.result == GRSP.Invalid_Command) {
-                  this.hasTestPassed = true;
-                } else {
-                  winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.Invalid_Command}); 
-                }
-              }
-              if (msg.mnemonic == "NVANS"){
-                winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+        this.network.messagesIn.forEach(msg => {
+          if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            // ok - it's the right node
+            if (msg.mnemonic == "GRSP"){
+              if (msg.result == GRSP.Invalid_Command) {
+                this.hasTestPassed = true;
+              } else {
+                winston.info({message: 'VLCB:      GRSP wrong result - expected ' + GRSP.Invalid_Command}); 
               }
             }
-          });
-        }
+            if (msg.mnemonic == "NVANS"){
+              winston.info({message: 'VLCB:      unexpected NVANS response'}); 
+            }
+          }
+        });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_SHORT');
         resolve();
@@ -306,10 +287,5 @@ class opcodes_8x {
 	} // end test_NVSETRD_SHORT
 
 
-
-
 } // end class
 
-module.exports = {
-    opcodes_8x: opcodes_8x
-}

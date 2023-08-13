@@ -27,7 +27,7 @@ exports.MinimumNodeServiceTests  = class MinimumNodeServiceTests{
 		this.opcodes_4x = new opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x(this.network);
-		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_8x = new opcodes_8x(this.network);
     }
 
 

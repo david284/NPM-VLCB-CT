@@ -20,8 +20,8 @@ class CANBridgeServiceTests {
 		this.network = NETWORK;
 		this.Title = 'CANBridge Service';
 		
-		this.opcodes_7x = new opcodes_7x.opcodes_7x(this.network);
-		this.opcodes_8x = new opcodes_8x.opcodes_8x(this.network);
+		this.opcodes_7x = new opcodes_7x(this.network);
+		this.opcodes_8x = new opcodes_8x(this.network);
     }
 
 
