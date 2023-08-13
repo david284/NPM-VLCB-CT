@@ -13,7 +13,7 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
 
-class opcodes_4x {
+module.exports = class opcodes_4x {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
@@ -35,15 +35,13 @@ class opcodes_4x {
       var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              if (msg.mnemonic == "NNACK"){
-                this.hasTestPassed = true;
-              }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "NNACK"){
+              this.hasTestPassed = true;
             }
-          })
-        }
+          }
+        })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN');
         resolve();
@@ -62,33 +60,31 @@ class opcodes_4x {
       this.network.write(msgData);
       setTimeout(()=>{
         var GRSPreceived = false;
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.mnemonic == "GRSP"){
-              GRSPreceived = true;
-              if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-                if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-                winston.debug({message: 'VLCB:      GRSP received: ' + msg.result})
-                  if (msg.result == GRSP.OK) {
-                    this.hasTestPassed = true;
-                  } else {
-                    winston.info({message: 'VLCB: GRSP result:'
-                      + '\n  Expected ' + GRSP.OK
-                      + '\n  Actual ' + msg.result}); 
-                  }
-                }else {
-                  winston.info({message: 'VLCB: GRSP requestOpCode:'
-                    + '\n  Expected ' + cbusLib.decode(msgData).opCode
-                    + '\n  Actual ' + msg.requestOpCode}); 
+        this.network.messagesIn.forEach(msg => {
+          if (msg.mnemonic == "GRSP"){
+            GRSPreceived = true;
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+              winston.debug({message: 'VLCB:      GRSP received: ' + msg.result})
+                if (msg.result == GRSP.OK) {
+                  this.hasTestPassed = true;
+                } else {
+                  winston.info({message: 'VLCB: GRSP result:'
+                    + '\n  Expected ' + GRSP.OK
+                    + '\n  Actual ' + msg.result}); 
                 }
-              } else {
-                winston.info({message: 'VLCB: GRSP nodeNumber:' +
-                  + '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
-                  + '\n  Actual ' + msg.nodeNumber}); 
+              }else {
+                winston.info({message: 'VLCB: GRSP requestOpCode:'
+                  + '\n  Expected ' + cbusLib.decode(msgData).opCode
+                  + '\n  Actual ' + msg.requestOpCode}); 
               }
+            } else {
+              winston.info({message: 'VLCB: GRSP nodeNumber:' +
+                + '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
+                + '\n  Actual ' + msg.nodeNumber}); 
             }
-          });
-        }
+          }
+        });
         if (!GRSPreceived) { winston.info({message: 'VLCB: NNRSM Fail: no GRSP received'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
         resolve();
@@ -97,9 +93,4 @@ class opcodes_4x {
   }
 	
 	
-
-}
-
-module.exports = {
-    opcodes_4x: opcodes_4x
-}
+} // end class

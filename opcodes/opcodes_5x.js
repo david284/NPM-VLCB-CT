@@ -17,7 +17,7 @@ const utils = require('./../utilities.js');
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 
-class opcodes_5x {
+module.exports = class opcodes_5x {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
@@ -34,20 +34,17 @@ class opcodes_5x {
 	// 0x50 RQNN
 	checkForRQNN(RetrievedValues){
 		this.hasTestPassed = false;
-    if (this.network.messagesIn.length > 0){
-      this.network.messagesIn.forEach(element => {
-        var msg = cbusLib.decode(element);
-        if (msg.mnemonic == "RQNN"){
-          this.test_nodeNumber = msg.nodeNumber;
-          RetrievedValues.setNodeNumber( msg.nodeNumber);
-          this.inSetupMode = true;
-          this.hasTestPassed = true;
-          winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
-          // ok, the message must be from the unit under test, so store it's CANID
-          RetrievedValues.data.CANID = parseInt(msg.encoded.substr(3, 2), 16)>>1
-        }
-      })
-		}
+    this.network.messagesIn.forEach(msg => {
+      if (msg.mnemonic == "RQNN"){
+        this.test_nodeNumber = msg.nodeNumber;
+        RetrievedValues.setNodeNumber( msg.nodeNumber);
+        this.inSetupMode = true;
+        this.hasTestPassed = true;
+        winston.info({message: 'VLCB:      module ' + this.test_nodeNumber + ' in setup mode '});
+        // ok, the message must be from the unit under test, so store it's CANID
+        RetrievedValues.data.CANID = parseInt(msg.encoded.substr(3, 2), 16)>>1
+      }
+    })
 		if (this.hasTestPassed){ 
 			utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNN');
 		}else{
@@ -72,19 +69,17 @@ class opcodes_5x {
         msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
         this.network.write(msgData);
         setTimeout(()=>{
-          if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(msg => {
-              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-                if (msg.mnemonic == "PARAN"){
-                  // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
-                  if (msg.parameterValue & 0x20) { 
-                    RetrievedValues.data.inLearnMode = true;
-                    this.hasTestPassed = true; 
-                  }
+          this.network.messagesIn.forEach(msg => {
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              if (msg.mnemonic == "PARAN"){
+                // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
+                if (msg.parameterValue & 0x20) { 
+                  RetrievedValues.data.inLearnMode = true;
+                  this.hasTestPassed = true; 
                 }
               }
-            })
-          }
+            }
+          })
           if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN');
           resolve();
@@ -107,19 +102,17 @@ class opcodes_5x {
         msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
         this.network.write(msgData);
         setTimeout(()=>{
-          if (this.network.messagesIn.length > 0){
-            this.network.messagesIn.forEach(msg => {
-              if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-                if (msg.mnemonic == "PARAN"){
-                  // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
-                  if (!(msg.parameterValue & 0x20)) { 
-                    RetrievedValues.data.inLearnMode = false;
-                    this.hasTestPassed = true; 
-                  }
+          this.network.messagesIn.forEach(msg => {
+            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+              if (msg.mnemonic == "PARAN"){
+                // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
+                if (!(msg.parameterValue & 0x20)) { 
+                  RetrievedValues.data.inLearnMode = false;
+                  this.hasTestPassed = true; 
                 }
               }
-            })
-          }
+            }
+          })
           if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN');
           resolve();
@@ -138,15 +131,13 @@ class opcodes_5x {
       var msgData = cbusLib.encodeNNCLR(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
       setTimeout(()=>{
-        if (this.network.messagesIn.length > 0){
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-              if (msg.mnemonic == "WRACK"){
-                this.hasTestPassed = true; 
-              }
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+            if (msg.mnemonic == "WRACK"){
+              this.hasTestPassed = true; 
             }
-          })
-        }
+          }
+        })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR');
         resolve();
@@ -275,22 +266,20 @@ class opcodes_5x {
           setTimeout(()=>{
             var MSB_Uptime 
             var LSB_Uptime 
-            if (this.network.messagesIn.length > 0){
-             this.network.messagesIn.forEach(msg => {
-                if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-                  if (msg.mnemonic == "DGN"){
-                    if (msg.DiagnosticCode == 2) {
-                      MSB_Uptime = msg.DiagnosticValue
-                      winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
-                    }
-                    if (msg.DiagnosticCode == 3) {
-                      LSB_Uptime = msg.DiagnosticValue
-                      winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
-                    }
+            this.network.messagesIn.forEach(msg => {
+              if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+                if (msg.mnemonic == "DGN"){
+                  if (msg.DiagnosticCode == 2) {
+                    MSB_Uptime = msg.DiagnosticValue
+                    winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
+                  }
+                  if (msg.DiagnosticCode == 3) {
+                    LSB_Uptime = msg.DiagnosticValue
+                    winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
                   }
                 }
-              })
-            }
+              }
+            })
             // now check uptime if we've received both parts
             if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
               var uptime = (MSB_Uptime << 8) + LSB_Uptime
@@ -310,8 +299,5 @@ class opcodes_5x {
   }
 
 
-}
+} // end class
 
-module.exports = {
-    opcodes_5x: opcodes_5x
-}
