@@ -7,17 +7,13 @@ const cbusLib = require('cbuslibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const SetupMode_tests = require('./../Tests_SetupMode.js');
-
-
-// Assert style
-var assert = require('chai').assert;
+const utils = require('./../utilities.js');
+const assert = require('chai').assert;
 
 const NET_PORT = 5555;
 const NET_ADDRESS = "127.0.0.1"
 
-
-
-describe('Setup Mode tests', function(){
+describe('Setup Mode unit tests', function(){
 	let mock_Cbus = new Mock_Cbus(NET_PORT);
 	let  Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
@@ -28,14 +24,7 @@ describe('Setup Mode tests', function(){
     let test_timeout = SetupMode.response_time + 100;
 
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '------------------ Setup Mode unit tests -------------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
+    utils.DisplayUnitTestHeader('Setup Mode unit tests');
 	})
     
     beforeEach (function() {
@@ -44,17 +33,16 @@ describe('Setup Mode tests', function(){
     })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      utils.DisplayUnitTestFooter('Setup Mode unit tests finished');
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////

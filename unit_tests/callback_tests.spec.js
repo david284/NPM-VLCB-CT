@@ -2,36 +2,24 @@
 const expect = require('chai').expect;
 const winston = require('./config/winston_test.js');
 const itParam = require('mocha-param');
-
 const cbusLib = require('cbuslibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const callback_tests = require('./../Tests_callback.js');
 const RetrievedValues = require('./../RetrievedValues.js');
-
-
-// Assert style
-var assert = require('chai').assert;
+const utils = require('./../utilities.js');
+const assert = require('chai').assert;
 
 const NET_PORT = 5559;
 const NET_ADDRESS = "127.0.0.1"
 
-
-describe('callback tests', function(){
+describe('callback unit tests', function(){
 	const mock_Cbus = new Mock_Cbus(NET_PORT);
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const callback = new callback_tests.callbackTests(Network);
 
-
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '------------------- callback unit tests --------------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
+    utils.DisplayUnitTestHeader('callback unit tests');
 	})
     
     beforeEach (function() {
@@ -39,17 +27,16 @@ describe('callback tests', function(){
     })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      utils.DisplayUnitTestFooter('callback unit tests finished');
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////

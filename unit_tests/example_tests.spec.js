@@ -3,44 +3,31 @@ const expect = require('chai').expect;
 const winston = require('./config/winston_test.js');
 const itParam = require('mocha-param');
 const example_tests = require('./../Tests_examples.js');
+const utils = require('./../utilities.js');
+const assert = require('chai').assert;
 
-
-// Assert style
-var assert = require('chai').assert;
-
-
-
-describe('example tests', function(){
+describe('example unit tests', function(){
 	const examples = new example_tests.ExampleTests();
 
-
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '------------------- Examples unit tests --------------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
-	})
+    utils.DisplayUnitTestHeader('example unit tests');
+  })
     
     beforeEach (function() {
    		winston.info({message: ' '});   // blank line to separate tests
     })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      utils.DisplayUnitTestFooter('example unit tests finished');
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -45,6 +45,8 @@ const Type17_LongMessage = require('./Services/Type17_LongMessageService.js');
 const NET_ADDRESS = "127.0.0.1"
 const NET_PORT = 5550;
 
+
+
 winston.info({message: ' '});
 winston.info({message: '================================================================================'});
 //                      01234567890123456789012345678901234567899876543210987654321098765432109876543210
@@ -56,73 +58,87 @@ winston.info({message: '========================================================
 winston.info({message: ' '});
 
 let connection = null;
-if (networkSelected()){
-  // create network connection for tests to use
-  connection = new IP_Network(NET_ADDRESS, NET_PORT);
-  winston.info({message: '---- network selected ----'});
-} else {
-  utils.findCANUSB4();
-//  connection = new CANUSB4.CANUSB4('/dev/ttyS3')
-}
 
-// end app if no connection found
-if (connection == null) {
-  winston.info({message: '******** no connection found ******'});
-};
+// Now setup for console input to get the node number of the module we're testing
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-// create instances of tests
-const examples = new example_tests.ExampleTests(connection);
-const callback = new callback_tests.callbackTests(connection);
-const SetupMode = new SetupMode_tests.SetupMode_tests(connection);
 //
-const MNS = new Type1_MNS.MinimumNodeServiceTests(connection);
-const NVS = new Type2_NVS.NodeVariableServiceTests(connection);
-const CAN = new Type3_CAN.CANServiceTests(connection);
-const Teaching = new Type4_Teaching.TeachingServiceTests(connection);
-const Producer = new Type5_Producer.ProducerServiceTests(connection);
-const Consumer = new Type6_Consumer.ConsumerServiceTests(connection);
-const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(connection);
-const Bootloader = new Type10_Bootloader.BootloaderServiceTests(connection);
-const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(connection);
-const FastClock = new Type12_FastClock.FastClockServiceTests(connection);
-const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(connection);
-const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(connection);
-const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(connection);
-const SLiM = new Type16_SLiM.SLiMServiceTests(connection);
-const LongMessage = new Type17_LongMessage.LongMessageServiceTests(connection);
+// NOTE: Much use is made of the async/await methods
+// as many tests have to wait for an expected response to check if it's passed or failed
+// and waiting for a function to complete (await) is only possible from an async function
+// (in native node.js anyway)
+//
 
+run_main()
 
-  // Now setup for console input to get the node number of the module we're testing
+async function run_main(){
+  if (networkSelected()){
+    // create network connection for tests to use
+    connection = new IP_Network(NET_ADDRESS, NET_PORT);
+    winston.info({message: '---- network selected ----'});
+  } else {
+    let canbus4_info = {'path': null}  // seems we have to create an object so it passes by ref
+    utils.findCANUSB4(canbus4_info)
+    await utils.sleep(500);   // wait for serial port check to complete
+    winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
+    if (canbus4_info.path) {
+      connection = new CANUSB4.CANUSB4(canbus4_info.path)
+      winston.info({message: 'VLCB: CANUSB4 found ' + canbus4_info.path + '\n'});
+    }else{
+      winston.info({message: '\nVLCB: ******** ERROR: No CANUSB4 found - terminating \n'});
+      process.exit()
+    }
+  }
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
+  if (connection) {
+    winston.info({message: ' ==== enter node number to be tested, followed by enter'});
+    winston.info({message: ' ==== or just enter if putting module into setup using the button'});
 
-if (connection) {
-
-  winston.info({message: ' ==== enter node number to be tested, followed by enter'});
-  winston.info({message: ' ==== or just enter if putting module into setup using the button'});
-
-  // This will prompt for the node number, and then run the tests
-  rl.question('\n Enter Node number > ', function(answer) {
-    RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
-    winston.info({message: ' '});
-    winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
-    winston.info({message: ' '});
-    runtests();
-  });
-} else {
-  winston.info({message: '\nVLCB: ==== terminating \n'});
-  process.exit()
+    // This will prompt for the node number, and then run the tests
+    rl.question('\n Enter Node number > ', function(answer) {
+      RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
+      winston.info({message: ' '});
+      winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+      winston.info({message: ' '});
+      runtests();                        // ok - now run actual tests.........
+    });
+  } else {
+    // end app if no connection found (this condition should never occur, but still.....)
+    winston.info({message: '\nnVLCB: ******** ERROR: no connection found - terminating \n'});
+    process.exit()
+  }
 }
-
 
 
 // Block to call tests to ensure they run in sequence
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
 async function runtests() {
+  // create instances of tests
+  const examples = new example_tests.ExampleTests(connection);
+  const callback = new callback_tests.callbackTests(connection);
+  const SetupMode = new SetupMode_tests.SetupMode_tests(connection);
+  //
+  const MNS = new Type1_MNS.MinimumNodeServiceTests(connection);
+  const NVS = new Type2_NVS.NodeVariableServiceTests(connection);
+  const CAN = new Type3_CAN.CANServiceTests(connection);
+  const Teaching = new Type4_Teaching.TeachingServiceTests(connection);
+  const Producer = new Type5_Producer.ProducerServiceTests(connection);
+  const Consumer = new Type6_Consumer.ConsumerServiceTests(connection);
+  const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(connection);
+  const Bootloader = new Type10_Bootloader.BootloaderServiceTests(connection);
+  const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(connection);
+  const FastClock = new Type12_FastClock.FastClockServiceTests(connection);
+  const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(connection);
+  const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(connection);
+  const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(connection);
+  const SLiM = new Type16_SLiM.SLiMServiceTests(connection);
+  const LongMessage = new Type17_LongMessage.LongMessageServiceTests(connection);
+
+
 	// RetrievedValues is used to store information gleaned from the module under test
 	// and is shared with, & updated by, all tests
 

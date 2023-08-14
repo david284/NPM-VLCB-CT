@@ -41,7 +41,7 @@ class CANUSB4 {
     this.parser = this.serialPort.pipe(new ReadlineParser({ delimiter: ';' }))
 
     this.serialPort.on("open", function () {
-      winston.info({message: `CANUSB4: Serial Port : ${USB_PORT} Open`})
+      winston.debug({message: `CANUSB4: Serial Port : ${USB_PORT} Open`})
     }.bind(this));
     
     this.parser.on('data', function (data) {
@@ -50,7 +50,7 @@ class CANUSB4 {
       this.messagesIn.push(decodedMsg)
       winston.debug({message: 'CANUSB4: <<< receive ' + data + " " + decodedMsg.text});
       if (this.testStarted) {
-        winston.info({message: `VLCB     >>> Receive : ${decodedMsg.text}`})
+        winston.info({message: `VLCB:      >>> Receive : ${decodedMsg.text}`})
       }
       this.callback(decodedMsg);
     }.bind(this));
@@ -69,6 +69,11 @@ class CANUSB4 {
     winston.debug({message: 'CANUSB4: Transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
     winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
   }
+
+	closeConnection(){
+    this.serialPort.close();
+	}
+	
 
 	dummyFunction(msg) {
     // do nothing - this function will be replaced at runtime

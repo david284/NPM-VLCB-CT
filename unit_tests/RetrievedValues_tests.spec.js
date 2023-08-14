@@ -3,25 +3,16 @@ const expect = require('chai').expect;
 const winston = require('./config/winston_test.js');
 const itParam = require('mocha-param');
 const RetrievedValues = require('./../RetrievedValues.js');
-
-
-// Assert style
+const utils = require('./../utilities.js');
 var assert = require('chai').assert;
 
 
 
-describe('RetrievedValues tests', function(){
+describe('RetrievedValues unit tests', function(){
 
 
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '--------------- Retrieved Values unit tests ----------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
+    utils.DisplayUnitTestHeader('RetrievedValues unit tests');
 	})
     
     beforeEach (function() {
@@ -32,12 +23,8 @@ describe('RetrievedValues tests', function(){
     // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
       // timeout to allow tests to print
-      winston.info({message: ' '});   // blank line to separate tests
-      winston.info({message: '------------------------------------------------------------'});
       winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
-      //                      012345678901234567890123456789987654321098765432109876543210
-      winston.info({message: '----------- Retrieved Values unit tests finished -----------'});
-      winston.info({message: '------------------------------------------------------------'});
+      utils.DisplayUnitTestFooter('RetrievedValues unit tests finished');
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();

@@ -30,27 +30,41 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 exports.decToHex = function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 
+exports.DisplayUnitTestHeader = function DisplayUnitTestHeader(name){ 
+  winston.info({message:' '});
+  var frame = ''
+  frame = frame.padStart(100, '=');
+  winston.info({message: frame});
+  var divider = AssembleDivider(name, '-');
+  winston.info({message: divider});
+  winston.info({message: frame});
+}
 
-
+exports.DisplayUnitTestFooter = function DisplayUnitTestFooter(name){
+  var divider = AssembleDivider(name,'-');
+  winston.info({message:divider});
+}
+  
+  
 exports.DisplayStartDivider = function DisplayDivider(name){
-		var divider = AssembleDivider(name);
-        winston.info({message:divider});
-    }
+  var divider = AssembleDivider(name, '=');
+  winston.info({message:divider});
+}
 
 exports.DisplayEndDivider = function DisplayDivider(name){
-		var divider = AssembleDivider(name);
-        winston.info({message:divider + '\n\n'});
-    }
+  var divider = AssembleDivider(name, '=');
+  winston.info({message:divider + '\n\n'});
+}
 
-function AssembleDivider(name){
+function AssembleDivider(name, filler){
 		// target width is 80 characters
 		var width = 100;
 		name = ' ' + name + ' ';
 		var startPadding = (width + name.length)/2;  // we want mid point plus half the name
 		// padStart first argument is the total length after padding added at the start
-		name = name.padStart(startPadding, '=');
+		name = name.padStart(startPadding, filler);
 		// padEnd first argument is the total length after padding added at the end
-		name = name.padEnd(width, '=');
+		name = name.padEnd(width, filler);
 		return name;
 }
 
@@ -82,17 +96,14 @@ exports.sleep = function sleep(timeout) {
 	});
 };
 	
-exports.findCANUSB4 = function findCANUSB4() {
+exports.findCANUSB4 = function findCANUSB4(canbus4_info) {
   winston.debug({message: 'utils: CANUSB4:'});
-  if (Object.keys(SerialPort.list()).length == 0){
-    winston.debug({message: 'utils: CANUSB4: no serial ports found'});
-  }
   SerialPort.list().then(ports => {
     ports.forEach(function(port) {
       winston.debug({message: 'utils: CANUSB4: checking port: ' + JSON.stringify(port)});
       if (port.vendorId != undefined && port.vendorId.toString().toUpperCase() == '04D8' && port.productId.toString().toUpperCase() == 'F80C') {
-        winston.info({message: 'utils: CANUSB4 found ' + port.path});
-        return port.path
+        winston.debug({message: 'utils: CANUSB4 found ' + port.path});
+        canbus4_info.path = port.path
       }
     })
   })

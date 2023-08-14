@@ -8,8 +8,8 @@ const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 const RetrievedValues = require('./../RetrievedValues.js');
-
-
+const utils = require('./../utilities.js');
+const assert = require('chai').assert;
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -18,16 +18,12 @@ const RetrievedValues = require('./../RetrievedValues.js');
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
-
-// Assert style
-const assert = require('chai').assert;
-
 const NET_PORT = 5568;			// 5560 + opcode catagory offset
 const NET_ADDRESS = "127.0.0.1"
 
 
 
-describe('opcodes_8x tests', function(){
+describe('opcodes_8x unit tests', function(){
 	const mock_Cbus = new Mock_Cbus(NET_PORT);
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const tests = new opcodes_8x(Network);
@@ -38,12 +34,7 @@ describe('opcodes_8x tests', function(){
     const test_timeout = tests.response_time + 100;
 
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '------------------ opcodes_8x unit tests -------------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
+    utils.DisplayUnitTestHeader('opcodes_8x unit tests');
     Network.testStarted = true;
 	})
     
@@ -56,12 +47,8 @@ describe('opcodes_8x tests', function(){
         // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
       // timeout to allow tests to print
-      winston.info({message: ' '});   // blank line to separate tests
-      winston.info({message: '------------------------------------------------------------'});
       winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
-      //                      012345678901234567890123456789987654321098765432109876543210
-      winston.info({message: '-------------- opcodes_8x unit tests finished --------------'});
-      winston.info({message: '------------------------------------------------------------'});
+      utils.DisplayUnitTestFooter('opcodes_8x unit tests finished');
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();

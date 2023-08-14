@@ -4,26 +4,14 @@ const winston = require('./config/winston_test.js');
 const itParam = require('mocha-param');
 const CANUSB4 = require('../canusb4.js');
 const cbusLib = require('cbuslibrary');
+const utils = require('./../utilities.js');
+const assert = require('chai').assert;
 
-
-// Assert style
-var assert = require('chai').assert;
-
-
-
-describe('canusb4 tests', function(){
+describe('canusb4 unit tests', function(){
 	const canusb4 = new CANUSB4.CANUSB4('MOCK_PORT');
 
-
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '-------------------- canusb4 unit tests --------------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
-
+    utils.DisplayUnitTestHeader('canusb4 unit tests');
 	})
     
     beforeEach (function() {
@@ -31,17 +19,16 @@ describe('canusb4 tests', function(){
     })
 
 	after(function(done) {
-        // bit of timing to ensure all winston messages get sent before closing tests completely
+    // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
-            // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: canusb4 tests finished '});
-            setTimeout(function(){
-                    // timeout to allow the finish text above to print
-                     done();
-            }, 100);
+      // timeout to allow tests to print
+      utils.DisplayUnitTestFooter('opcodes_0x unit tests finished');
+      setTimeout(function(){
+        // timeout to allow the finish text above to print
+        done();
+      }, 100);
 		}, 100);
-    });
+  });
 
 
 ///////////////////////////////////////////////////////////////////////////////

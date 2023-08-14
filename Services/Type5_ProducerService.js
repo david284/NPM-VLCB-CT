@@ -55,9 +55,12 @@ class ProducerServiceTests {
           utils.DisplayComment("now in Learn mode")
 
           // add new long event (512) & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
+          var eventIdentifier = utils.decToHex(259, 4) + '0200'
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
+          // add new 'spoofed' long event (65,280:512) & event variable #1
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, 'ff000200', 1, 2);
           // add new short event (1024) & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "00000400", 1, 1);
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "00000400", 1, 3);
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          
@@ -72,10 +75,15 @@ class ProducerServiceTests {
           winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
         }
         
+        // now request all events stored, so we can firm the events have been added
+        await this.opcodes_5x.test_NERD(RetrievedValues);
+
         // get long event 512
-        await this.opcodes_9x.test_AREQ(RetrievedValues, 1000, 512);
+        await this.opcodes_9x.test_AREQ(RetrievedValues, RetrievedValues.getNodeNumber(), 512);
+        // get 'spoofed' long event (65,280:512)
+        await this.opcodes_9x.test_AREQ(RetrievedValues, 65280, 512);
 				// get short event 1024
-        await this.opcodes_9x.test_ASRQ(RetrievedValues, 1000, 1024);
+        await this.opcodes_9x.test_ASRQ(RetrievedValues, RetrievedValues.getNodeNumber(), 1024);
         
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});

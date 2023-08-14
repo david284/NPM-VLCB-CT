@@ -3,13 +3,11 @@ const itParam = require('mocha-param');
 const expect = require('chai').expect;
 const assert = require('chai').assert;
 const winston = require('./config/winston_test.js');
-
 const fs = require('fs')
 let RetrievedValues = require('./../RetrievedValues.js');
 const fetch_file = require('./../fetch_module_descriptor.js')
 const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js');
-
-
+const utils = require('./../utilities.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -19,16 +17,10 @@ const NodeParameterNames = require('./../Definitions/Text_NodeParameterNames.js'
 // const has block scope (like let), but can't be changed through reassigment or redeclared
 
 
-describe('fetch_module_descriptor tests', function(){
+describe('fetch_module_descriptor unit tests', function(){
 
 	before(function() {
-		winston.info({message: ' '});
-		//                      012345678901234567890123456789987654321098765432109876543210
-		winston.info({message: '============================================================'});
-		winston.info({message: '------------ fetch_module_descriptor unit tests ------------'});
-		winston.info({message: '============================================================'});
-		winston.info({message: ' '});
-
+    utils.DisplayUnitTestHeader('fetch_module_descriptor unit tests');
 	})
     
     beforeEach (function() {
@@ -39,8 +31,7 @@ describe('fetch_module_descriptor tests', function(){
         // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
             // timeout to allow tests to print
-            winston.info({message: ' '});   // blank line to separate tests
-            winston.info({message: 'UNIT TEST: tests finished '});
+            utils.DisplayUnitTestFooter('fetch_module_descriptor unit tests finished');
             setTimeout(function(){
                     // timeout to allow the finish text above to print
                      done();
