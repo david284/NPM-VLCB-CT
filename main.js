@@ -100,6 +100,7 @@ async function run_main(){
     // This will prompt for the node number, and then run the tests
     rl.question('\n Enter Node number > ', function(answer) {
       RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
+      RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
       winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
       winston.info({message: ' '});

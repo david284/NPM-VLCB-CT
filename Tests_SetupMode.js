@@ -75,6 +75,10 @@ class SetupMode_tests {
 		// need module to be in setup mode to start the tests
         if (this.inSetupMode) {
             this.passed_count=1;     // passed first test if in setup
+            if (RetrievedValues.getNodeNumber() == 0) {
+              RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
+              utils.DisplayComment("using entered node number : " + RetrievedValues.getNodeNumber())
+            }
             // do opcodes only possible in setup mode
             await this.opcodes_1x.test_RQMN(RetrievedValues);
             await this.opcodes_1x.test_RQNP(RetrievedValues);
