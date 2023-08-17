@@ -86,7 +86,8 @@ class RetrievedValues {
 			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
 			this.data.ServicesActualCount++;
 			if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
-		}
+      winston.debug({message: 'VLCB: storeEventVariable: service added - index ' + ServiceIndex});
+    }
 		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
 		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
 		if(Service_Definitions[ServiceType] != null) {
@@ -118,6 +119,12 @@ class RetrievedValues {
 		this.data["Services"][ServiceIndex]["Data4"] = Data4;
 		
 	}
+
+  clearAllServices(){
+    this.data["Services"] = {}
+    this.data.ServicesActualCount = 0;
+    this.data.ServicesReportedCount = 0;
+  }
 	
 	ServiceToString(ServiceIndex) {
 		if (this.data.Services[ServiceIndex] != null) {

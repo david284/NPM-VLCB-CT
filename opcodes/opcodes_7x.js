@@ -451,13 +451,13 @@ module.exports = class opcodes_7x {
 	// 0x78 - RQSD
   test_RQSD(RetrievedValues, ServiceIndex) {
     return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN RQSD test - serviceIndex ' + ServiceIndex});
+      winston.debug({message: 'VLCB: BEGIN RQSD test - node ' + RetrievedValues.getNodeNumber() + ' serviceIndex ' + ServiceIndex});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
+      if (ServiceIndex == 0) {RetrievedValues.clearAllServices()} // clear stored services if we're reading all of them
       var msgData = cbusLib.encodeRQSD(RetrievedValues.getNodeNumber(), ServiceIndex);
       this.network.write(msgData);
       setTimeout(()=>{
-        var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
             if (ServiceIndex == 0) {
@@ -467,6 +467,8 @@ module.exports = class opcodes_7x {
                 if (msg.ServiceIndex == 0){
                   // special case that SD message with serviceIndex 0 has the service count in ther version field
                   RetrievedValues.data.ServicesReportedCount = msg.ServiceVersion;
+                  // also assume to start with that this defines the maximum service index
+                  RetrievedValues.data.MaxServiceIndex = msg.ServiceVersion
                   this.hasTestPassed = true;	// accept test has passed if we get this one message
                   winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
                 } else {
@@ -484,9 +486,10 @@ module.exports = class opcodes_7x {
         });
         //
         // we can check we received SD messages for all the expected services if the requested serviceIndex was 0
-        if ((ServiceIndex == 0) & (RetrievedValues.data.ServiceActualCount != RetrievedValues.data.ServiceReportedCount)) {
-          winston.info({message: 'VLCB: RQSD failed - service count doesn\'t match'});
-          this.hasTestPassed - false;
+        if ((ServiceIndex == 0) && (RetrievedValues.data.ServicesActualCount != RetrievedValues.data.ServicesReportedCount)) {
+            winston.info({message: 'VLCB:      RQSD failed - service count doesn\'t match'});
+            winston.info({message: 'VLCB:      RQSD: reported: ' + RetrievedValues.data.ServicesReportedCount + ' actual: ' + RetrievedValues.data.ServicesActualCount});
+            this.hasTestPassed = false;
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (ServiceIndex ' + ServiceIndex + ')');
         resolve();

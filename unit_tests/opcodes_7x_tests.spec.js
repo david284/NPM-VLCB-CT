@@ -285,15 +285,15 @@ describe('opcodes_7x unit tests', function(){
 	
 	const Services = {
 		"1": {
-			"ServiceIndex": 3, "ServiceType": 1, "ServiceVersion": 0,
+			"ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": 0,
 			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
 		},
 		"2": {
-			"ServiceIndex": 4, "ServiceType": 2, "ServiceVersion": 0,
+			"ServiceIndex": 2, "ServiceType": 2, "ServiceVersion": 0,
 			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
 		},
 		"3": {
-			"ServiceIndex": 5, "ServiceType": 3, "ServiceVersion": 0,
+			"ServiceIndex": 3, "ServiceType": 3, "ServiceVersion": 0,
 			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
 		}
 	}
