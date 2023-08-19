@@ -57,7 +57,7 @@ exports.DisplayStartDivider = function DisplayDivider(name){
 
 exports.DisplayEndDivider = function DisplayDivider(name){
   var divider = AssembleDivider(name, '=');
-  winston.info({message:divider + '\n\n'});
+  winston.info({message:divider + '\n'});
 }
 
 function AssembleDivider(name, filler){

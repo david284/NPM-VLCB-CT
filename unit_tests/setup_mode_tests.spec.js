@@ -16,7 +16,7 @@ const NET_ADDRESS = "127.0.0.1"
 describe('Setup Mode unit tests', function(){
 	let mock_Cbus = new Mock_Cbus(NET_PORT);
 	let  Network = new IP_Network(NET_ADDRESS, NET_PORT);
-	const SetupMode = new SetupMode_tests.SetupMode_tests(Network);
+	const SetupMode = new SetupMode_tests(Network);
 
 
     // SetupMode have their own timeouts, so need to reflect that and add a little bit

@@ -26,7 +26,7 @@ const NET_ADDRESS = "127.0.0.1"
 describe('Node variable Service unit tests', function(){
 	const mock_Cbus = new Mock_Cbus(NET_PORT);
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
-	const tests = new NVS_tests.NodeVariableServiceTests(Network);
+	const tests = new NVS_tests(Network);
 
     const test_timeout = 100;
 

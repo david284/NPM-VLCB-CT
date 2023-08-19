@@ -7,7 +7,7 @@ const utils = require('./../utilities.js');
 const assert = require('chai').assert;
 
 describe('example unit tests', function(){
-	const examples = new example_tests.ExampleTests();
+	const examples = new example_tests();
 
 	before(function() {
     utils.DisplayUnitTestHeader('example unit tests');

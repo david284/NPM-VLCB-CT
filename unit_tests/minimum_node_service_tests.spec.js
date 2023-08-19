@@ -17,7 +17,7 @@ const NET_ADDRESS = "127.0.0.1"
 describe('Minimum Node Service unit tests', function(){
 	let mock_Cbus = new Mock_Cbus(NET_PORT);
 	let Network = new IP_Network(NET_ADDRESS, NET_PORT);
-	let mns_tests = new MNS_tests.MinimumNodeServiceTests(Network);
+	let mns_tests = new MNS_tests(Network);
 
 
     // mns_testss have their own timeouts, so need to reflect that and add a little bit

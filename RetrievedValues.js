@@ -89,6 +89,7 @@ class RetrievedValues {
         this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
         this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
         this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
+//        this.data["Services"][ServiceIndex]["diagnostics"] = {};
         this.data.ServicesActualCount++;
         if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
         winston.debug({message: 'VLCB: RetrievedValues: service added - index ' + ServiceIndex});
@@ -165,52 +166,55 @@ class RetrievedValues {
   // Diagnostics related methods
   //
 
-
+  // add a diagnostic ode, but only if the service has already been created
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
-		if (this.data["Services"][ServiceIndex] == null) {
-			this.addService(ServiceIndex, null, null);
-		}
+		if (this.data["Services"][ServiceIndex] != null) {
 		
-		// lets create a shorter reference to make the code a bit more readable
-		const service = this.data["Services"][ServiceIndex];
-		
-		if (service["diagnostics"] == null) { 
-			service["diagnosticReportedCount"] = null;
-			service["MaxDiagnosticCode"] = 0;
-			service["diagnostics"] = {};
-		}
-		
-		if (service.diagnostics[DiagnosticCode] == null){
-			// new diagnostic code
-			service.diagnosticReportedCount++;
-			// keep a record of highest diagnostic code
-			if (DiagnosticCode > service["MaxDiagnosticCode"]) {service["MaxDiagnosticCode"] = DiagnosticCode}
-			service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
-			service.diagnostics[DiagnosticCode] = {};
-		}
+      // lets create a shorter reference to make the code a bit more readable
+      const service = this.data["Services"][ServiceIndex];
+      
+      if (service["diagnostics"] == undefined) { 
+        service["diagnosticReportedCount"] = null;
+        service["MaxDiagnosticCode"] = 0;
+        service["diagnostics"] = {};
+      }
+      
+      if (service.diagnostics[DiagnosticCode] == null){
+        // new diagnostic code
+        service.diagnosticReportedCount++;
+        // keep a record of highest diagnostic code
+        if (DiagnosticCode > service["MaxDiagnosticCode"]) {service["MaxDiagnosticCode"] = DiagnosticCode}
+        service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
+        service.diagnostics[DiagnosticCode] = {};
+      }
 
-		var DiagnosticName = "Unknown Diagnostic Code";	//assume diagnostic code is unknown to start with
-		
-		// we can't get the name unless we have the service type & version
-		if ( (service.ServiceType != null) & (service.ServiceVersion != null)) {
-			var serviceType = service.ServiceType;
-			var serviceVersion = service.ServiceVersion;
-			// have type & version, lets see if we can get a matching name
-			if ( Service_Definitions[serviceType] != null) {
-				//lets see if we have a name this diagnostic code for this service type
-				if ((Service_Definitions[serviceType].version!= null) 
-					&& (Service_Definitions[serviceType].version[serviceVersion]!= null)
-					&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics != null)
-					&& (Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode] != null) ) {
-					DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode].name;
-				}	
-			}
-		}
+      var DiagnosticName = "Unknown Diagnostic Code";	//assume diagnostic code is unknown to start with
+      
+      // we can't get the name unless we have the service type & version
+      if ( (service.ServiceType != null) & (service.ServiceVersion != null)) {
+        var serviceType = service.ServiceType;
+        var serviceVersion = service.ServiceVersion;
+        // have type & version, lets see if we can get a matching name
+        if ( Service_Definitions[serviceType] != null) {
+          //lets see if we have a name this diagnostic code for this service type
+          if ((Service_Definitions[serviceType].version!= null) 
+            && (Service_Definitions[serviceType].version[serviceVersion]!= null)
+            && (Service_Definitions[serviceType].version[serviceVersion].diagnostics != null)
+            && (Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode] != null) ) {
+            DiagnosticName = Service_Definitions[serviceType].version[serviceVersion].diagnostics[DiagnosticCode].name;
+          }	
+        }
+      }
+      // do these in this order so name is first (more readable)
+      service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
+      service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
+      service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;
+      return true
+    } else {
+      winston.info({message: 'VLCB:      FAIL: RetrievedValues: add diagnostic code: service index does not exist: ' + ServiceIndex});
+      return false      
+    }
 
-		// do these in this order so name is first (more readable)
-		service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
-		service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
-		service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;
 	}
 
 
