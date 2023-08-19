@@ -84,9 +84,9 @@ describe('opcodes_4x unit tests', function(){
 		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
     mock_Cbus.enterSetup(0);
-    await tests.test_SNN(RetrievedValues);
+    var result = await tests.test_SNN(RetrievedValues);
     winston.info({message: 'UNIT TEST: SNN ended'});
-    expect(tests.hasTestPassed).to.equal(true);
+    expect(result).to.equal(true);
     mock_Cbus.exitSetup(0);
 	})
 

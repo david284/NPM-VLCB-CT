@@ -17,11 +17,15 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 {
 	if (comment == null) { comment = ""; }
 	if (hasTestPassed){ 
+    process.stdout.write('\x1B[92m');   // bright green
 		winston.info({message: 'VLCB: PASS ' +  testName + ' passed ' + comment}); 
+    process.stdout.write('\x1B[37m');   // white
 		RetrievedValues.data.TestsPassed++;
 	}else{
-		winston.info({message: '\x1B[91m' + 'VLCB: FAIL ' +  testName + ' failed ' + comment + '\x1B[37m'});
-		RetrievedValues.data.TestsFailed++;
+    process.stdout.write('\x1B[91m');   // bright red
+		winston.info({message: 'VLCB: FAIL ' +  testName + ' failed ' + comment});
+    process.stdout.write('\x1B[37m');   // white
+    RetrievedValues.data.TestsFailed++;
 	}
 
 }
