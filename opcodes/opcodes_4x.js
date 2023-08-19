@@ -44,7 +44,7 @@ module.exports = class opcodes_4x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN');
-        resolve();
+        resolve(this.hasTestPassed);
       } , this.response_time );
     }.bind(this));
   }

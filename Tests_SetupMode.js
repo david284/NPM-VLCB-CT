@@ -82,15 +82,14 @@ class SetupMode_tests {
             // do opcodes only possible in setup mode
             await this.opcodes_1x.test_RQMN(RetrievedValues);
             await this.opcodes_1x.test_RQNP(RetrievedValues);
-            await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
-			
-			RetrievedValues.data.setup_completed = true;
+            // consider it completed if we exit setup succesfully using SNN
+            RetrievedValues.data.setup_completed = await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
 			
         } else {
-            winston.info({message: ''});
-            winston.info({message: 'VLCB:      failed to go into setup'});
+            winston.info({message: 'VLCB:'});
+            winston.info({message: 'VLCB: FAIL - failed to go into setup'});
 			RetrievedValues.data.TestsFailed++;
         }
 		
