@@ -83,6 +83,17 @@ describe('RetrievedValues unit tests', function(){
 		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
   })
 
+    //
+    it("Add Undefined Service test", function () {
+      RetrievedValues.addService(1,9999,3);
+      winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
+      expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
+      expect(RetrievedValues.data.Services[1].ServiceType).to.equal(9999);
+      expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
+    })
+  
+  
+
 
     //
 	it("Add Service Data test", function () {

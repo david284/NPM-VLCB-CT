@@ -79,35 +79,41 @@ class RetrievedValues {
 
 	
 	addService(ServiceIndex, ServiceType, ServiceVersion){
-		if (this.data.Services[ServiceIndex] == null) {
-			this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
-			this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
-			this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
-			this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
-			this.data.ServicesActualCount++;
-			if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
-      winston.debug({message: 'VLCB: storeEventVariable: service added - index ' + ServiceIndex});
-    }
-		this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
-		this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
-		if(Service_Definitions[ServiceType] != null) {
-			this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
-		} else{
-			this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
-		}
-		
-		// create a bit field for expected diagnostic codes for this service 
-		// so we can check against actual received bitfield
-		if ( (ServiceType != null) && (ServiceVersion != null)
-			&& (Service_Definitions[ServiceType].version!= null) 
-			&& (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
-			&& (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
+    if ( (ServiceIndex != null) && (ServiceType != null) && (ServiceVersion != null)){
+      if (this.data.Services[ServiceIndex] == null) {
+        this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
+        this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
+        this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
+        this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
+        this.data.ServicesActualCount++;
+        if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
+        winston.debug({message: 'VLCB: RetrievedValues: service added - index ' + ServiceIndex});
+      }
+      this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
+      this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
+      if(Service_Definitions[ServiceType] != null) {
+        this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
+      } else{
+        this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
+      }
+      
+      // create a bit field for expected diagnostic codes for this service 
+      // so we can check against actual received bitfield
+      if(Service_Definitions[ServiceType] != null) {
+        if ( (Service_Definitions[ServiceType].version!= null) 
+          && (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
+          && (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
 
-			for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
-				this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
-			}
-		}
-	}
+          for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
+            this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
+          }
+        }
+      }
+    } else {
+      winston.error({message: 'VLCB: RetrievedValues: addService(): invalid parameter ' + ServiceIndex + ' ' + ServiceType + ' ' + ServiceVersion});  
+    }
+  }
+
 
 	addServiceData(ServiceIndex, Data1, Data2, Data3, Data4){
 		if (this.data.Services[ServiceIndex] == null) {

@@ -216,8 +216,9 @@ async function runtests() {
 
 
 				default:
-					winston.info({message: 'VLCB: unknown ServiceType ' + serviceType});
-			}
+					winston.info({message: 'VLCB:      unknown ServiceType ' + serviceType});
+          utils.processResult(RetrievedValues, false, 'ServiceType');
+        }
 			
 		}
 	} else {
