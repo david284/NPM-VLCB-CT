@@ -13,7 +13,7 @@ const BaseService = require('./Services/BaseService.js');
 
 // extends base class as example of how to do it - but not used
 
-class ExampleTests extends BaseService{
+module.exports = class ExampleTests extends BaseService{
 
     constructor(NETWORK) {
 		super();
@@ -82,6 +82,3 @@ class ExampleTests extends BaseService{
 
 }
 
-module.exports = {
-    ExampleTests: ExampleTests
-}

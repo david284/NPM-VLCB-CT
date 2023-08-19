@@ -14,7 +14,7 @@ const opcodes_8x = require('./../opcodes/opcodes_8x.js');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
-class DCC_CAB_ServiceTests {
+module.exports = class DCC_CAB_ServiceTests {
 
     constructor(NETWORK) {
 		this.network = NETWORK;
@@ -55,6 +55,3 @@ class DCC_CAB_ServiceTests {
 
 }
 
-module.exports = {
-    DCC_CAB_ServiceTests: DCC_CAB_ServiceTests
-}

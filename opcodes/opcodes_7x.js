@@ -196,10 +196,10 @@ module.exports = class opcodes_7x {
                     winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + fail_output});
                   }
                 } else {
-                  warning_output = ' :: Warning: No matching module_descriptor value entry';
+                  warning_output = ' :: info: No matching module_descriptor value entry';
                 }
               } else {
-                warning_output =  ' :: Warning: No matching module_descriptor file entry';
+                warning_output =  ' :: info: No matching module_descriptor file entry';
               }
             }
           }

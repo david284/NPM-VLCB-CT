@@ -51,8 +51,12 @@ class RetrievedValues {
   //
 
 	addNodeParameter(parameterIndex, parameterValue) {
-		this.data.nodeParameters[parameterIndex] = { "name": NodeParameterNames[parameterIndex]};
-		this.data.nodeParameters[parameterIndex]["value"] = parameterValue;
+		this.data.nodeParameters[parameterIndex]= { "value": parameterValue }
+    if (NodeParameterNames[parameterIndex]){
+		  this.data.nodeParameters[parameterIndex]["name"] = NodeParameterNames[parameterIndex]
+    } else{
+		  this.data.nodeParameters[parameterIndex]["name"] = 'unknown node parameter'
+    }
 	}
 	
   ///////////////////////////////////////////////////////////////////////////////
@@ -103,12 +107,12 @@ class RetrievedValues {
         if ( (Service_Definitions[ServiceType].version!= null) 
           && (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
           && (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
-
           for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
             this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
           }
         }
       }
+
     } else {
       winston.error({message: 'VLCB: RetrievedValues: addService(): invalid parameter ' + ServiceIndex + ' ' + ServiceType + ' ' + ServiceVersion});  
     }
@@ -270,7 +274,6 @@ class RetrievedValues {
   // File related methods
   //
 
-	
 	writeToDisk(path) {
 		// now write retrieved_values to disk
 		var text = JSON.stringify(this.data, null, '    ');

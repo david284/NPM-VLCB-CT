@@ -16,7 +16,7 @@ const cbusLib = require('cbuslibrary');
 // need to attach callback to network to receive all messages as the're received
 //
 
-class callbackTests {
+module.exports = class callbackTests {
 
     constructor(NETWORK) {
 		//                        0123456789012345678901234567890123456789
@@ -46,6 +46,3 @@ class callbackTests {
 	
 }
 
-module.exports = {
-    callbackTests: callbackTests
-}

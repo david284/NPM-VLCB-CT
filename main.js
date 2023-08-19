@@ -119,25 +119,25 @@ async function run_main(){
 // Only code within this code block will be executed in sequence
 async function runtests() {
   // create instances of tests
-  const examples = new example_tests.ExampleTests(connection);
-  const callback = new callback_tests.callbackTests(connection);
-  const SetupMode = new SetupMode_tests.SetupMode_tests(connection);
+  const examples = new example_tests(connection);
+  const callback = new callback_tests(connection);
+  const SetupMode = new SetupMode_tests(connection);
   //
-  const MNS = new Type1_MNS.MinimumNodeServiceTests(connection);
-  const NVS = new Type2_NVS.NodeVariableServiceTests(connection);
-  const CAN = new Type3_CAN.CANServiceTests(connection);
-  const Teaching = new Type4_Teaching.TeachingServiceTests(connection);
-  const Producer = new Type5_Producer.ProducerServiceTests(connection);
-  const Consumer = new Type6_Consumer.ConsumerServiceTests(connection);
-  const EventAck = new Type9_EventAck.EventAcknowledgeServiceTests(connection);
-  const Bootloader = new Type10_Bootloader.BootloaderServiceTests(connection);
-  const Bootloader2 = new Type11_Bootloader2.Bootloader2ServiceTests(connection);
-  const FastClock = new Type12_FastClock.FastClockServiceTests(connection);
-  const DCC_CAB = new Type13_DCC_CAB.DCC_CAB_ServiceTests(connection);
-  const DCC_CMD = new Type14_DCC_CMD.DCC_CMD_ServiceTests(connection);
-  const CANBridge = new Type15_CANBridge.CANBridgeServiceTests(connection);
-  const SLiM = new Type16_SLiM.SLiMServiceTests(connection);
-  const LongMessage = new Type17_LongMessage.LongMessageServiceTests(connection);
+  const MNS = new Type1_MNS(connection);
+  const NVS = new Type2_NVS(connection);
+  const CAN = new Type3_CAN(connection);
+  const Teaching = new Type4_Teaching(connection);
+  const Producer = new Type5_Producer(connection);
+  const Consumer = new Type6_Consumer(connection);
+  const EventAck = new Type9_EventAck(connection);
+  const Bootloader = new Type10_Bootloader(connection);
+  const Bootloader2 = new Type11_Bootloader2(connection);
+  const FastClock = new Type12_FastClock(connection);
+  const DCC_CAB = new Type13_DCC_CAB(connection);
+  const DCC_CMD = new Type14_DCC_CMD(connection);
+  const CANBridge = new Type15_CANBridge(connection);
+  const SLiM = new Type16_SLiM(connection);
+  const LongMessage = new Type17_LongMessage(connection);
 
 
 	// RetrievedValues is used to store information gleaned from the module under test
