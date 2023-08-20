@@ -205,7 +205,12 @@ module.exports = class mock_CbusNetwork {
           }
           break;
         case '11': // RQMN
-          this.outputNAME("CANTEST");     
+          for (var moduleIndex = 0; moduleIndex < this.modules.length; moduleIndex++) {
+            // should only respond if in setup mode
+            if (this.modules[moduleIndex].inSetupMode()){
+              this.outputNAME("CANTEST");     
+            }
+          }
           break;
         case '22': // QLOC
           break;

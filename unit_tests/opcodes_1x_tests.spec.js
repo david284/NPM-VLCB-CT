@@ -62,13 +62,27 @@ describe('opcodes_1x unit tests', function(){
 // 				Unit Tests
 //
 
-    //10 - RQNP
+
+function GetTestCase_Pass_Fail() {
+  var arg1, testCases = [];
+  for (var a = 1; a<= 2; a++) {
+    if (a == 1) {arg1 = true}
+    if (a == 2) {arg1 = false}
+    testCases.push({'expectedResult': arg1});
+  }
+  return testCases;
+}
+
+
+
+  //10 - RQNP
 	//
-	it("RQNP test", async function () {
+  itParam("RQNP test ${JSON.stringify(value)}", GetTestCase_Pass_Fail(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQNP test'});
-    mock_Cbus.enterSetup(0);
-    await  tests.test_RQNP(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+    if (value.expectedResult == true) { mock_Cbus.enterSetup(0) }
+    var result = await  tests.test_RQNP(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: RQNP ended'});
     mock_Cbus.exitSetup(0);
 	})
@@ -76,11 +90,14 @@ describe('opcodes_1x unit tests', function(){
 
     // 0x11 - RQMN
     //
-	it("RQMN test", async function () {
+    itParam("RQMN test ${JSON.stringify(value)}", GetTestCase_Pass_Fail(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
-    await tests.test_RQMN(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+    if (value.expectedResult == true) { mock_Cbus.enterSetup(0) }
+    var result = await tests.test_RQMN(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
   	winston.info({message: 'UNIT TEST: RQMN ended'});
+    mock_Cbus.exitSetup(0);
 	})
 
 
