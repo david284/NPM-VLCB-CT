@@ -79,7 +79,7 @@ function GetTestCase_NodeNumber() {
 
     // 0x0D - QNN
     itParam("QNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
+		winston.info({message: 'UNIT TEST: BEGIN QNN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);    // sets node number of expected response
     var result = await tests.test_QNN(RetrievedValues);
     expect(result).to.equal(value.expectedResult);

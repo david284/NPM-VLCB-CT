@@ -67,27 +67,28 @@ describe('opcodes_4x unit tests', function(){
   // most of the opcodes in this section have a single nodeNumber parameter, so can use this common testcase structure
   //
   function GetTestCase_NodeNumber() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = true}
+      if (a == 3) {arg1 = 65535, arg2 = true}
+      if (a == 4) {arg1 = 2, arg2 = false}
+      testCases.push({'nodeNumber':arg1, 'expectedResult': arg2});
+    }
+    return testCases;
+  }
+  
 
 	// 0x42 - SNN
     //
     itParam("SNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST: BEGIN SNN test'});
+		winston.info({message: 'UNIT TEST: BEGIN SNN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
-    mock_Cbus.enterSetup(0);
+    if (value.expectedResult == true) { mock_Cbus.enterSetup(0) }
     var result = await tests.test_SNN(RetrievedValues);
     winston.info({message: 'UNIT TEST: SNN ended'});
-    expect(result).to.equal(true);
-    mock_Cbus.exitSetup(0);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 	})
 
   
@@ -95,9 +96,10 @@ describe('opcodes_4x unit tests', function(){
     itParam("NNRSM test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NNRSM test'});
 		RetrievedValues.setNodeNumber( value.nodeNumber );
-    await tests.test_NNRSM(RetrievedValues);
+    var result = await tests.test_NNRSM(RetrievedValues);
     winston.info({message: 'UNIT TEST: NNRSM ended'});
-    expect(tests.hasTestPassed).to.equal(true);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 	})
 
 

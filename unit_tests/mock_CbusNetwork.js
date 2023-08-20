@@ -213,12 +213,23 @@ module.exports = class mock_CbusNetwork {
           // Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
           var nodeNumber = cbusMsg.nodeNumber
           winston.debug({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
-          this.outputNNACK(nodeNumber);
+          for (var moduleIndex = 0; moduleIndex < this.modules.length; moduleIndex++) {
+            // should only respond if in setup mode
+            if (this.modules[moduleIndex].inSetupMode()){
+              this.modules[moduleIndex].endSetupMode();
+              this.outputNNACK(nodeNumber);
+            }
+          }
           break;
         case '4F': //NNRSM
           // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNRSM'});
-          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          for (var moduleIndex = 0; moduleIndex < this.modules.length; moduleIndex++) {
+            // should only respond for matching node number
+            if (this.modules[moduleIndex].getNodeNumber() == cbusMsg.nodeNumber){
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.OK);
+            }
+          }
           break;
         case '53': //NNLRN
           // Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
@@ -1034,15 +1045,15 @@ class CbusModule {
   //setup mode
   inSetupMode(){
     return this.setupMode;
-//    winston.info({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' setup mode is ' + this.setupMode});
+    winston.debug({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' setup mode is ' + this.setupMode});
   }
   startSetupMode(){ 
     this.setupMode=true;
-//    winston.info({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' started setup mode'});
+    winston.debug({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' started setup mode'});
   }
   endSetupMode(){ 
     this.setupMode=false;
-//    winston.info({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' ended setup mode'});
+    winston.debug({message: 'Mock_cbus Network: Node ' + this.nodeNumber + ' ended setup mode'});
   }
 
   // Node Number

@@ -54,7 +54,7 @@ module.exports = class opcodes_1x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAMS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 100 );
     }.bind(this));
   }
@@ -77,7 +77,7 @@ module.exports = class opcodes_1x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NAME'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 100 )
     }.bind(this));
   }

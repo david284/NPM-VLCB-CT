@@ -87,7 +87,7 @@ module.exports = class opcodes_4x {
         });
         if (!GRSPreceived) { winston.info({message: 'VLCB: NNRSM Fail: no GRSP received'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 1000 );
     }.bind(this));
   }
