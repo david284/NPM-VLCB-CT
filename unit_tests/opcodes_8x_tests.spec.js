@@ -171,8 +171,8 @@ function GetTestCase_NodeNumber() {
       winston.info({message: 'UNIT TEST:: BEGIN NVSETRD test ' + JSON.stringify(value)});
       RetrievedValues.setNodeNumber(value.nodeNumber);
       var result = await tests.test_NVSETRD(RetrievedValues, value.nodeVariableIndex, value.nodeVariableValue);
-      expect(result).to.equal(true);  
-      expect(tests.hasTestPassed).to.equal(true);  
+      expect(result).to.equal(value.expectedResult);
+      expect(tests.hasTestPassed).to.equal(value.expectedResult);
       winston.info({message: 'UNIT TEST: NVSETRD ended'});
     })
   
@@ -192,9 +192,9 @@ function GetTestCase_NodeNumber() {
     it("NVSETRD_SHORT", async function () {
       winston.info({message: 'UNIT TEST:: BEGIN NVSETRD_SHORT test'});
       RetrievedValues.setNodeNumber(0);
-      await tests.test_NVSETRD_SHORT(RetrievedValues, 1, 0);
+      var result = await tests.test_NVSETRD_SHORT(RetrievedValues, 1, 0);
+      expect(result).to.equal(true);  
       expect(tests.hasTestPassed).to.equal(true);  
-
       winston.info({message: 'UNIT TEST: NVSETRD_SHORT ended'});
     })
   

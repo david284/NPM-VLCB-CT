@@ -9,6 +9,7 @@ const IP_Network = require('./../ip_network.js')
 const opcodes_9x = require('./../opcodes/opcodes_9x.js');
 const RetrievedValues = require('./../RetrievedValues.js');
 const utils = require('./../utilities.js');
+const { brotliCompressSync } = require('zlib');
 const assert = require('chai').assert;
 
 // Scope:
@@ -62,29 +63,36 @@ describe('opcodes_9x unit tests', function(){
   //
 
   function GetTestCase_NodeAndEvent() {
-    var arg1, arg2, testCases = [];
-    for (var a = 1; a< 4; a++) {
-      if (a == 1) {arg1 = 0}
-      if (a == 2) {arg1 = 1}
-      if (a == 3) {arg1 = 65535}
+    var arg1, arg2, arg3, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg3 = true}
+      if (a == 2) {arg1 = 1, arg3 = true}
+      if (a == 3) {arg1 = 65535, arg3 = true}
+      if (a == 4) {arg1 = 2, arg3 = false}
       for (var b = 1; b < 4; b++) {
         if (b == 1) {arg2 = 0}
         if (b == 2) {arg2 = 1}
         if (b == 3) {arg2 = 65535}
-        testCases.push({'nodeNumber':arg1, 'eventNumber':arg2});
+        testCases.push({'nodeNumber':arg1, 'eventNumber':arg2, 'expectedResult':arg3});
       }
     }
     return testCases;
   }
 
   function GetTestCase_eventIdentifier() {
-    var arg1, testCases = [];
-    for (var a = 1; a< 5; a++) {
-      if (a == 1) {arg1 = "00000000"}
-      if (a == 2) {arg1 = "00000001"}
-      if (a == 3) {arg1 = "00010000"}
-      if (a == 4) {arg1 = "FFFFFFFF"}
-      testCases.push({'eventIdentifier':arg1});
+    var arg1, arg2, arg3, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg3 = true}
+      if (a == 2) {arg1 = 1, arg3 = true}
+      if (a == 3) {arg1 = 65535, arg3 = true}
+      if (a == 4) {arg1 = 2, arg3 = false}
+      for (var b = 1; b< 5; b++) {
+        if (b == 1) {arg2 = "00000000"}
+        if (b == 2) {arg2 = "00000001"}
+        if (b == 3) {arg2 = "00010000"}
+        if (b == 4) {arg2 = "FFFFFFFF"}
+        testCases.push({ 'nodeNumber':arg1, 'eventIdentifier':arg2, 'expectedResult':arg3 });
+      }
     }
     return testCases;
   }
@@ -92,7 +100,8 @@ describe('opcodes_9x unit tests', function(){
   // 0x92 - AREQ
   itParam("AREQ test ${JSON.stringify(value)}", GetTestCase_NodeAndEvent(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN AREQ test ' + JSON.stringify(value)});
-    await tests.test_AREQ(RetrievedValues, value.nodeNumber, value.eventNumber);
+    var result = await tests.test_AREQ(RetrievedValues, value.nodeNumber, value.eventNumber);
+    expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: AREQ ended'});
   })
@@ -101,10 +110,11 @@ describe('opcodes_9x unit tests', function(){
   // 0x95 - EVULN
   itParam("EVULN test ${JSON.stringify(value)}", GetTestCase_eventIdentifier(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN test ' + JSON.stringify(value)});
-		RetrievedValues.setNodeNumber(1);
-    mock_Cbus.learningNode = 1;
-    await tests.test_EVULN(RetrievedValues, value.eventIdentifier);
-    expect(tests.hasTestPassed).to.equal(true);  
+		RetrievedValues.setNodeNumber(value.nodeNumber);
+    if (value.expectedResult == true) { mock_Cbus.learningNode = value.nodeNumber }
+    var result = await tests.test_EVULN(RetrievedValues, value.eventIdentifier);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: EVULN ended'});
   })
 
@@ -114,7 +124,8 @@ describe('opcodes_9x unit tests', function(){
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_INVALID_EVENT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
-    await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
+    var result = await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
+    expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVULN_INVALID_EVENT ended'});
   })
@@ -125,18 +136,20 @@ describe('opcodes_9x unit tests', function(){
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_SHORT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
-    await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "00010001");
+    var result = await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "00010001");
+    expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVULN_SHORT ended'});
   })
 
     
   function GetTestCase_NVSET() {
-    var arg1, arg2, arg3, testCases = [];
-    for (var a = 1; a< 4; a++) {
-      if (a == 1) {arg1 = 0}
-      if (a == 2) {arg1 = 1}
-      if (a == 3) {arg1 = 65535}
+    var arg1, arg2, arg3, arg4, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg4 = true}
+      if (a == 2) {arg1 = 1, arg4 = true}
+      if (a == 3) {arg1 = 65535, arg4 = true}
+      if (a == 4) {arg1 = 2, arg4 = false}
       for (var b = 1; b < 4; b++) {
         if (b == 1) {arg2 = 0}
         if (b == 2) {arg2 = 1}
@@ -145,7 +158,7 @@ describe('opcodes_9x unit tests', function(){
           if (c == 1) {arg3 = 0}
           if (c == 2) {arg3 = 1}
           if (c == 3) {arg3 = 2}
-          testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3});
+          testCases.push({ 'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'nodeVariableValue': arg3, 'expectedResult':arg4 });
         }
       }
     }
@@ -155,11 +168,11 @@ describe('opcodes_9x unit tests', function(){
   // 0x96 - NVSET
   // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
   itParam("NVSET test ${JSON.stringify(value)}", GetTestCase_NVSET(), async function (value) {
-    winston.info({message: 'UNIT TEST:: BEGIN NVSET test'});
+    winston.info({message: 'UNIT TEST:: BEGIN NVSET test ' + JSON.stringify(value)});
     RetrievedValues.setNodeNumber(value.nodeNumber);
-    await tests.test_NVSET(RetrievedValues, value.nodeVariableIndex, value.nodeVariableValue);
-    expect(tests.hasTestPassed).to.equal(true);  
-
+    var result = await tests.test_NVSET(RetrievedValues, value.nodeVariableIndex, value.nodeVariableValue);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: NVSET ended'});
   })
   
@@ -168,9 +181,9 @@ describe('opcodes_9x unit tests', function(){
   it("NVSET_INVALID_INDEX", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN NVSET_INVALID_INDEX test'});
     RetrievedValues.setNodeNumber(0);
-    await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 255, 0);
+    var result = await tests.test_NVSET_INVALID_INDEX(RetrievedValues, 255, 0);
+    expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
-
     winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
   })
 
@@ -179,9 +192,9 @@ describe('opcodes_9x unit tests', function(){
   it("NVSET_SHORT", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN NVSET_SHORT test'});
     RetrievedValues.setNodeNumber(0);
-    await tests.test_NVSET_SHORT(RetrievedValues, 1, 0);
+    var result = await tests.test_NVSET_SHORT(RetrievedValues, 1, 0);
+    expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
-
     winston.info({message: 'UNIT TEST: NVSET_SHORT ended'});
   })
 

@@ -375,7 +375,7 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received NVSETRD'});
           if (cbusMsg.encoded.length != 18) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
+          } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
             var nodeVariables = this.modules[0].nodeVariables;
             for (var i=0; i< nodeVariables.length; i++){
               if (cbusMsg.nodeVariableIndex == i) {
@@ -417,15 +417,13 @@ module.exports = class mock_CbusNetwork {
           // :SB780N9500000000;
           if (cbusMsg.encoded.length != 18) {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
-            if ( this.getModule(this.learningNode) != undefined) {
-              var events = this.getModule(this.learningNode).getStoredEvents();
-              var match = false;
-              // find matching event
-              events.forEach(event => {
-                if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
-              })
-            }
+          } else if ( this.getModule(this.learningNode) != undefined) {
+            var events = this.getModule(this.learningNode).getStoredEvents();
+            var match = false;
+            // find matching event
+            events.forEach(event => {
+              if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
+            })
             if (match) {
               // don't bother actually deleting the event.....
               this.outputWRACK(this.learningNode);
@@ -439,7 +437,7 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received NVSET'});
           if (cbusMsg.encoded.length != 18) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
+          } else if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
             if (cbusMsg.nodeVariableIndex < 255) {
               this.outputWRACK(cbusMsg.nodeNumber);
             } else {

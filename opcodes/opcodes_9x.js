@@ -51,7 +51,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARON or AROF'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'AREQ');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
 	} // end Test_AREQ
@@ -82,7 +82,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
 	} // end Test_EVULN
@@ -117,7 +117,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
 	} // end test_EVULN_INVALID_EVENT
@@ -156,7 +156,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
 	} // end test_EVULN_SHORT
@@ -183,7 +183,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_NVSET
@@ -217,7 +217,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_INVALID_INDEX');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end test_NVSET_INVALID_INDEX
@@ -255,7 +255,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_NVSET_SHORT
@@ -287,7 +287,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARSON or ARSOF'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'ASRQ');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
 	} // end Test_ASRQ
