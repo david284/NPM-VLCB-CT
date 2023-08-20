@@ -61,7 +61,7 @@ module.exports = class opcodes_0x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PNN'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 500 );
     }.bind(this));
   } // end test_QNN

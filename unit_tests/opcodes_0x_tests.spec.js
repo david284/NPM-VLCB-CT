@@ -64,13 +64,26 @@ describe('opcodes_0x unit tests', function(){
 // 				Tests
 //
 
+function GetTestCase_NodeNumber() {
+  var arg1, arg2, testCases = [];
+  for (var a = 1; a<= 4; a++) {
+    if (a == 1) {arg1 = 0, arg2 = true}
+    if (a == 2) {arg1 = 1, arg2 = true}
+    if (a == 3) {arg1 = 65535, arg2 = true}
+    if (a == 4) {arg1 = 2, arg2 = false}
+    testCases.push({'nodeNumber':arg1, 'expectedResult': arg2});
+  }
+  return testCases;
+}
+
 
     // 0x0D - QNN
-	it("QNN test", async function () {
+    itParam("QNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test'});
-		RetrievedValues.setNodeNumber(0);
-    await tests.test_QNN(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		RetrievedValues.setNodeNumber(value.nodeNumber);    // sets node number of expected response
+    var result = await tests.test_QNN(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: QNN ended'});
 	})
 
