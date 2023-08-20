@@ -202,8 +202,9 @@ describe('opcodes_9x unit tests', function(){
   // 0x9A - ASRQ
   itParam("ASRQ test ${JSON.stringify(value)}", GetTestCase_NodeAndEvent(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN ASRQ test ' + JSON.stringify(value)});
-    await tests.test_ASRQ(RetrievedValues, value.nodeNumber, value.eventNumber);
-    expect(tests.hasTestPassed).to.equal(true);  
+    var result = await tests.test_ASRQ(RetrievedValues, value.nodeNumber, value.eventNumber);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: ASRQ ended'});
   })
 

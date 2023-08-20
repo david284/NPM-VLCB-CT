@@ -46,7 +46,7 @@ module.exports = class opcodes_Dx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN
@@ -79,7 +79,7 @@ module.exports = class opcodes_Dx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_EVENT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN_INVALID_EVENT
@@ -112,7 +112,7 @@ module.exports = class opcodes_Dx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_INDEX');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end test_EVLRN_INVALID_INDEX
@@ -149,7 +149,7 @@ module.exports = class opcodes_Dx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN_SHORT

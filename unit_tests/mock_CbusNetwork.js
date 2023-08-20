@@ -450,7 +450,7 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received ASRQ'});
           if (cbusMsg.encoded.length != 18) {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
+          } else if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
             if (cbusMsg.deviceNumber > 0 ) {
               this.outputARSON(cbusMsg.nodeNumber, cbusMsg.deviceNumber)
             } else {
