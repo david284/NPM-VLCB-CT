@@ -74,7 +74,7 @@ module.exports = class opcodes_8x {
           } 
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN ' + testType);
-        resolve();
+        resolve(this.hasTestPassed);
 			} , RDGN_timeout );
     }.bind(this));
 	} // end Test_RDGN
@@ -108,7 +108,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_DIAG');
-				resolve();
+				resolve(this.hasTestPassed);
 				;} , 250
 			);
 		}.bind(this));
@@ -143,7 +143,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_INVALID_SERVICE');
-				resolve();
+				resolve(this.hasTestPassed);
 				;} , 250
 			);
 		}.bind(this));
@@ -182,7 +182,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
 				utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN_SHORT');
-				resolve();
+				resolve(this.hasTestPassed);
 				;} , 250
 			);
 		}.bind(this));
@@ -211,7 +211,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NVANS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD');
-        resolve();
+        resolve(this.hasTestPassed);
 			} , 250 );
     }.bind(this));
 	} // end Test_NVSETRD
@@ -244,7 +244,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_INVALID_INDEX');
-        resolve();
+        resolve(this.hasTestPassed);
 			} , 250 );
     }.bind(this));
 	} // end Test_NVSETRD_INVALID_INDEX
@@ -281,7 +281,7 @@ module.exports = class opcodes_8x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSETRD_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
 			} , 250 );
     }.bind(this));
 	} // end test_NVSETRD_SHORT
