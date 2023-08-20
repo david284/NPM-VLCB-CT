@@ -32,8 +32,10 @@ class RetrievedValues {
 								"nodeParameters": {},
                 "nodeVariables":{},
                 "events": {},
-								"ServicesActualCount": 0,
-								"ServicesReportedCount":null,
+                "EventSpaceLeft": null,
+                "StoredEventCount" : null,
+                "ServicesActualCount": 0,
+								"ServicesReportedCount": null,
 								"MaxServiceIndex": 0,
 								"Services": {},
 								"modules": {}

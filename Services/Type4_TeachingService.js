@@ -46,14 +46,14 @@ module.exports = class TeachingServiceTests {
 				await this.opcodes_8x.test_RDGN(RetrievedValues, serviceIndex, 0);
 
 				// now request number of event spaces left
-				await this.opcodes_5x.test_NNEVN(RetrievedValues, serviceIndex);
+				await this.opcodes_5x.test_NNEVN(RetrievedValues);
         // save value for later use
-        var initialEventSpaceLeft = RetrievedValues.data.Services[serviceIndex].EventSpaceLeft
+        var initialEventSpaceLeft = RetrievedValues.data.EventSpaceLeft
 
 				// now request number of events stored
-				await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+				await this.opcodes_5x.test_RQEVN(RetrievedValues);
         // save value for later use
-        var initialStoredEventCount = RetrievedValues.data.Services[serviceIndex].StoredEventCount
+        var initialStoredEventCount = RetrievedValues.data.StoredEventCount
 
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
@@ -90,9 +90,9 @@ module.exports = class TeachingServiceTests {
           await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // now request number of events stored
-          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
-          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount)
+          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
 
           // now read back event variables just added
           await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
@@ -115,20 +115,20 @@ module.exports = class TeachingServiceTests {
           await this.opcodes_9x.test_EVULN(RetrievedValues, "01000200");
           
           // now request number of events stored so we can check if event has been removed
-          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
-          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.Services[serviceIndex].StoredEventCount)
+          utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
 
           // now fill the event store, so we can test exceeding the storage limit
           // number of events supported is in node parameter[4]
           utils.DisplayComment("Starting process to completely fill stored events table")
-          var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.Services[serviceIndex].StoredEventCount
+          var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.StoredEventCount
           for (var i = 1; i <= numEventsToAdd; i++) {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
           // now request number of events stored
-          await this.opcodes_5x.test_RQEVN(RetrievedValues, serviceIndex);          
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);          
           utils.DisplayComment("stored events table should now be fully populated with " + RetrievedValues.data.nodeParameters[4].value + " events")
 
           // event store should now be full, so expect an error reponse when adding another

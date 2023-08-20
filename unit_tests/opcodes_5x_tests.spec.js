@@ -61,28 +61,29 @@ describe('opcodes_5x unit tests', function(){
   // most of the opcodes in this section have a single nodeNumber parameter, so can use this common testcase structure
   //
   function GetTestCase_NodeNumber() {
-		var arg1, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) arg1 = 0;
-			if (a == 2) arg1 = 1;
-			if (a == 3) arg1 = 65535;
-			testCases.push({'nodeNumber':arg1});
-		}
-		return testCases;
-	}
-
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = true}
+      if (a == 3) {arg1 = 65535, arg2 = true}
+      if (a == 4) {arg1 = 2, arg2 = false}
+      testCases.push({'nodeNumber':arg1, 'expectedResult': arg2});
+    }
+    return testCases;
+  }
+  
 
   // 0x50 RQNN
   // need to use a timeout here, as we send a RQNN from the mock_cbus, and need to wait for it to be received
   // 
   itParam("RQNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), function (done, value) {
-		winston.info({message: 'UNIT TEST: BEGIN RQNN test'});
+		winston.info({message: 'UNIT TEST: BEGIN RQNN test ' + JSON.stringify(value)});
     mock_Cbus.enterSetup(value.nodeNumber);
 		var retrieved_values = {};
 		setTimeout(function(){
 			tests.checkForRQNN(RetrievedValues);
-      expect(tests.inSetupMode).to.equal(true);
-      expect(tests.test_nodeNumber).to.equal(value.nodeNumber);
+      expect(tests.inSetupMode).to.equal(value.expectedResult);
+      if (value.expectedResult == true) { expect(tests.test_nodeNumber).to.equal(value.nodeNumber) }
       winston.info({message: 'UNIT TEST: RQNN ended'});
       mock_Cbus.exitSetup(value.nodeNumber);
 			done();
@@ -92,82 +93,90 @@ describe('opcodes_5x unit tests', function(){
 
 	// 0x53 - NNLRN
 	itParam("NNLRN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNLRN test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNLRN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NNLRN(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NNLRN(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NNLRN test'});
 	})
   
   
 	// 0x54 - NNULN
 	itParam("NNULN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNULN test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNULN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NNULN(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NNULN(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NNULN test'});
 	})
   
   
 	// 0x55 - NNCLR
 	itParam("NNCLR test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNCLR test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNCLR test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NNCLR(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NNCLR(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NNCLR test'});
 	})
   
   
 	// 0x56 - NNEVN
 	itParam("NNEVN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNEVN test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNEVN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NNEVN(RetrievedValues, 1);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NNEVN(RetrievedValues, 1);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NNEVN test'});
 	})
   
   
 	// 0x57 - NERD
 	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NERD test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NERD test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_NERD(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NERD(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NERD test'});
 	})
   
   
 	// 0x57 - RQEVN
 	itParam("RQEVN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN RQEVN test'});
+		winston.info({message: 'UNIT TEST:: BEGIN RQEVN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_RQEVN(RetrievedValues, 1);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_RQEVN(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END RQEVN test'});
 	})
   
   
 	// 0x5D - ENUM
 	itParam("ENUM test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN ENUM test'});
+		winston.info({message: 'UNIT TEST:: BEGIN ENUM test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-		await tests.test_ENUM(RetrievedValues);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_ENUM(RetrievedValues);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END ENUM test'});
 	})
 	
 
 	// 0x5E - NNRST
 	itParam("NNRST test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NNRST test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NNRST test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
 		// so need to pass in the service index for the MNS service - 1 in this case
-		await tests.test_NNRST(RetrievedValues, 1);
-    expect(tests.hasTestPassed).to.equal(true);
+		var result = await tests.test_NNRST(RetrievedValues, 1);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END NNRST test'});
 	})
 	

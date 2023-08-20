@@ -62,36 +62,14 @@ module.exports = class mock_CbusNetwork {
             new CANTEST (65535)
             ]
             
-/*            
-    // values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
-    this.DGN_Outputs = {
-        "1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, 
-        "2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 2 },  
-        "3": { "ServiceIndex": 2, "DiagnosticCode": 1, "DiagnosticValue": 3 },  
-        "4": { "ServiceIndex": 3, "DiagnosticCode": 1, "DiagnosticValue": 4 }, 
-        "4": { "ServiceIndex": 4, "DiagnosticCode": 1, "DiagnosticValue": 5 }
-        };
-*/
     // values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
     // bare minimum to do something - we expect the test will update this array using set_DGN_Outputs()
     this.DGN_Outputs = {
-        "1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 },
-        "2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 0 },  
+        "1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, // STATUS
+        "2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 0 }, // UPTIME upper word
         "3": { "ServiceIndex": 2, "DiagnosticCode": 3, "DiagnosticValue": 0 },  
         "4": { "ServiceIndex": 3, "DiagnosticCode": 4, "DiagnosticValue": 0 }
         };
-
-    this.Services = {
-      "1": {
-        "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": 0,
-        "diagnostics": { 
-          "1": {"DiagnosticCode": 1, "DiagnosticValue": 1}, 
-          "2": {"DiagnosticCode": 1, "DiagnosticValue": 0},
-          "3": {"DiagnosticCode": 1, "DiagnosticValue": 0}, 
-          "4": {"DiagnosticCode": 1, "DiagnosticValue": 0} 
-        }
-      }
-    }
 
     this.server = net.createServer(function (socket) {
       this.socket=socket;
@@ -255,14 +233,18 @@ module.exports = class mock_CbusNetwork {
           }          
           break;
         case '55': //NNCLR
-          // Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-          winston.debug({message: 'Mock CBUS Network: received NNULN'});
-          this.outputWRACK(cbusMsg.nodeNumber);                
+          // Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
+          winston.debug({message: 'Mock CBUS Network: received NNCLR'});
+          if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
+            this.outputWRACK(cbusMsg.nodeNumber);                
+          }          
           break;
         case '56': //NNEVN
           // Format: [<MjPri><MinPri=3><CANID>]<56><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNEVN'});
-          this.outputEVNLF(cbusMsg.nodeNumber, 20);
+          if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
+            this.outputEVNLF(cbusMsg.nodeNumber, 20);
+          }          
           break;
         case '57': //NERD
           // Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
@@ -280,8 +262,10 @@ module.exports = class mock_CbusNetwork {
         case '58': //RQEVN
           // Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received RQEVN'});
-          var storedEventsCount = this.getModule(cbusMsg.nodeNumber).getStoredEventsCount();
-          this.outputNUMEV(cbusMsg.nodeNumber, storedEventsCount);
+          if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
+            var storedEventsCount = this.getModule(cbusMsg.nodeNumber).getStoredEventsCount();
+            this.outputNUMEV(cbusMsg.nodeNumber, storedEventsCount);
+          }          
           break;
         case '5C': //BOOTM
           // Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>>
@@ -290,12 +274,16 @@ module.exports = class mock_CbusNetwork {
         case '5D': //ENUM
           // Format: [<MjPri><MinPri=3><CANID>]<5D><NN hi><NN lo>>
           winston.debug({message: 'Mock CBUS Network: received ENUM: node ' + cbusMsg.nodeNumber });
-          this.outputNNACK(cbusMsg.nodeNumber);
+          if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
+            this.outputNNACK(cbusMsg.nodeNumber);
+          }          
           break;
         case '5E': //NNRST
           // Format: [<MjPri><MinPri=3><CANID>]<5E><NN hi><NN lo>
           winston.debug({message: 'Mock CBUS Network: received NNRST'});
-          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
+            this.getModule(cbusMsg.nodeNumber).resetModule()
+          }          
           break;
         case '71': //NVRD
           // Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
@@ -320,12 +308,14 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received RQNPN'});
           if (cbusMsg.encoded.length < 16) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
-              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
-              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
-          } else {
-            var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
-            this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
+          } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
+            if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
+                this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
+                this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
+            } else {
+              var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
+              this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
+            }
           }
           break;
         case '75': //CANID
@@ -349,26 +339,28 @@ module.exports = class mock_CbusNetwork {
         case '78': //RQSD
           winston.debug({message: 'Mock CBUS Network: received RQSD'});
           // Format: [<MjPri><MinPri=3><CANID>]<78><NN hi><NN lo><ServiceIndex>
-          // get count of service entries first
-          var count = 0;
-          for (var index in this.Services) { count++; }
           if (cbusMsg.encoded.length < 16) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else if (cbusMsg.ServiceIndex == 0) {
-            this.outputSD(cbusMsg.nodeNumber, 0, 0, count);
-            // now send a message for each actual service entry
-            for (var index in this.Services) {
-              this.outputSD(cbusMsg.nodeNumber, 
-                this.Services[index].ServiceIndex,
-                this.Services[index].ServiceType,
-                this.Services[index].ServiceVersion);
-            }
-          } else
-          {
-            if(cbusMsg.ServiceIndex > count) {
-              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, cbusMsg.ServiceIndex, GRSP.InvalidService);
-            } else {
-              this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
+          } else  {
+            var module = this.getModule(cbusMsg.nodeNumber)
+            if (module != undefined){
+              if (cbusMsg.ServiceIndex == 0) {
+                // all services selected
+                this.outputSD(cbusMsg.nodeNumber, 0, 0, module.getServiceCount());
+                // now send a message for each actual service entry
+                for (var index in module.services) {
+                  this.outputSD(cbusMsg.nodeNumber, 
+                    module.services[index].ServiceIndex,
+                    module.services[index].ServiceType,
+                    module.services[index].ServiceVersion);
+                }
+              } else {
+                if(cbusMsg.ServiceIndex > module.getServiceCount()) {
+                  this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, cbusMsg.ServiceIndex, GRSP.InvalidService);
+                } else {
+                  this.outputESD(cbusMsg.nodeNumber, cbusMsg.ServiceIndex);
+                }
+              }
             }
           }
           break;
@@ -570,14 +562,18 @@ module.exports = class mock_CbusNetwork {
   enterSetup(nodeNumber) {
     var module = this.getModule(nodeNumber);
     winston.debug({message: 'Mock CBUS Network: node ' + nodeNumber + ' request start setup'});
-    module.startSetupMode();
-    this.outputRQNN(nodeNumber);
+    if (module != undefined){
+      module.startSetupMode();
+      this.outputRQNN(nodeNumber);
+    }
   }
 
   exitSetup(nodeNumber) {
     var module = this.getModule(nodeNumber);
     winston.debug({message: 'Mock CBUS Network: node ' + nodeNumber + ' request exit setup'});
-    module.endSetupMode();
+    if (module != undefined){
+      module.endSetupMode();
+    }
   }
   
 
@@ -838,42 +834,44 @@ module.exports = class mock_CbusNetwork {
 
   // C7
   outputDGN(nodeNumber, ServiceIndex, DiagnosticCode) {
-    if (ServiceIndex == 0){
-      for (var key in this.DGN_Outputs) {
-        winston.debug({message: 'Mock CBUS Network: DGN_Output ' + JSON.stringify(key)});   
-        var msgData = cbusLib.encodeDGN(nodeNumber, 
-          this.DGN_Outputs[key].ServiceIndex,
-          this.DGN_Outputs[key].DiagnosticCode, 
-          this.DGN_Outputs[key].DiagnosticValue);
-          this.broadcast(msgData);
-      }
-    } else {
-      // requesting individual service, so get count of service entries
-      var count = 0;
-      for (var index in this.Services) { count++; }
-      if(ServiceIndex > count) {
-        this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidService);
-      } else {
-        if (DiagnosticCode == 0) {
-          for (var key in this.DGN_Outputs) {
+    var module = this.getModule(nodeNumber);
+    if (module != undefined) {
+      if (ServiceIndex == 0){
+        // requesting all diagnostics, from all services.....
+        for (var key in module.services) {
+          for (var index in module.services[key].diagnostics) {
             var msgData = cbusLib.encodeDGN(nodeNumber, 
-              this.DGN_Outputs[key].ServiceIndex,
-              this.DGN_Outputs[key].DiagnosticCode, 
-              this.DGN_Outputs[key].DiagnosticValue);
+              module.services[key].ServiceIndex,
+              module.services[key].diagnostics[index].DiagnosticCode, 
+              module.services[key].diagnostics[index].DiagnosticValue);
               this.broadcast(msgData);
           }
+        }
+      } else {
+        // requesting individual service, so check it exists
+        if(ServiceIndex > module.getServiceCount()) {
+          this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidService);
         } else {
-          // requesting individual service, so get count of service entries
-          var diagCount = 0;
-          for (var index in this.Services[ServiceIndex].diagnostics) { diagCount++; }
-          if (DiagnosticCode > diagCount) {
-            this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidDiagnosticCode);
+          if (DiagnosticCode == 0) {
+            // requesting all diagnostics, from one service
+            for (var key in module.services[ServiceIndex].diagnostics) {
+              var msgData = cbusLib.encodeDGN(nodeNumber, 
+                ServiceIndex,
+                module.services[ServiceIndex].diagnostics[key].DiagnosticCode, 
+                module.services[ServiceIndex].diagnostics[key].DiagnosticValue);
+                this.broadcast(msgData);
+            }
           } else {
-            var msgData = cbusLib.encodeDGN(nodeNumber, 
-              ServiceIndex,
-              DiagnosticCode, 
-              this.Services[ServiceIndex].diagnostics[DiagnosticCode].DiagnosticValue);
-              this.broadcast(msgData);
+            // requesting one diagnostic, from one service, so check diagnostic exists
+            if (DiagnosticCode > module.getDiagnosticCount(ServiceIndex)) {
+              this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidDiagnosticCode);
+            } else {
+              var msgData = cbusLib.encodeDGN(nodeNumber, 
+                ServiceIndex,
+                DiagnosticCode, 
+                module.services[ServiceIndex].diagnostics[DiagnosticCode].DiagnosticValue);
+                this.broadcast(msgData);
+            }
           }
         }
       }
@@ -1039,6 +1037,45 @@ class CbusModule {
     this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
     this.nodeVariables = [ 8, 1, 2, 3, 4, 5, 6, 7, 8 ];
     this.parameters[6] = this.nodeVariables.length - 1
+  }
+
+  services = {
+    "1": {
+      "ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": 0,
+      "diagnostics": { 
+        "1": {"DiagnosticCode": 1, "DiagnosticValue": 1}, // STATUS
+        "2": {"DiagnosticCode": 2, "DiagnosticValue": 3}, // UPTIME upper word
+        "3": {"DiagnosticCode": 3, "DiagnosticValue": 3}, // UPTIME lower word
+        "4": {"DiagnosticCode": 4, "DiagnosticValue": 3}  // Memory Fault Indicator
+      }
+    },
+    "2": {
+      "ServiceIndex": 2, "ServiceType": 2, "ServiceVersion": 0,
+      "diagnostics": { 
+        "1": {"DiagnosticCode": 1, "DiagnosticValue": 1}, // 
+        "2": {"DiagnosticCode": 2, "DiagnosticValue": 3}, // 
+      }
+    }
+  }
+
+  getServiceCount(){
+    var count = 0
+    for (var index in this.services) { count++; }
+    winston.debug({message: 'Mock_cbus Network: getServiceCount value: ' + count});
+    return count
+  }
+
+  getDiagnosticCount(serviceIndex)
+  {
+    var count = 0
+    for (var index in this.services[serviceIndex].diagnostics) { count++; }
+    winston.debug({message: 'Mock_cbus Network: service ' + serviceIndex + ' diagnostic count ' + count});
+    return count
+  }
+
+  resetModule() {
+    this.services[1].diagnostics[2].DiagnosticValue = 0
+    this.services[1].diagnostics[3].DiagnosticValue = 0
   }
 
   getStoredEvents() { return this.events}

@@ -33,6 +33,7 @@ module.exports = class opcodes_5x {
 
 	// 0x50 RQNN
 	checkForRQNN(RetrievedValues){
+    this.inSetupMode = false;
 		this.hasTestPassed = false;
     this.network.messagesIn.forEach(msg => {
       if (msg.mnemonic == "RQNN"){
@@ -82,7 +83,7 @@ module.exports = class opcodes_5x {
           })
           if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN');
-          resolve();
+          resolve(this.hasTestPassed);
         }, 250 );
       }, 250 );
     }.bind(this));
@@ -115,7 +116,7 @@ module.exports = class opcodes_5x {
           })
           if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN');
-          resolve();
+          resolve(this.hasTestPassed);
         }, 250 );
       } , 250 );
     }.bind(this));
@@ -140,15 +141,15 @@ module.exports = class opcodes_5x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
 
 
   // 0x56 - NNEVN
-  test_NNEVN(RetrievedValues, ServiceIndex) {
-    winston.debug({message: 'VLCB: BEGIN NNEVN test'});
+  test_NNEVN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNEVN test: node ' + RetrievedValues.getNodeNumber()});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
       this.network.messagesIn = [];
@@ -160,13 +161,13 @@ module.exports = class opcodes_5x {
             if (msg.mnemonic == "EVNLF"){
               this.hasTestPassed = true;
               // store the returned value
-              RetrievedValues.data.Services[ServiceIndex]["EventSpaceLeft"] = msg.EVSPC;
+              RetrievedValues.data["EventSpaceLeft"] = msg.EVSPC;
             }
           }
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected EVNLF'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -174,7 +175,7 @@ module.exports = class opcodes_5x {
 
   // 0x57 - NERD
   test_NERD(RetrievedValues) {
-    winston.debug({message: 'VLCB: BEGIN NERD test'});
+    winston.debug({message: 'VLCB: BEGIN NERD test: node ' + RetrievedValues.getNodeNumber()});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
       this.network.messagesIn = [];
@@ -193,15 +194,15 @@ module.exports = class opcodes_5x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ENRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
 
 
   // 0x58 - RQEVN
-  test_RQEVN(RetrievedValues, ServiceIndex) {
-    winston.debug({message: 'VLCB: BEGIN RQEVN test'});
+  test_RQEVN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN RQEVN test: node ' + RetrievedValues.getNodeNumber()});
     return new Promise(function (resolve, reject) {
       this.hasTestPassed = false;
       this.network.messagesIn = [];
@@ -213,13 +214,13 @@ module.exports = class opcodes_5x {
             if (msg.mnemonic == "NUMEV"){
               this.hasTestPassed = true;
               // store the returned value
-              RetrievedValues.data.Services[ServiceIndex]["StoredEventCount"] = msg.eventCount;
+              RetrievedValues.data["StoredEventCount"] = msg.eventCount;
             }
           }
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NUMEV'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -243,7 +244,7 @@ module.exports = class opcodes_5x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -289,7 +290,7 @@ module.exports = class opcodes_5x {
               winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST has undefined value '}); 
             }
             utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
-            resolve();
+            resolve(this.hasTestPassed);
           } , 1000 );
         } else {
             winston.info({message: 'VLCB:      No Service 1 found '}); 
