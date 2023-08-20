@@ -49,7 +49,7 @@ module.exports = class opcodes_Bx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected EVANS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_EVLRN
@@ -82,7 +82,7 @@ module.exports = class opcodes_Bx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_EVENT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_REQEV_INVALID_EVENT
@@ -115,7 +115,7 @@ module.exports = class opcodes_Bx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_INDEX');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_REQEV_INVALID_INDEX
@@ -152,7 +152,7 @@ module.exports = class opcodes_Bx {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
 	} // end Test_REQEV_SHORT

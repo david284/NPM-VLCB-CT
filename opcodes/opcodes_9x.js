@@ -287,7 +287,7 @@ module.exports = class opcodes_9x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARSON or ARSOF'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'ASRQ');
-        resolve(this.hasTestPassed);
+        resolve();
       }, 250 );
     }.bind(this));
 	} // end Test_ASRQ

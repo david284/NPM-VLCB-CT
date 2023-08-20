@@ -470,15 +470,13 @@ module.exports = class mock_CbusNetwork {
           // :SB780NB200000000FF;
           if (cbusMsg.encoded.length != 20) {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
-            if ( this.getModule(this.learningNode) != undefined) {
-              var events = this.getModule(this.learningNode).getStoredEvents();
-              var match = false;
-              // find matching event
-              events.forEach(event => {
-                if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
-              })
-            }
+          } else if ( this.getModule(this.learningNode) != undefined) {
+            var events = this.getModule(this.learningNode).getStoredEvents();
+            var match = false;
+            // find matching event
+            events.forEach(event => {
+              if (event.eventIdentifier == cbusMsg.eventIdentifier) {match = true;}
+            })
             if (match) {
               if (cbusMsg.eventVariableIndex <= this.getModule(this.learningNode).parameters[5]) {
                 this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
