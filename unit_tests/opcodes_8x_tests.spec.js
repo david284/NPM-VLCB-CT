@@ -63,26 +63,6 @@ describe('opcodes_8x unit tests', function(){
 //
 
 
-	// 0x87
-	//
-	// what we want to test
-	// Service index	Service type	Service Version		Diagnostic Code
-	//			1								1							1									1				//
-	//			1								1							1									2				// change of code
-	//			2								1							1									1				// change of index - same type
-	//			3								2							1									1				// change of index, change of type
-	//			4								1							2									1				// change of index, change of version
-
-	// values to output from mockCbus - ServiceIndex, DiagnosticCode, DiagnosticValue
-	var DGN_Outputs = {
-				"1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, 
-				"2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 2 },  
-				"3": { "ServiceIndex": 2, "DiagnosticCode": 1, "DiagnosticValue": 3 },  
-				"4": { "ServiceIndex": 3, "DiagnosticCode": 1, "DiagnosticValue": 4 }, 
-				"5": { "ServiceIndex": 4, "DiagnosticCode": 1, "DiagnosticValue": 5 }
-				};
-
-
     // 0x87 - RDGN
 	it("RDGN test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RDGN test'});
@@ -92,8 +72,6 @@ describe('opcodes_8x unit tests', function(){
 		RetrievedValues.addService(2,1,1); //		"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
 		RetrievedValues.addService(3,2,1); //		"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
 		RetrievedValues.addService(4,1,2); // 	"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
-		// set mock CBUS with diagnostic values to be sent in response to query
-		mock_Cbus.DGN_Outputs = DGN_Outputs;
 		// ok, all setup, now start test - service 0, diagnostics 0
     await tests.test_RDGN(RetrievedValues, 0, 0);
 		winston.info({message: 'UNIT TEST: RDGN ended'});
@@ -110,14 +88,13 @@ describe('opcodes_8x unit tests', function(){
     RetrievedValues.addService(2,1,1); //		"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
     RetrievedValues.addService(3,2,1); //		"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
     RetrievedValues.addService(4,1,2); // 	"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
-    // set mock CBUS with diagnostic values to be sent in response to query
-    mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 1, diagnostics 99
     await tests.test_RDGN_INVALID_DIAG(RetrievedValues, 1, 99);
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RDGN_INVALID_DIAG ended'});
   })
 
+  
   // 0x87 - RDGN
   it("RDGN_INVALID_SERVICE test", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN RDGN_INVALID_SERVICE test'});
@@ -127,8 +104,6 @@ describe('opcodes_8x unit tests', function(){
     RetrievedValues.addService(2,1,1); //		"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
     RetrievedValues.addService(3,2,1); //		"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
     RetrievedValues.addService(4,1,2); // 	"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
-    // set mock CBUS with diagnostic values to be sent in response to query
-    mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
     await tests.test_RDGN_INVALID_SERVICE(RetrievedValues, 5, 0);
     expect(tests.hasTestPassed).to.equal(true);
@@ -145,8 +120,6 @@ describe('opcodes_8x unit tests', function(){
     RetrievedValues.addService(2,1,1); //		"2": { "ServiceIndex": 2, "ServiceType": 1, "ServiceVersion": 1 },  
     RetrievedValues.addService(3,2,1); //		"3": { "ServiceIndex": 3, "ServiceType": 2, "ServiceVersion": "1" },  
     RetrievedValues.addService(4,1,2); // 	"4": { "ServiceIndex": 4, "ServiceType": 1, "ServiceVersion": 2 } } 
-    // set mock CBUS with diagnostic values to be sent in response to query
-    mock_Cbus.DGN_Outputs = DGN_Outputs;
     // ok, all setup, now start test - service 5, diagnostics 0
     await tests.test_RDGN_SHORT(RetrievedValues, 5, 0);
     expect(tests.hasTestPassed).to.equal(true);

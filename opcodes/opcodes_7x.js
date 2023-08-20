@@ -54,7 +54,7 @@ module.exports = class opcodes_7x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - expected NVANS'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD');
-        resolve();
+        resolve(this.hasTestPassed);
       } , timeout );
     }.bind(this));
   }
@@ -103,7 +103,7 @@ module.exports = class opcodes_7x {
 
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX ');
           
-          resolve();
+          resolve(this.hasTestPassed);
           ;} , 250 );
         } else {
           winston.info({message: 'VLCB: **** NVRD_INVALID_INDEX Test Aborted **** Node Variable Index 0 requested'});				
@@ -143,7 +143,7 @@ module.exports = class opcodes_7x {
           if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_SHORT ');
           
-          resolve();
+          resolve(this.hasTestPassed);
         } , 250 );
       } else {
         winston.info({message: 'VLCB: **** NVRD_SHORT Test Aborted **** Node Variable Index 0 requested'});				
@@ -206,7 +206,7 @@ module.exports = class opcodes_7x {
         })
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN index ' + parameterIndex + ' ' + NodeParameterNames[parameterIndex], warning_output);
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -252,7 +252,7 @@ module.exports = class opcodes_7x {
           if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
         }
       utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX');
-        resolve();
+        resolve(this.hasTestPassed);
       ;} , 250 );
     }.bind(this));
   }
@@ -287,7 +287,7 @@ module.exports = class opcodes_7x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       ;} , 250 );
     }.bind(this));
   }
@@ -330,7 +330,7 @@ module.exports = class opcodes_7x {
           if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: WRACK message missing/incorrect'}); }
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
   }
@@ -375,7 +375,7 @@ module.exports = class opcodes_7x {
           if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID_INVALID_VALUE');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
   }
@@ -407,7 +407,7 @@ module.exports = class opcodes_7x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
   }
@@ -442,7 +442,7 @@ module.exports = class opcodes_7x {
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'MODE');
   
-        resolve();
+        resolve(this.hasTestPassed);
       }, 250 );
     }.bind(this));
   }
@@ -492,7 +492,7 @@ module.exports = class opcodes_7x {
             this.hasTestPassed = false;
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (ServiceIndex ' + ServiceIndex + ')');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -527,7 +527,7 @@ module.exports = class opcodes_7x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_INVALID_SERVICE (ServiceIndex ' + ServiceIndex + ')');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }
@@ -566,7 +566,7 @@ module.exports = class opcodes_7x {
         });
         if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD_SHORT');
-        resolve();
+        resolve(this.hasTestPassed);
       } , 250 );
     }.bind(this));
   }

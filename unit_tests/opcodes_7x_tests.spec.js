@@ -71,32 +71,32 @@ describe('opcodes_7x unit tests', function(){
 	var nodeVariableCount = nodeVariables.length-1
 
   function GetTestCase_NVRD() {
-		var arg1, arg2, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0}
-			if (a == 2) {arg1 = 1}
-			if (a == 3) {arg1 = 65535}
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a<= 4; a++) {
+			if (a == 1) {arg1 = 0, arg3 = true}
+			if (a == 2) {arg1 = 1, arg3 = true}
+			if (a == 3) {arg1 = 65535, arg3 = true}
+			if (a == 4) {arg1 = 2, arg3 = false}
 			for (var b = 1; b < 4; b++) {
 				if (b == 1) {arg2 = 0}
 				if (b == 2) {arg2 = 1}
 				if (b == 3) {arg2 = nodeVariableCount}
-				testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2});
+				testCases.push({'nodeNumber':arg1, 'nodeVariableIndex':arg2, 'expectedResult': arg3});
 			}
 		}
 		return testCases;
 	}
 
-
   // 0x71 - NVRD
   itParam("NVRD test ${JSON.stringify(value)}", GetTestCase_NVRD(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN NVRD test'});
+		winston.info({message: 'UNIT TEST:: BEGIN NVRD test ' + JSON.stringify(value)});
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
 		RetrievedValues.setNodeNumber(value.nodeNumber);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-    await tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
-//		winston.debug({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
-    expect(tests.hasTestPassed).to.equal(true);
+    var result = await tests.test_NVRD(RetrievedValues, 1, value.nodeVariableIndex);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: NVRD ended'});
 	})
 
@@ -108,8 +108,9 @@ describe('opcodes_7x unit tests', function(){
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-  	await tests.test_NVRD_INVALID_INDEX(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+  	var result = await tests.test_NVRD_INVALID_INDEX(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
     winston.info({message: 'UNIT TEST: NVRD_INVALID_INDEX ended'});
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
 	})
 
@@ -121,23 +122,25 @@ describe('opcodes_7x unit tests', function(){
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
-		await tests.test_NVRD_SHORT(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
+		var result = await tests.test_NVRD_SHORT(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
 		winston.info({message: 'UNIT TEST: NVRD_SHORT ended'});
+    expect(result).to.equal(true);
 		expect(tests.hasTestPassed).to.equal(true);
 	})
 	
 	
 	function GetTestCase_RQNPN() {
-		var arg1, arg2, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0}
-			if (a == 2) {arg1 = 1}
-			if (a == 3) {arg1 = 65535}
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a<= 4; a++) {
+			if (a == 1) {arg1 = 0, arg3 = true}
+			if (a == 2) {arg1 = 1, arg3 = true}
+			if (a == 3) {arg1 = 65535, arg3 = true}
+			if (a == 4) {arg1 = 2, arg3 = false}
 			for (var b = 1; b < 4; b++) {
 				if (b == 1) {arg2 = 0}
 				if (b == 2) {arg2 = 1}
 				if (b == 3) {arg2 = 20}
-				testCases.push({'nodeNumber':arg1, 'parameterIndex':arg2});
+				testCases.push({'nodeNumber':arg1, 'parameterIndex':arg2, 'expectedResult':arg3});
 			}
 		}
 		return testCases;
@@ -146,11 +149,11 @@ describe('opcodes_7x unit tests', function(){
 
   // 0x73 - RQNPN
   itParam("RQNPN test ${JSON.stringify(value)}", GetTestCase_RQNPN(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test'});
+		winston.info({message: 'UNIT TEST:: BEGIN RQNPN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-  	await tests.test_RQNPN(RetrievedValues, test_module_descriptor, value.parameterIndex);
-    expect(tests.hasTestPassed).to.equal(true);
-//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});
+  	var result = await tests.test_RQNPN(RetrievedValues, test_module_descriptor, value.parameterIndex);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END RQNPN test'});    
 	})
 
@@ -159,9 +162,9 @@ describe('opcodes_7x unit tests', function(){
   it("RQNPN_INVALID_INDEX test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_INVALID_INDEX test'});
 		RetrievedValues.setNodeNumber(0);
-  	await tests.test_RQNPN_INVALID_INDEX(RetrievedValues, test_module_descriptor, 21);
+  	var result = await tests.test_RQNPN_INVALID_INDEX(RetrievedValues, test_module_descriptor, 21);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
-//		winston.info({message: 'UNIT TEST: RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, '    ')});        
 		winston.info({message: 'UNIT TEST:: END RQNPN_INVALID_INDEX test'});
 	})
 
@@ -170,22 +173,24 @@ describe('opcodes_7x unit tests', function(){
   it("RQNPN_SHORT test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_SHORT test'});
 		RetrievedValues.setNodeNumber(0);
-  	await tests.test_RQNPN_SHORT(RetrievedValues, test_module_descriptor, 21);
+  	var result = await tests.test_RQNPN_SHORT(RetrievedValues, test_module_descriptor, 21);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END RQNPN_SHORT test'});
 	})
 
 
   function GetTestCase_CANID() {
-		var arg1, arg2, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0}
-			if (a == 2) {arg1 = 1}
-			if (a == 3) {arg1 = 65535}
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a<= 4; a++) {
+			if (a == 1) {arg1 = 0, arg3 = true}
+			if (a == 2) {arg1 = 1, arg3 = true}
+			if (a == 3) {arg1 = 65535, arg3 = true}
+			if (a == 4) {arg1 = 2, arg3 = false}
 			for (var b = 1; b < 3; b++) {
 				if (b == 1) {arg2 = 1}
 				if (b == 2) {arg2 = 99}
-				testCases.push({'nodeNumber':arg1, 'CANID':arg2});
+				testCases.push({'nodeNumber':arg1, 'CANID':arg2, 'expectedResult':arg3});
 			}
 		}
 		return testCases;
@@ -194,10 +199,11 @@ describe('opcodes_7x unit tests', function(){
 
   // 0x75 - CANID
   itParam("CANID test ${JSON.stringify(value)}", GetTestCase_CANID(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN CANID test'});
+		winston.info({message: 'UNIT TEST:: BEGIN CANID test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-  	await tests.test_CANID(RetrievedValues, value.CANID);
-    expect(tests.hasTestPassed).to.equal(true);
+  	var result = await tests.test_CANID(RetrievedValues, value.CANID);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END CANID test'});    
 	})
 
@@ -223,7 +229,8 @@ describe('opcodes_7x unit tests', function(){
   itParam("CANID_INVALID_VALUE test ${JSON.stringify(value)}", GetTestCase_CANID_INVALID_VALUE(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN CANID_INVALID_VALUE test'});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-  	await tests.test_CANID_INVALID_VALUE(RetrievedValues, value.CANID);
+  	var result = await tests.test_CANID_INVALID_VALUE(RetrievedValues, value.CANID);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END CANID_INVALID_VALUE test'});    
 	})
@@ -233,23 +240,25 @@ describe('opcodes_7x unit tests', function(){
   it("CANID_SHORT test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN CANID_SHORT test'});
 		RetrievedValues.setNodeNumber(0);
-  	await tests.test_CANID_SHORT(RetrievedValues, 21);
+  	var result = await tests.test_CANID_SHORT(RetrievedValues, 21);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
 		winston.info({message: 'UNIT TEST:: END CANID_SHORT test'});
 	})
 
 
   function GetTestCase_MODE() {
-		var arg1, arg2, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0}
-			if (a == 2) {arg1 = 1}
-			if (a == 3) {arg1 = 65535}
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a<= 4; a++) {
+			if (a == 1) {arg1 = 0, arg3 = true}
+			if (a == 2) {arg1 = 1, arg3 = true}
+			if (a == 3) {arg1 = 65535, arg3 = true}
+			if (a == 4) {arg1 = 2, arg3 = false}
 			for (var b = 1; b < 4; b++) {
 				if (b == 1) {arg2 = 0}
 				if (b == 2) {arg2 = 1}
 				if (b == 3) {arg2 = 2}
-				testCases.push({'nodeNumber':arg1, 'MODE':arg2});
+				testCases.push({'nodeNumber':arg1, 'MODE':arg2, 'expectedResult':arg3 });
 			}
 		}
 		return testCases;
@@ -258,56 +267,41 @@ describe('opcodes_7x unit tests', function(){
 
 	// 0x76 - MODE
 	itParam("MODE test ${JSON.stringify(value)}", GetTestCase_MODE(), async function (value) {
-		winston.info({message: 'UNIT TEST: BEGIN MODE test'});
+		winston.info({message: 'UNIT TEST: BEGIN MODE test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-    await tests.test_MODE(RetrievedValues, test_module_descriptor, value.MODE);
+    var result = await tests.test_MODE(RetrievedValues, test_module_descriptor, value.MODE);
     winston.info({message: 'UNIT TEST: MODE ended'});
-    expect(tests.hasTestPassed).to.equal(true);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 	})
 
 
 
   function GetTestCase_RQSD() {
-		var arg1, arg2, testCases = [];
-		for (var a = 1; a< 4; a++) {
-			if (a == 1) {arg1 = 0}
-			if (a == 2) {arg1 = 1}
-			if (a == 3) {arg1 = 65535}
+		var arg1, arg2, arg3, testCases = [];
+		for (var a = 1; a<= 4; a++) {
+			if (a == 1) {arg1 = 0, arg3 = true}
+			if (a == 2) {arg1 = 1, arg3 = true}
+			if (a == 3) {arg1 = 65535, arg3 = true}
+			if (a == 4) {arg1 = 2, arg3 = false}
 			for (var b = 1; b < 4; b++) {
 				if (b == 1) {arg2 = 0}
 				if (b == 2) {arg2 = 1}
 				if (b == 3) {arg2 = 2}
-				testCases.push({'nodeNumber':arg1, 'ServiceIndex':arg2});
+				testCases.push({ 'nodeNumber':arg1, 'ServiceIndex':arg2, 'expectedResult':arg3 });
 			}
 		}
 		return testCases;
 	}
 	
-	const Services = {
-		"1": {
-			"ServiceIndex": 1, "ServiceType": 1, "ServiceVersion": 0,
-			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
-		},
-		"2": {
-			"ServiceIndex": 2, "ServiceType": 2, "ServiceVersion": 0,
-			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
-		},
-		"3": {
-			"ServiceIndex": 3, "ServiceType": 3, "ServiceVersion": 0,
-			"diagnostics": { "1": {"DiagnosticCode": 1, "DiagnosticValue": 1} }
-		}
-	}
-
-
 
   // 0x78 - RQSD
   itParam("RQSD test ${JSON.stringify(value)}", GetTestCase_RQSD(), async function (value) {
-		winston.info({message: 'UNIT TEST:: BEGIN RQSD test'});
-		mock_Cbus.Services = Services;
-		// storage for values retrieved from module under test	
+		winston.info({message: 'UNIT TEST:: BEGIN RQSD test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
-    await tests.test_RQSD(RetrievedValues, value.ServiceIndex);
-    expect(tests.hasTestPassed).to.equal(true);
+    var result = await tests.test_RQSD(RetrievedValues, value.ServiceIndex);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: RQSD ended'});
 	})
 
@@ -315,10 +309,9 @@ describe('opcodes_7x unit tests', function(){
   // 0x78 - RQSD_INVALID_SERVICE
   it("RQSD_INVALID_SERVICE test",  async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD_INVALID_SERVICE test'});
-		mock_Cbus.Services = Services;
-		// storage for values retrieved from module under test	
 		RetrievedValues.setNodeNumber(0);
-    await tests.test_RQSD_INVALID_SERVICE(RetrievedValues, 4);
+    var result = await tests.test_RQSD_INVALID_SERVICE(RetrievedValues, 4);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RQSD_INVALID_SERVICE ended'});
 	})
@@ -326,10 +319,9 @@ describe('opcodes_7x unit tests', function(){
   // 0x78 - RQSD_SHORT
   it("RQSD_SHORT test",  async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RQSD_SHORT test'});
-		mock_Cbus.Services = Services;
-		// storage for values retrieved from module under test	
 		RetrievedValues.setNodeNumber(0);
-    await tests.test_RQSD_SHORT(RetrievedValues, 1);
+    var result = await tests.test_RQSD_SHORT(RetrievedValues, 1);
+    expect(result).to.equal(true);
     expect(tests.hasTestPassed).to.equal(true);
     winston.info({message: 'UNIT TEST: RQSD_SHORT ended'});
 	})

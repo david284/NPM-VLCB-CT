@@ -62,15 +62,6 @@ module.exports = class mock_CbusNetwork {
             new CANTEST (65535)
             ]
             
-    // values to output from DGN opcode - ServiceIndex, DiagnosticCode, DiagnosticValue
-    // bare minimum to do something - we expect the test will update this array using set_DGN_Outputs()
-    this.DGN_Outputs = {
-        "1": { "ServiceIndex": 1, "DiagnosticCode": 1, "DiagnosticValue": 1 }, // STATUS
-        "2": { "ServiceIndex": 1, "DiagnosticCode": 2, "DiagnosticValue": 0 }, // UPTIME upper word
-        "3": { "ServiceIndex": 2, "DiagnosticCode": 3, "DiagnosticValue": 0 },  
-        "4": { "ServiceIndex": 3, "DiagnosticCode": 4, "DiagnosticValue": 0 }
-        };
-
     this.server = net.createServer(function (socket) {
       this.socket=socket;
       socket.setKeepAlive(true,60000);
@@ -290,7 +281,7 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received NVRD'});
           if (cbusMsg.encoded.length < 16) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else {
+          } else if ( this.getModule(cbusMsg.nodeNumber) != undefined) {
             var nodeVariables = this.modules[0].nodeVariables;
             for (var i=0; i< nodeVariables.length; i++){
               if ((cbusMsg.nodeVariableIndex == 0) || (cbusMsg.nodeVariableIndex == i)) {
@@ -323,18 +314,24 @@ module.exports = class mock_CbusNetwork {
           winston.debug({message: 'Mock CBUS Network: received CANID'});
           if (cbusMsg.encoded.length < 16) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
-          } else if ((cbusMsg.CAN_ID < 1) || (cbusMsg.CAN_ID > 99)){
-            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_parameter);  
-            this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidEvent);
-          } else {
-            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.OK);  
-            this.outputWRACK(cbusMsg.nodeNumber);                
+          } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
+            if ((cbusMsg.CAN_ID < 1) || (cbusMsg.CAN_ID > 99)){
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_parameter);  
+              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidEvent);
+            } else {
+              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.OK);  
+              this.outputWRACK(cbusMsg.nodeNumber);                
+            }
           }
           break;
         case '76': //MODE
           // Format: [<MjPri><MinPri=3><CANID>]<76><NN hi><NN lo><MODE>
           winston.debug({message: 'Mock CBUS Network: received MODE'});
-          this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          if (cbusMsg.encoded.length < 16) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
+          } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
+            this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, 0);
+          }
           break;
         case '78': //RQSD
           winston.debug({message: 'Mock CBUS Network: received RQSD'});
