@@ -104,14 +104,15 @@ class RetrievedValues {
         this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
       }
       
-      // create a bit field for expected diagnostic codes for this service 
-      // so we can check against actual received bitfield
+      // create a bit field & count for expected diagnostic codes for this service 
+      // so we can check against actual received diagnostic codes
       if(Service_Definitions[ServiceType] != null) {
         if ( (Service_Definitions[ServiceType].version!= null) 
           && (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
           && (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
           for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
             this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
+            this.data["Services"][ServiceIndex].diagnosticExpectedCount++;
           }
         }
       }

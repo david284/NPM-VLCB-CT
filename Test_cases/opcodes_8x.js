@@ -68,8 +68,13 @@ module.exports = class opcodes_8x {
         if(ServiceIndex == 0) {	testType = "\'all services\'"; } // overwrite if index = 0
         if(ServiceIndex != 0) {
           if ( DiagnosticCode == 0) { 
-            if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-              winston.info({message: 'VLCB:      FAIL number of expected diagnostics do not match number of received diagnostics'});
+            if(RetrievedValues.data.Services[ServiceIndex].diagnosticExpectedCount != RetrievedValues.data.Services[ServiceIndex].diagnosticReportedCount) {
+              winston.info({message: 'VLCB:      FAIL expected diagnostic count ' + RetrievedValues.data.Services[ServiceIndex].diagnosticExpectedCount +
+                                    ' does not match received diagnostic count ' + RetrievedValues.data.Services[ServiceIndex].diagnosticReportedCount });
+              this.hasTestPassed = false
+            }
+            else if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
+              winston.info({message: 'VLCB:      FAIL mix of expected diagnostics do not match mix of received diagnostics'});
               this.hasTestPassed = false
             }
           } 
