@@ -429,14 +429,14 @@ module.exports = class opcodes_7x {
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 this.hasTestPassed = true;
               }else {
-                winston.info({message: 'VLCB: GRSP requestOpCode:'
-                  + '\n  Expected ' + cbusLib.decode(msgData).opCode
-                  + '\n  Actual ' + msg.requestOpCode}); 
+                winston.info({message: 'VLCB:      GRSP requestOpCode:'
+                  + ' Expected: ' + cbusLib.decode(msgData).opCode
+                  + ' Actual: ' + msg.requestOpCode}); 
               }
             } else {
-              winston.info({message: 'VLCB: GRSP nodeNumber:' +
-                + '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
-                + '\n  Actual ' + msg.nodeNumber}); 
+              winston.info({message: 'VLCB:      GRSP nodeNumber:'
+                + ' Expected: ' + cbusLib.decode(msgData).nodeNumber
+                + ' Actual: ' + msg.nodeNumber}); 
             }
           }
         });
