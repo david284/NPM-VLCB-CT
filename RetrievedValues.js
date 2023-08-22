@@ -89,9 +89,11 @@ class RetrievedValues {
       if (this.data.Services[ServiceIndex] == null) {
         this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
         this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
+        this.data["Services"][ServiceIndex]["diagnosticReportedCount"] = 0;
         this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
         this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
-//        this.data["Services"][ServiceIndex]["diagnostics"] = {};
+        this.data["Services"][ServiceIndex]["MaxDiagnosticCode"] = 0;
+        this.data["Services"][ServiceIndex]["diagnostics"] = {};
         this.data.ServicesActualCount++;
         if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
         winston.debug({message: 'VLCB: RetrievedValues: service added - index ' + ServiceIndex});
@@ -169,24 +171,18 @@ class RetrievedValues {
   // Diagnostics related methods
   //
 
-  // add a diagnostic ode, but only if the service has already been created
+  // add a diagnostic code, but only if the service has already been created
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
 		if (this.data["Services"][ServiceIndex] != null) {
 		
       // lets create a shorter reference to make the code a bit more readable
       const service = this.data["Services"][ServiceIndex];
       
-      if (service["diagnostics"] == undefined) { 
-        service["diagnosticReportedCount"] = null;
-        service["MaxDiagnosticCode"] = 0;
-        service["diagnostics"] = {};
-      }
-      
       if (service.diagnostics[DiagnosticCode] == null){
         // new diagnostic code
         service.diagnosticReportedCount++;
         // keep a record of highest diagnostic code
-        if (DiagnosticCode > service["MaxDiagnosticCode"]) {service["MaxDiagnosticCode"] = DiagnosticCode}
+        if (DiagnosticCode > service.MaxDiagnosticCode) { service.MaxDiagnosticCode = DiagnosticCode }
         service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
         service.diagnostics[DiagnosticCode] = {};
       }
