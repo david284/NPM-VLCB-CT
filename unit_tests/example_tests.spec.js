@@ -2,7 +2,7 @@
 const expect = require('chai').expect;
 const winston = require('./config/winston_test.js');
 const itParam = require('mocha-param');
-const example_tests = require('./../Tests_examples.js');
+const example_tests = require('./../Test_suites/Tests_examples.js');
 const utils = require('./../utilities.js');
 const assert = require('chai').assert;
 

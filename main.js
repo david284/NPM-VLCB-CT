@@ -13,25 +13,24 @@ const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
-const example_tests = require('./Tests_examples.js');
-const callback_tests = require('./Tests_callback.js');
-const SetupMode_tests = require('./Tests_SetupMode.js');
-
-const Type1_MNS = require('./Services/Type1_MinimumNodeService.js');
-const Type2_NVS = require('./Services/Type2_NodeVariableService.js');
-const Type3_CAN = require('./Services/Type3_CANService.js');
-const Type4_Teaching = require('./Services/Type4_TeachingService.js');
-const Type5_Producer = require('./Services/Type5_ProducerService.js');
-const Type6_Consumer = require('./Services/Type6_ConsumerService.js');
-const Type9_EventAck = require('./Services/Type9_EventAcknowledgeService.js');
-const Type10_Bootloader = require('./Services/Type10_BootloaderService.js');
-const Type11_Bootloader2 = require('./Services/Type11_Bootloader2Service.js');
-const Type12_FastClock = require('./Services/Type12_FastClockService.js');
-const Type13_DCC_CAB = require('./Services/Type13_DCC_CAB_Service.js');
-const Type14_DCC_CMD = require('./Services/Type14_DCC_CMD_Service.js');
-const Type15_CANBridge = require('./Services/Type15_CANBridgeService.js');
-const Type16_SLiM = require('./Services/Type16_SLiMService.js');
-const Type17_LongMessage = require('./Services/Type17_LongMessageService.js');
+const example_tests = require('./Test_suites/Tests_examples.js');
+const callback_tests = require('./Test_suites/Tests_callback.js');
+const SetupMode_tests = require('./Test_suites/Tests_SetupMode.js');
+const Type1_MNS = require('./Test_suites/Type1_MinimumNodeService.js');
+const Type2_NVS = require('./Test_suites/Type2_NodeVariableService.js');
+const Type3_CAN = require('./Test_suites/Type3_CANService.js');
+const Type4_Teaching = require('./Test_suites/Type4_TeachingService.js');
+const Type5_Producer = require('./Test_suites/Type5_ProducerService.js');
+const Type6_Consumer = require('./Test_suites/Type6_ConsumerService.js');
+const Type9_EventAck = require('./Test_suites/Type9_EventAcknowledgeService.js');
+const Type10_Bootloader = require('./Test_suites/Type10_BootloaderService.js');
+const Type11_Bootloader2 = require('./Test_suites/Type11_Bootloader2Service.js');
+const Type12_FastClock = require('./Test_suites/Type12_FastClockService.js');
+const Type13_DCC_CAB = require('./Test_suites/Type13_DCC_CAB_Service.js');
+const Type14_DCC_CMD = require('./Test_suites/Type14_DCC_CMD_Service.js');
+const Type15_CANBridge = require('./Test_suites/Type15_CANBridgeService.js');
+const Type16_SLiM = require('./Test_suites/Type16_SLiMService.js');
+const Type17_LongMessage = require('./Test_suites/Type17_LongMessageService.js');
 
 
 // Scope:

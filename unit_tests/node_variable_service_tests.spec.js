@@ -8,7 +8,7 @@ const cbusLib = require('cbuslibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
 const RetrievedValues = require('./../RetrievedValues.js');
-const NVS_tests = require('./../Services/Type2_NodeVariableService.js');
+const NVS_tests = require('./../Test_suites/Type2_NodeVariableService.js');
 const utils = require('./../utilities.js');
 const assert = require('chai').assert;
 

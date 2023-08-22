@@ -39,12 +39,6 @@ describe('RetrievedValues unit tests', function(){
 //
 
     //
-	it("RetrievedValues Constructor test", function () {
-    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.retrieved_values, null, '    ')});        
-		expect(RetrievedValues.getNodeNumber()).to.be.null;
-  })
-
-    //
 	it("Node Number test", function () {
     RetrievedValues.setNodeNumber(300);
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);

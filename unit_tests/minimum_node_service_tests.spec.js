@@ -6,7 +6,7 @@ const net = require('net')
 const cbusLib = require('cbuslibrary');
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 const IP_Network = require('./../ip_network.js')
-const MNS_tests = require('./../Services/Type1_MinimumNodeService.js');
+const MNS_tests = require('./../Test_suites/Type1_MinimumNodeService.js');
 const utils = require('./../utilities.js');
 const assert = require('chai').assert;
 
