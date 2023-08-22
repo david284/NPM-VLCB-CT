@@ -40,8 +40,10 @@ describe('RetrievedValues unit tests', function(){
 
     //
 	it("Node Number test", function () {
+		winston.info({message: 'UNIT TEST: BEGIN Node Number test'});
     RetrievedValues.setNodeNumber(300);
 		expect(RetrievedValues.getNodeNumber()).to.equal(300);
+		winston.info({message: 'UNIT TEST: END Node Number test'});
   })
 
 
@@ -70,27 +72,29 @@ describe('RetrievedValues unit tests', function(){
 
     //
 	it("Add Service test", function () {
+		winston.info({message: 'UNIT TEST: BEGIN Add Service test'});
     RetrievedValues.addService(1,2,3);
     winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
 		expect(RetrievedValues.data.Services[1].ServiceType).to.equal(2);
 		expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
+		winston.info({message: 'UNIT TEST: END Add Service test'});
   })
 
-    //
-    it("Add Undefined Service test", function () {
-      RetrievedValues.addService(1,9999,3);
-      winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
-      expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
-      expect(RetrievedValues.data.Services[1].ServiceType).to.equal(9999);
-      expect(RetrievedValues.data.Services[1].ServiceVersion).to.equal(3);
-    })
-  
-  
+  //
+  it("Add Undefined Service test", function () {
+    winston.info({message: 'UNIT TEST: BEGIN Add Undefined Service test'});
+    RetrievedValues.addService(2,9999,3);
+    winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
+    expect(RetrievedValues.data.Services[2].ServiceIndex).to.equal(2);
+    expect(RetrievedValues.data.Services[2].ServiceType).to.equal(9999);
+    expect(RetrievedValues.data.Services[2].ServiceVersion).to.equal(3);
+    winston.info({message: 'UNIT TEST: END Add Undefined Service test'});
+  })
 
-
-    //
+  //
 	it("Add Service Data test", function () {
+		winston.info({message: 'UNIT TEST: BEGIN Add Service Data test'});
     RetrievedValues.addService(2,2,3);
 		//
     RetrievedValues.addServiceData(2,3,4,5,6);
@@ -100,6 +104,7 @@ describe('RetrievedValues unit tests', function(){
 		expect(RetrievedValues.data.Services[2].Data2).to.equal(4);
 		expect(RetrievedValues.data.Services[2].Data3).to.equal(5);
 		expect(RetrievedValues.data.Services[2].Data4).to.equal(6);
+		winston.info({message: 'UNIT TEST: END Add Service Data test'});
   })
 
 

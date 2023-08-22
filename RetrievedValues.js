@@ -87,23 +87,26 @@ class RetrievedValues {
 	addService(ServiceIndex, ServiceType, ServiceVersion){
     if ( (ServiceIndex != null) && (ServiceType != null) && (ServiceVersion != null)){
       if (this.data.Services[ServiceIndex] == null) {
-        this.data.Services[ServiceIndex] = {"ServiceIndex":ServiceIndex};
-        this.data["Services"][ServiceIndex]["diagnosticExpectedCount"] = 0;
-        this.data["Services"][ServiceIndex]["diagnosticReportedCount"] = 0;
-        this.data["Services"][ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
-        this.data["Services"][ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
-        this.data["Services"][ServiceIndex]["MaxDiagnosticCode"] = 0;
-        this.data["Services"][ServiceIndex]["diagnostics"] = {};
+        this.data.Services[ServiceIndex]= {"ServiceName": "Unknown Service"};
+        this.data.Services[ServiceIndex]["ServiceIndex"] = ServiceIndex;
+        this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
+        this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
+        this.data.Services[ServiceIndex]["diagnosticExpectedCount"] = 0;
+        this.data.Services[ServiceIndex]["diagnosticReportedCount"] = 0;
+        this.data.Services[ServiceIndex]["diagnosticCodeExpectedBitfield"] = 0;
+        this.data.Services[ServiceIndex]["diagnosticCodeReceivedBitfield"] = 0;
+        this.data.Services[ServiceIndex]["MaxDiagnosticCode"] = 0;
+        this.data.Services[ServiceIndex]["diagnostics"] = {};
+
+        if(Service_Definitions[ServiceType] != null) {
+          this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
+        }
+
         this.data.ServicesActualCount++;
         if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
         winston.debug({message: 'VLCB: RetrievedValues: service added - index ' + ServiceIndex});
-      }
-      this.data.Services[ServiceIndex]["ServiceType"] = ServiceType;
-      this.data.Services[ServiceIndex]["ServiceVersion"] = ServiceVersion;
-      if(Service_Definitions[ServiceType] != null) {
-        this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
-      } else{
-        this.data.Services[ServiceIndex]["ServiceName"] = "Unknown Service"
+      } else {
+        winston.debug({message: 'VLCB:      WARNING: service already exists - index ' + ServiceIndex});
       }
       
       // create a bit field & count for expected diagnostic codes for this service 
