@@ -42,7 +42,7 @@ describe('example unit tests', function(){
             winston.info({message: 'UNIT TEST: Harness ended'});
             expect(examples.hasTestPassed).to.equal(true);
 			done();
-		}, 500);
+		}, 100);
     })
 
 

@@ -34,6 +34,7 @@ describe('opcodes_Dx unit tests', function(){
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_Dx unit tests');
     Network.testStarted = true;
+    tests.defaultTimeout = 10
 	})
     
     beforeEach (function() {

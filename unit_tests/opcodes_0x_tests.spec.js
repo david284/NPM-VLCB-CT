@@ -29,14 +29,10 @@ describe('opcodes_0x unit tests', function(){
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const tests = new opcodes_0x(Network);
 
-
-    // mns_testss have their own timeouts, so need to reflect that and add a little bit
-    // to ensure the unti tests don't timeout first
-    const test_timeout = tests.response_time + 100;
-
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_0x unit tests');
     Network.testStarted = true;
+    tests.defaultTimeout = 10
 	})
     
     beforeEach (function() {

@@ -28,8 +28,6 @@ describe('Node variable Service unit tests', function(){
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
 	const tests = new NVS_tests(Network);
 
-    const test_timeout = 100;
-
 	before(function() {
     utils.DisplayUnitTestHeader('Node variable Service unit tests');
 	})
@@ -75,7 +73,7 @@ describe('Node variable Service unit tests', function(){
       expect(RetrievedValues.data.TestsPassed).to.equal(1);
       expect(RetrievedValues.data.TestsFailed).to.equal(0);
 			done();
-		}, test_timeout);
+		}, 20);
 	})
 
   // 
@@ -95,7 +93,7 @@ describe('Node variable Service unit tests', function(){
       expect(RetrievedValues.data.TestsPassed).to.equal(0);
       expect(RetrievedValues.data.TestsFailed).to.equal(1);
 			done();
-		}, test_timeout);
+		}, 20);
 	})
 
 })

@@ -40,7 +40,7 @@ describe('utilities unit tests', function(){
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: Harness ended'});
 			done();
-		}, 500);
+		}, 10);
     })
 
     //
@@ -49,7 +49,7 @@ describe('utilities unit tests', function(){
 		setTimeout(function(){
             winston.info({message: 'UNIT TEST: Harness ended'});
 			done();
-		}, 500);
+		}, 10);
     })
 
 

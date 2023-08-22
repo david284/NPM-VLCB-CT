@@ -79,7 +79,7 @@ describe('callback unit tests', function(){
 			}
 			winston.info({message: 'UNIT TEST: END HEARTB test'});
 			done();
-		}, 100);
+		}, 20);
 	})
 
 
