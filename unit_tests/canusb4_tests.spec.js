@@ -48,7 +48,7 @@ describe('canusb4 unit tests', function(){
       winston.info({message: 'UNIT TEST: END canusb4 receive test'});
       expect(canusb4.messagesIn[0].encoded).to.equal(msgData);
 			done();
-		}, 100);
+		}, 10);
   })
 
 	it("canusb4 transmit", function (done) {
@@ -61,7 +61,7 @@ describe('canusb4 unit tests', function(){
       winston.info({message: 'UNIT TEST: END canusb4 transmit test'});
       expect(buffer.toString()).to.equal(msgData);
 			done();
-		}, 100);
+		}, 10);
   })
 
 

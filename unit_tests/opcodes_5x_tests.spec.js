@@ -88,7 +88,7 @@ describe('opcodes_5x unit tests', function(){
       winston.info({message: 'UNIT TEST: RQNN ended'});
       mock_Cbus.exitSetup(value.nodeNumber);
 			done();
-		}, 100);
+		}, 10);
 	})
 
 

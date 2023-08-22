@@ -36,14 +36,11 @@ describe('example unit tests', function(){
 //
 
     //
-	it("test_harness", function (done) {
-        examples.test_harness();
-		setTimeout(function(){
-            winston.info({message: 'UNIT TEST: Harness ended'});
-            expect(examples.hasTestPassed).to.equal(true);
-			done();
-		}, 100);
-    })
+	it("test_harness", async function () {
+		var result = await examples.test_harness();
+    winston.info({message: 'UNIT TEST: Harness ended'});
+    expect(examples.hasTestPassed).to.equal(true);
+  })
 
 
 })
