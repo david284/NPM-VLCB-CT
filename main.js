@@ -13,7 +13,6 @@ const fetch_file = require('./fetch_module_descriptor.js')
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
 let RetrievedValues = require('./RetrievedValues.js');		// can't be const as we re-declare it with returned object
 
-const example_tests = require('./Test_suites/Tests_examples.js');
 const callback_tests = require('./Test_suites/Tests_callback.js');
 const SetupMode_tests = require('./Test_suites/Tests_SetupMode.js');
 const Type1_MNS = require('./Test_suites/Type1_MinimumNodeService.js');
@@ -113,15 +112,13 @@ async function run_main(){
 }
 
 
-// Block to call tests to ensure they run in sequence
+// Block to call test suites to ensure they run in sequence
 // this relies on the underlying functions being themselves async functions, which can be called with an 'await' method
 // Only code within this code block will be executed in sequence
 async function runtests() {
-  // create instances of tests
-  const examples = new example_tests(connection);
+  // create instances of test suites
   const callback = new callback_tests(connection);
   const SetupMode = new SetupMode_tests(connection);
-  //
   const MNS = new Type1_MNS(connection);
   const NVS = new Type2_NVS(connection);
   const CAN = new Type3_CAN(connection);

@@ -1,6 +1,6 @@
 'use strict';
 const winston = require('winston');		// use config from root instance
-const cbusLib = require('cbuslibrary');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -10,12 +10,9 @@ const cbusLib = require('cbuslibrary');
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
 
+module.exports = class BaseTestCase {
 
-class BaseService {
-
-    constructor() {}
+  constructor() {}
 		
-
 }
 
-module.exports = BaseService;
