@@ -474,6 +474,8 @@ module.exports = class opcodes_7x {
                   winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
                 } else {
                   RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
+                  winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex 
+                              +  ' - ' + RetrievedValues.data.Services[msg.ServiceIndex.toString()].ServiceName});
                 }
               }
             } else {
