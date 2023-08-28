@@ -54,7 +54,7 @@ module.exports = class opcodes_0x {
             } else {
               // we have an expected node number, so check it
               if (msg.nodeNumber == expectedNodeNumber){
-                comment = 'QNN passed for node ' + msg.nodeNumber
+                comment = 'PNN received for node ' + msg.nodeNumber
                 this.hasTestPassed = true;
               }
             }
