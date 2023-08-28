@@ -10,7 +10,13 @@ const {SerialPort} = require("serialport");
 // var has function scope (or global if top level)
 // const has block scope (like let), and can't be changed through reassigment or redeclared
 
-
+// add separate logger just for failures
+const failLogger = winston.createLogger({
+  format: winston.format.printf((info) => { return info.message;}),
+  transports: [
+    new winston.transports.File({ filename: './Test_Results/fails.txt', level: 'error', options: { flags: 'w' } }),
+  ],
+});
 
 
 exports.processResult = function processResult(RetrievedValues, hasTestPassed, testName, comment)
@@ -24,6 +30,7 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 	}else{
     process.stdout.write('\x1B[91m');   // bright red
 		winston.info({message: 'VLCB: FAIL ' +  testName + ' failed ' + comment});
+    failLogger.log({ level: 'error', message: 'VLCB: FAIL ' +  testName + ' failed ' + comment });
     process.stdout.write('\x1B[37m');   // white
     RetrievedValues.data.TestsFailed++;
 	}
