@@ -30,7 +30,7 @@ exports.processResult = function processResult(RetrievedValues, hasTestPassed, t
 	}else{
     process.stdout.write('\x1B[91m');   // bright red
 		winston.info({message: 'VLCB: FAIL ' +  testName + ' failed ' + comment});
-    failLogger.log({ level: 'error', message: 'VLCB: FAIL ' +  testName + ' failed ' + comment });
+    failLogger.log({ level: 'error', message: 'VLCB: FAIL ' +  testName + ' : ' + comment });
     process.stdout.write('\x1B[37m');   // white
     RetrievedValues.data.TestsFailed++;
 	}

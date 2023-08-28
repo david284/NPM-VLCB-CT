@@ -65,6 +65,7 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNLRN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         // to check if it's in learn mode, read node parameter 8
         msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
@@ -73,16 +74,18 @@ module.exports = class opcodes_5x {
           this.network.messagesIn.forEach(msg => {
             if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
               if (msg.mnemonic == "PARAN"){
+                comment = ' - received PARAN message'
                 // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
                 if (msg.parameterValue & 0x20) { 
                   RetrievedValues.data.inLearnMode = true;
                   this.hasTestPassed = true; 
+                  comment = ' - in learn mode'
                 }
               }
             }
           })
-          if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
-          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN');
+          if(!this.hasTestPassed){ comment = ' - missing expected PARAN message'; }
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN (0x53)', comment);
           resolve(this.hasTestPassed);
         }, this.defaultTimeout );
       }, this.defaultTimeout );
@@ -98,6 +101,7 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNULN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         // to check if it's no longer in learn mode, read node parameter 8
         msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
@@ -110,12 +114,13 @@ module.exports = class opcodes_5x {
                 if (!(msg.parameterValue & 0x20)) { 
                   RetrievedValues.data.inLearnMode = false;
                   this.hasTestPassed = true; 
+                  comment = ' - out of learn mode'
                 }
               }
             }
           })
-          if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAN'}); }
-          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN');
+          if(!this.hasTestPassed){ comment = ' - missing expected PARAN'; }
+          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN (0x54)', comment);
           resolve(this.hasTestPassed);
         }, this.defaultTimeout );
       } , this.defaultTimeout );
@@ -131,16 +136,18 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNCLR(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
             if (msg.mnemonic == "WRACK"){
               this.hasTestPassed = true; 
+              comment = ' - WRACK received'
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR');
+        if(!this.hasTestPassed){ comment = ' - missing expected WRACK'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR (0x55)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -155,6 +162,7 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNEVN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -162,11 +170,12 @@ module.exports = class opcodes_5x {
               this.hasTestPassed = true;
               // store the returned value
               RetrievedValues.data["EventSpaceLeft"] = msg.EVSPC;
+              comment = ' - EVNLF received'
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected EVNLF'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN');
+        if(!this.hasTestPassed){ comment = ' - missing expected EVNLF message'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN (0x56)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -181,19 +190,21 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "ENRSP"){
               this.hasTestPassed = true;
+              comment = ' - received ENRSP'
               // store the returned value
               if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
               RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ENRSP'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD');
+        if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -208,18 +219,20 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeRQEVN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "NUMEV"){
               this.hasTestPassed = true;
+              comment = ' - received NUMEV'
               // store the returned value
               RetrievedValues.data["StoredEventCount"] = msg.eventCount;
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NUMEV'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN');
+        if(!this.hasTestPassed){ comment = ' - missing expected NUMEV'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN (0x58)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -234,16 +247,18 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "NNACK"){
               this.hasTestPassed = true;
+              comment = ' - received NNACK'
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM');
+        if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM (0x5D)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -258,6 +273,7 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         if (serviceIndex) {
           // get all diagnostics for MNS service, so we can check uptime has been reset
@@ -285,11 +301,16 @@ module.exports = class opcodes_5x {
             if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
               var uptime = (MSB_Uptime << 8) + LSB_Uptime
               winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-              if (uptime < 2){ this.hasTestPassed = true }
+              if (uptime < 2){ 
+                this.hasTestPassed = true 
+                comment = ' - uptime is less than 2'
+              } else {
+                comment = ' - uptime is ' + uptime + ', but expected < 2'
+              }
             } else {
-              winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST has undefined value '}); 
+              comment = ' -  uptime after NNRST has undefined value'
             }
-            utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST');
+            utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST (0x5E)', comment);
             resolve(this.hasTestPassed);
           } , this.defaultTimeout*4 );
         } else {

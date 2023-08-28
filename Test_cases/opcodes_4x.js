@@ -34,16 +34,18 @@ module.exports = class opcodes_4x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             if (msg.mnemonic == "NNACK"){
               this.hasTestPassed = true;
+              comment = ' - received NNACK message'
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NNACK'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN');
+        if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN (0x42)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -58,6 +60,7 @@ module.exports = class opcodes_4x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNNRSM(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         var GRSPreceived = false;
         this.network.messagesIn.forEach(msg => {
@@ -68,25 +71,25 @@ module.exports = class opcodes_4x {
               winston.debug({message: 'VLCB:      GRSP received: ' + msg.result})
                 if (msg.result == GRSP.OK) {
                   this.hasTestPassed = true;
+                  comment = ' - GPRS OK received'
                 } else {
-                  winston.info({message: 'VLCB: GRSP result:'
-                    + '\n  Expected ' + GRSP.OK
-                    + '\n  Actual ' + msg.result}); 
+                  comment = ' - GRSP result:  Expected ' + GRSP.OK + ' Actual ' + msg.result
+                  winston.info({message: 'VLCB:      ' + comment}); 
                 }
               }else {
-                winston.info({message: 'VLCB: GRSP requestOpCode:'
-                  + '\n  Expected ' + cbusLib.decode(msgData).opCode
-                  + '\n  Actual ' + msg.requestOpCode}); 
+                comment = 'GRSP requestOpCode: Expected ' + cbusLib.decode(msgData).opCode
+                + ' Actual ' + msg.requestOpCode
+                winston.info({message: 'VLCB:      ' + comment}); 
               }
             } else {
-              winston.info({message: 'VLCB: GRSP nodeNumber:' +
-                + '\n  Expected ' + cbusLib.decode(msgData).nodeNumber
-                + '\n  Actual ' + msg.nodeNumber}); 
+              comment = 'GRSP nodeNumber: Expected ' + cbusLib.decode(msgData).nodeNumber
+              + ' Actual ' + msg.nodeNumber
+              winston.info({message: 'VLCB:      ' + comment}); 
             }
           }
         });
-        if (!GRSPreceived) { winston.info({message: 'VLCB: NNRSM Fail: no GRSP received'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM');
+        if (!GRSPreceived) { comment = ' - no GRSP received'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));

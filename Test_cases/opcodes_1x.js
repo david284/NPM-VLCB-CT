@@ -34,9 +34,11 @@ module.exports = class opcodes_1x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeRQNP();
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "PARAMS"){
+            comment = ' - received RQNP message '
             winston.debug({message: 'VLCB: RQNP valid'});
             this.hasTestPassed = true;
             RetrievedValues.addNodeParameter(1, msg.param1);
@@ -53,8 +55,8 @@ module.exports = class opcodes_1x {
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PARAMS'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP');
+        if(!this.hasTestPassed){ comment = ' - missing expected PARAMS message'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNP (0x10)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
@@ -69,15 +71,17 @@ module.exports = class opcodes_1x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeRQMN();
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "NAME"){
             this.hasTestPassed = true;
             RetrievedValues.data["NAME"] = msg.name;
+            comment = ' - received NAME ' + msg.name
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected NAME'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN');
+        if(!this.hasTestPassed){ comment = ' - missing expected NAME message'; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout )
     }.bind(this));

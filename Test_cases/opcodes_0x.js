@@ -31,6 +31,8 @@ module.exports = class opcodes_0x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeQNN();
       this.network.write(msgData);
+      var comment = ''
+      var expectedNodeNumber = RetrievedValues.getNodeNumber()
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "PNN"){
@@ -46,21 +48,20 @@ module.exports = class opcodes_0x {
             RetrievedValues.data.modules[msg.nodeNumber] = newModule;
             // we check matching node number here, as we're expecting all the nodes to respond to QNN
             // and we'll only pass the test if we get a response from the node under test
-            var expectedNodeNumber = RetrievedValues.getNodeNumber()
             if (isNaN(expectedNodeNumber)) {
               // don't have an expected node number, so assume good
               this.hasTestPassed = true;
             } else {
               // we have an expected node number, so check it
               if (msg.nodeNumber == expectedNodeNumber){
-                winston.info({message: 'VLCB:      QNN passed for node ' + msg.nodeNumber});
+                comment = 'QNN passed for node ' + msg.nodeNumber
                 this.hasTestPassed = true;
               }
             }
           }
         })
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected PNN'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN');
+        if(!this.hasTestPassed){ comment = ' - missing expected PNN for node ' + expectedNodeNumber; }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN (0x0D)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout*2 );
     }.bind(this));
