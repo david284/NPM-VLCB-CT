@@ -843,7 +843,7 @@ module.exports = class mock_CbusNetwork {
       } else {
         // requesting individual service, so check it exists
         if(ServiceIndex > module.getServiceCount()) {
-          this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidService);
+          this.outputGRSP(nodeNumber, '87', ServiceIndex, GRSP.InvalidService);
         } else {
           if (DiagnosticCode == 0) {
             // requesting all diagnostics, from one service
@@ -857,7 +857,7 @@ module.exports = class mock_CbusNetwork {
           } else {
             // requesting one diagnostic, from one service, so check diagnostic exists
             if (DiagnosticCode > module.getDiagnosticCount(ServiceIndex)) {
-              this.outputGRSP(nodeNumber, '5E', ServiceIndex, GRSP.InvalidDiagnosticCode);
+              this.outputGRSP(nodeNumber, '87', ServiceIndex, GRSP.InvalidDiagnosticCode);
             } else {
               var msgData = cbusLib.encodeDGN(nodeNumber, 
                 ServiceIndex,
