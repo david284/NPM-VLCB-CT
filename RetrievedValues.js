@@ -145,6 +145,16 @@ class RetrievedValues {
     this.data.ServicesReportedCount = 0;
   }
 	
+  getServiceName(ServiceIndex){
+    if (ServiceIndex == 0){
+      return ''                         // no name if zero index, so don't try to find a match
+    } else if (this.data.Services[ServiceIndex] == null) {
+      return 'unknown service'
+    } else {
+      return this.data.Services[ServiceIndex].ServiceName
+    }
+  }
+
 	ServiceToString(ServiceIndex) {
 		if (this.data.Services[ServiceIndex] != null) {
 			var service = this.data.Services[ServiceIndex];

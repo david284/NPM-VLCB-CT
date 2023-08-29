@@ -85,7 +85,9 @@ module.exports = class opcodes_7x {
                 if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                   msgBitField |= 2;			// set bit 1
                 } else {
-                  winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidParameterIndex}); 
+                  var commentCMDERR =' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
+                  winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+                  comment += commentCMDERR 
                 }
               }
               if (msg.mnemonic == "GRSP"){
@@ -93,7 +95,9 @@ module.exports = class opcodes_7x {
                 if (msg.result == GRSP.InvalidNodeVariableIndex) {
                   msgBitField |= 8;			// set bit 3
                 } else {
-                  winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidParameterIndex}); 
+                  var commentGRSP = ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result
+                  winston.info({message: 'VLCB:      FAIL' + commentGRSP }); 
+                  comment += commentGRSP
                 }
               }
             }
@@ -102,10 +106,8 @@ module.exports = class opcodes_7x {
             comment = ' -  CMDERR & GRSP messages has been received correctly'
             this.hasTestPassed = true;
           } else {
-            if ((msgBitField && 1) == 0){ comment +=' - CMDERR message missing'; }
-            if ((msgBitField && 2) == 0){ comment +=' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber}
-            if ((msgBitField && 4) == 0){ comment += ' - GRSP message missing'; }
-            if ((msgBitField && 8) == 0){ comment += ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result}
+            if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing'; }
+            if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing'; }
           }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX (0x71)', comment); 
           resolve(this.hasTestPassed);
@@ -238,8 +240,9 @@ module.exports = class opcodes_7x {
                 this.hasTestPassed = true
                 comment += ' - received CMDERR Invalid Parameter Index'
               } else {
-                comment +=' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
-                winston.info({message: 'VLCB:      Fail' + comment}); 
+                var commentCMDERR =' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      Fail' + commentCMDERR}); 
+                comment += commentCMDERR
               }
             }
             if (msg.mnemonic == "GRSP"){
@@ -248,8 +251,9 @@ module.exports = class opcodes_7x {
                 this.hasTestPassed = true
                 comment += ' - received GRSP Invalid Parameter Index'
               } else {
-                comment += ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result
-                winston.info({message: 'VLCB:      FAIL' + comment}); 
+                var commentGRSP = ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result
+                winston.info({message: 'VLCB:      FAIL' + commentGRSP}); 
+                comment += commentGRSP
               }
             }
             if (msg.mnemonic == "PARAN"){
@@ -342,8 +346,8 @@ module.exports = class opcodes_7x {
           comment =  ' - both WRACK and GRSP messages have been received correctly'
           this.hasTestPassed = true;
         } else {
-          if ((msgBitField && 1) == 0){ comment += '- WRACK messages missing'}
-          if ((msgBitField && 2) == 0){ comment += ' - GRSP message missing'}
+          if ((msgBitField & 1) == 0){ comment += '- WRACK messages missing'}
+          if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing'}
         }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID (0x75)', comment);
         resolve(this.hasTestPassed);

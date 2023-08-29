@@ -44,6 +44,7 @@ module.exports = class opcodes_8x {
       var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
       this.network.write(msgData);
       var comment = ''
+      var ServiceName = RetrievedValues.getServiceName(ServiceIndex);
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -66,7 +67,6 @@ module.exports = class opcodes_8x {
             }
           }
         });
-        comment += " - ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode;
         if(ServiceIndex != 0) {
           if ( DiagnosticCode == 0) { 
             if(RetrievedValues.data.Services[ServiceIndex].diagnosticExpectedCount != RetrievedValues.data.Services[ServiceIndex].diagnosticReportedCount) {
@@ -82,6 +82,9 @@ module.exports = class opcodes_8x {
             }
           } 
         }
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - no response received to RDGN'; } }
+        // add some context to result
+        comment = " - " + ServiceName +" ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + comment;
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN (0x87)', comment);
         resolve(this.hasTestPassed);
 			} , RDGN_timeout );
