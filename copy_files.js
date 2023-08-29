@@ -54,6 +54,7 @@ exports.copyFiles = function copyFiles(identity)
     zip.addLocalFile('./Test_Results/Retrieved Values.txt')
     zip.addLocalFile('./Test_Results/debug.log')
     zip.addLocalFile('./Test_Results/TestReport.txt')
+    zip.addLocalFile('./Test_Results/fails.txt')
     zip.writeZip(foldername+outputFile);
   }catch (err) {
 		console.error(err)

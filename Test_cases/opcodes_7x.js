@@ -235,17 +235,21 @@ module.exports = class opcodes_7x {
             if (msg.mnemonic == "CMDERR"){
               msgBitField |= 1;			// set bit 0
               if (msg.errorNumber == GRSP.InvalidParameterIndex) {
-                msgBitField |= 2;			// set bit 1
+                this.hasTestPassed = true
+                comment += ' - received CMDERR Invalid Parameter Index'
               } else {
-                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidParameterIndex}); 
+                comment +=' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      Fail' + comment}); 
               }
             }
             if (msg.mnemonic == "GRSP"){
-              msgBitField |= 4;			// set bit 2
+              msgBitField |= 2;			// set bit 1
               if (msg.result == GRSP.InvalidParameterIndex) {
-                msgBitField |= 8;			// set bit 3
+                this.hasTestPassed = true
+                comment += ' - received GRSP Invalid Parameter Index'
               } else {
-                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.InvalidParameterIndex}); 
+                comment += ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result
+                winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
             if (msg.mnemonic == "PARAN"){
@@ -253,16 +257,10 @@ module.exports = class opcodes_7x {
             }
           }
         });
-        if (msgBitField == 15) {
-          comment = ' -  CMDERR & GRSP messages has been received correctly'
-          this.hasTestPassed = true;
-        } else {
-          if ((msgBitField && 1) == 0){ comment +=' - CMDERR message missing'; }
-          if ((msgBitField && 2) == 0){ comment +=' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber}
-          if ((msgBitField && 4) == 0){ comment += ' - GRSP message missing'; }
-          if ((msgBitField && 8) == 0){ comment += ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result}
-        }
-      utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX (0x73)', comment);
+        // check for missing messages
+        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing', this.hasTestPassed = false }
+        if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing', this.hasTestPassed = false }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX (0x73)', comment);
         resolve(this.hasTestPassed);
       ;} , this.defaultTimeout );
     }.bind(this));
@@ -521,6 +519,7 @@ module.exports = class opcodes_7x {
             comment = ' - Service count reported matches actual count of received services'
           }
         }
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - no response to RQSD received'; } }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (0x78)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );

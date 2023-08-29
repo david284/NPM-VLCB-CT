@@ -114,14 +114,16 @@ module.exports = class opcodes_Bx {
             if (msg.mnemonic == "CMDERR"){
               if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
                 this.hasTestPassed = true;
+                comment = ' - received expected CMDERR Invalid Event Variable Index'
               } else {
-                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEventVariableIndex}); 
+                comment = ' - CMDERR: expected '+ GRSP.InvalidEventVariableIndex + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_INDEX');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_INDEX (B2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
