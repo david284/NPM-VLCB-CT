@@ -38,18 +38,20 @@ module.exports = class opcodes_Bx {
       var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
       var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "EVANS"){
             if ((msg.nodeNumber == eventNodeNumber) && (msg.eventNumber == eventNumber) && (msg.eventVariableIndex == eventVariableIndex)){
               this.hasTestPassed = true; 
+              comment = ' - received EVANS message'
               // now store the value
               RetrievedValues.storeEventVariableValue(eventIdentifier, eventVariableIndex, msg.eventVariableValue)
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected EVANS'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV');
+        if(!this.hasTestPassed){ comment = ' - missing expected EVANS message' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV (0xB2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -68,6 +70,7 @@ module.exports = class opcodes_Bx {
       var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
       var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -75,14 +78,16 @@ module.exports = class opcodes_Bx {
             if (msg.mnemonic == "CMDERR"){
               if (msg.errorNumber == GRSP.InvalidEvent) {
                 this.hasTestPassed = true;
+                comment = ' - received expected CMDERR Invalid Event'
               } else {
-                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
+                comment = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_EVENT');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_EVENT (0xB2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -101,6 +106,7 @@ module.exports = class opcodes_Bx {
       var eventNumber = parseInt(eventIdentifier.substr(4, 4), 16);
       var msgData = cbusLib.encodeREQEV(eventNodeNumber, eventNumber, eventVariableIndex);
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -138,21 +144,30 @@ module.exports = class opcodes_Bx {
 			// truncate the 20 byte message to remove the last byte - remove last three bytes & add ';' to end
 			msgData = msgData.substring(0,17) + ';'
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "GRSP"){
-              if (msg.result == GRSP.Invalid_Command) {
-                this.hasTestPassed = true;
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                  comment = ' - received expected GRSP Invalid Command'
+                } else {
+                  comment += ' - GRSP: expected result ' + GRSP.Invalid_Command + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + comment}); 
+                }
               } else {
-                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + comment}); 
               }
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_SHORT');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected GRSP'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_SHORT (0xB2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));

@@ -81,7 +81,7 @@ module.exports = class opcodes_1x {
           }
         })
         if(!this.hasTestPassed){ comment = ' - missing expected NAME message'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN', comment);
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQMN (0x11)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout )
     }.bind(this));

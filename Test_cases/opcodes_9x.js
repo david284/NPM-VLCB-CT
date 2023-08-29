@@ -38,20 +38,23 @@ module.exports = class opcodes_9x {
       var msgData = cbusLib.encodeAREQ(nodeNumber, eventNumber);
       winston.debug({message: 'VLCB: AREQ test: msgData ' + msgData});
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == nodeNumber) {
             // ok - it's the right node
             if (msg.mnemonic == "ARON"){
               this.hasTestPassed = true;
+              comment = ' - received ARON'
             }
             if (msg.mnemonic == "AROF"){
               this.hasTestPassed = true;
+              comment = ' - received AROF'
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARON or AROF'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'AREQ');
+        if(!this.hasTestPassed){ comment = ' - missing expected ARON or AROF' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'AREQ (0x92)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
@@ -72,17 +75,23 @@ module.exports = class opcodes_9x {
       var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
       winston.debug({message: 'VLCB: EVULN test: msgData ' + msgData});
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "WRACK"){
               this.hasTestPassed = true;
+              comment = ' - received WRACK'
+            }
+          } else {
+            if (msg.mnemonic == "WRACK"){
+              winston.info({message: 'VLCB:       WARN: WRACK from unexpected node ' + msg.nodeNumber});
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected WRACK'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN');
+        if(!this.hasTestPassed){ comment = ' - missing expected WRACK' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN (0x95)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
@@ -103,6 +112,7 @@ module.exports = class opcodes_9x {
       var msgData = cbusLib.encodeEVULN(eventNodeNumber, eventNumber);
       winston.debug({message: 'VLCB: EVULN_INVALID_EVENT test: msgData ' + msgData});
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -110,14 +120,16 @@ module.exports = class opcodes_9x {
             if (msg.mnemonic == "CMDERR"){
               if (msg.errorNumber == GRSP.InvalidEvent) {
                 this.hasTestPassed = true;
+                comment = ' - CMDERR Invalid Event received'
               } else {
-                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidEvent}); 
+                comment = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT (0x95)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
@@ -142,21 +154,30 @@ module.exports = class opcodes_9x {
 			// truncate the 18 byte message to remove the last byte - remove last three bytes & add ';' to end
 			msgData = msgData.substring(0,15) + ';'
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "GRSP"){
-              if (msg.result == GRSP.Invalid_Command) {
-                this.hasTestPassed = true;
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                  comment = ' - received expected GRSP'
+                } else {
+                  comment += ' - GRSP: expected result ' + GRSP.Invalid_Command + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + comment}); 
+                }
               } else {
-                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + comment}); 
               }
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_SHORT');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected GRSP'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_SHORT (0x95)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
@@ -173,17 +194,23 @@ module.exports = class opcodes_9x {
       // now create message and start test
       var msgData = cbusLib.encodeNVSET(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "WRACK"){
               this.hasTestPassed = true;
+              comment = ' - WRACK received'
+            }
+          } else {
+            if (msg.mnemonic == "WRACK"){
+              winston.info({message: 'VLCB:       WARN: WRACK from unexpected node ' + msg.nodeNumber});
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - expected WRACK'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET');
+        if(!this.hasTestPassed){ comment = ' - missing expected WRACK' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET (0x96)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -200,6 +227,7 @@ module.exports = class opcodes_9x {
       // now create message and start test
       var msgData = cbusLib.encodeNVSET(RetrievedValues.getNodeNumber(), nodeVariableIndex, nodeVariableValue);
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
@@ -207,17 +235,19 @@ module.exports = class opcodes_9x {
             if (msg.mnemonic == "CMDERR"){
               if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
                 this.hasTestPassed = true;
+                comment = ' - received expected CMDERR Invalid Node Variable Index'
               } else {
-                winston.info({message: 'VLCB:      CMDERR wrong error number - expected ' + GRSP.InvalidNodeVariableIndex}); 
+                comment = ' - CMDERR: expected '+ GRSP.InvalidNodeVariableIndex + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
             if (msg.mnemonic == "WRACK"){
-              winston.info({message: 'VLCB:      unexpected WRACK response'}); 
+              winston.info({message: 'VLCB:      WARN: unexpected WRACK response'}); 
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected CMDERR'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_INVALID_INDEX');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_INVALID_INDEX (0x96)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -238,15 +268,24 @@ module.exports = class opcodes_9x {
 			// truncate the 18 byte message to remove the last byte - remove last three bytes & add ';' to end
 			msgData = msgData.substring(0,15) + ';'
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "GRSP"){
-              if (msg.result == GRSP.Invalid_Command) {
-                this.hasTestPassed = true;
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.Invalid_Command) {
+                  this.hasTestPassed = true;
+                  comment = ' - received expected GRSP Invalid Command'
+                } else {
+                  comment += ' - GRSP: expected result ' + GRSP.Invalid_Command + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + comment}); 
+                }
               } else {
-                winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
+                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + comment}); 
               }
             }
             if (msg.mnemonic == "WRACK"){
@@ -254,8 +293,8 @@ module.exports = class opcodes_9x {
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected GRSP'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_SHORT');
+        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected GRSP'; } }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'NVSET_SHORT (0x96)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
@@ -274,20 +313,23 @@ module.exports = class opcodes_9x {
       var msgData = cbusLib.encodeASRQ(nodeNumber, eventNumber);
       winston.debug({message: 'VLCB: ASRQ test: msgData ' + msgData});
       this.network.write(msgData);
+      var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
           if (msg.nodeNumber == nodeNumber) {
             // ok - it's the right node
             if (msg.mnemonic == "ARSON"){
               this.hasTestPassed = true;
+              comment += ' - received ARSON'
             }
             if (msg.mnemonic == "ARSOF"){
               this.hasTestPassed = true;
+              comment += ' - received ARSOF'
             }
           }
         });
-        if(!this.hasTestPassed){ winston.info({message: 'VLCB:      FAIL - missing expected ARSON or ARSOF'}); }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'ASRQ');
+        if(!this.hasTestPassed){ comment = ' - missing expected ARSON or ARSOF' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'ASRQ (0x9A)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
     }.bind(this));
