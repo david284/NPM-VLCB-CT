@@ -49,6 +49,7 @@ module.exports = class mock_CbusNetwork {
     this.clients = [];
 		this.learningNode = 0;
     this.eventLimitReached = false;
+    this.testOption = 0;
 
     this.sendArray = [];
     this.socket;
@@ -428,7 +429,34 @@ module.exports = class mock_CbusNetwork {
               // don't bother actually deleting the event.....
               this.outputWRACK(this.learningNode);
             } else {
-              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+              if (this.testOption == 0 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
+              }
+              if (this.testOption == 1 ) {
+                this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
+              }
+              if (this.testOption == 2 ) {
+                // no CMDERR
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
+              }
+              if (this.testOption == 3 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.OK); // wrong GRSP code
+              }
+              if (this.testOption == 4 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+                this.outputGRSP(this.learningNode, '0', 1, GRSP.InvalidEvent); // wrong requestedOpcode
+              }
+              if (this.testOption == 5 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+                // no GRSP
+              }
+              if (this.testOption == 6 ) {
+                // no CMDERR
+                // no GRSP
+              }
             }
           }
           break;

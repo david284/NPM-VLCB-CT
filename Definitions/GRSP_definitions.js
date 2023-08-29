@@ -3,6 +3,7 @@
 const GRSP = {
 	OK: 0,
 	CommandNotSupported: 1,
+	Invalid_Command: 1,
 	NotInLearnMode: 2,
 	NotInSetupMode: 3,
 	TooManyEvents: 4,
@@ -13,14 +14,9 @@ const GRSP = {
 	InvalidNodeVariableIndex: 10,
 	InvalidEventVariableValue: 11,
 	InvalidNodeVariableValue: 12,
+  InvalidMode: 13,
 
-	INV_CMD: 100,
-	Invalid_Command: 101,
 	Invalid_parameter: 102,
-	invalid_state: 103,
-//	Invalid_Command: 104,
-	Invalid_Command: 1,
-	No_EV: 105,
 
 	InvalidService: 252,
 	InvalidDiagnosticCode: 253,

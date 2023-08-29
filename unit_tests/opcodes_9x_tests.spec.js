@@ -120,14 +120,30 @@ describe('opcodes_9x unit tests', function(){
   })
 
     
+  function GetTestCase_EVULN_INVALID_EVENT() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 7; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = false}
+      if (a == 3) {arg1 = 2, arg2 = false}
+      if (a == 4) {arg1 = 3, arg2 = false}
+      if (a == 5) {arg1 = 4, arg2 = false}
+      if (a == 6) {arg1 = 5, arg2 = false}
+      if (a == 7) {arg1 = 6, arg2 = false}
+      testCases.push({ 'testOption':arg1, 'expectedResult':arg2 });
+    }
+    return testCases;
+  }
+
   // 0x95 - EVULN
-  it("EVULN_INVALID_EVENT test", async function () {
+  itParam("EVULN_INVALID_EVENT test ${JSON.stringify(value)}", GetTestCase_EVULN_INVALID_EVENT(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_INVALID_EVENT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
+    mock_Cbus.testOption = value.testOption
     var result = await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
-    expect(result).to.equal(true);  
-    expect(tests.hasTestPassed).to.equal(true);  
+    expect(result).to.equal(value.expectedResult);  
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);  
     winston.info({message: 'UNIT TEST: EVULN_INVALID_EVENT ended'});
   })
 
@@ -137,7 +153,7 @@ describe('opcodes_9x unit tests', function(){
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_SHORT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
-    var result = await tests.test_EVULN_INVALID_EVENT(RetrievedValues, "00010001");
+    var result = await tests.test_EVULN_SHORT(RetrievedValues, "00010001");
     expect(result).to.equal(true);  
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: EVULN_SHORT ended'});

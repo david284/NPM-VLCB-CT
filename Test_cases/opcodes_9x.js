@@ -104,6 +104,7 @@ module.exports = class opcodes_9x {
     return new Promise(function (resolve, reject) {
       winston.debug({message: 'VLCB: BEGIN EVULN_INVALID_EVENT test - eventIdentifier ' + eventIdentifier});
       this.hasTestPassed = false;
+      var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];
       // now create message and start test
       var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
@@ -118,17 +119,37 @@ module.exports = class opcodes_9x {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "CMDERR"){
+              msgBitField |= 1;			// set bit 0
               if (msg.errorNumber == GRSP.InvalidEvent) {
-                this.hasTestPassed = true;
-                comment = ' - CMDERR Invalid Event received'
+                comment += ' - CMDERR Invalid Event received'
+                msgBitField |= 2;			// set bit 1
               } else {
                 comment = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
                 winston.info({message: 'VLCB:      FAIL' + comment}); 
               }
             }
+            if (msg.mnemonic == "GRSP"){
+              msgBitField |= 4;			// set bit 2
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.InvalidEvent){
+                  comment += ' - GRSP Invalid Event received'
+                  msgBitField |= 8;			// set bit 3
+                } else {
+                  comment += ' - GRSP: expected result ' + GRSP.InvalidEvent + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + comment}); 
+                }
+              } else{
+                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + comment}); 
+              }
+            }
           }
         });
-        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        if (msgBitField == 15) {this.hasTestPassed =  true} 
+        // check for missing messages
+        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
+        if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVULN_INVALID_EVENT (0x95)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
