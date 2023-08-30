@@ -344,28 +344,32 @@ module.exports = class opcodes_7x {
               msgBitField |= 1;   // set bit 0
             }
             if (msg.mnemonic == "GRSP"){
-              msgBitField |= 2;   // set bit 1
+              msgBitField |= 2;			// set bit 1
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 if (msg.result == GRSP.OK){
+                  comment += ' - GRSP Invalid Event received'
+                  msgBitField |= 4;			// set bit 2
                 } else {
-                  comment += ' - GRSP: expected result ' + GRSP.OK + ' but received ' + msg.result;
-                  winston.info({message: 'VLCB:      ' + comment}); 
+                  var commentGRSP1 = ' - GRSP: expected result ' + GRSP.OK + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+                  comment += commentGRSP1
                 }
               } else{
-                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
                 + ' but received ' + msg.requestOpCode;
-                winston.info({message: 'VLCB:      ' + comment}); 
+                winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+                comment += commentGRSP2
               }
             }
           }
         });
-        if (msgBitField == 3) {
+        if (msgBitField == 7) {
           comment =  ' - both WRACK and GRSP messages have been received correctly'
           this.hasTestPassed = true;
-        } else {
-          if ((msgBitField & 1) == 0){ comment += '- WRACK messages missing'}
-          if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing'}
         }
+        // check for missing messages
+        if ((msgBitField & 1) == 0){ comment += '- WRACK messages missing'}
+        if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing'}
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID (0x75)', comment);
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );
