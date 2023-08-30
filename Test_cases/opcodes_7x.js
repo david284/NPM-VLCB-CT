@@ -83,6 +83,7 @@ module.exports = class opcodes_7x {
               if (msg.mnemonic == "CMDERR"){
                   msgBitField |= 1;			// set bit 0
                 if (msg.errorNumber == GRSP.InvalidNodeVariableIndex) {
+                  comment += ' - CMDERR Invalid Node Variable Index received'
                   msgBitField |= 2;			// set bit 1
                 } else {
                   var commentCMDERR =' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
@@ -94,6 +95,7 @@ module.exports = class opcodes_7x {
                 msgBitField |= 4;			// set bit 2
                 if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                   if (msg.result == GRSP.InvalidNodeVariableIndex) {
+                    comment += ' - GRSP Invalid Node Variable Index received'
                     msgBitField |= 8;			// set bit 3
                   } else {
                     var commentGRSP1 = ' - GRSP: expected ' + GRSP.InvalidParameterIndex + ' received ' + msg.result
@@ -109,10 +111,7 @@ module.exports = class opcodes_7x {
               }
             }
           });
-  				if (msgBitField == 15) {
-            comment = ' -  CMDERR & GRSP messages has been received correctly'
-            this.hasTestPassed = true;
-          }
+  				if (msgBitField == 15) { this.hasTestPassed = true; }
           if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing'; }
           if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing'; }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD_INVALID_INDEX (0x71)', comment); 
@@ -243,7 +242,7 @@ module.exports = class opcodes_7x {
             if (msg.mnemonic == "CMDERR"){
               msgBitField |= 1;			// set bit 0
               if (msg.errorNumber == GRSP.InvalidParameterIndex) {
-                comment += ' - CMDERR Invalid Event received'
+                comment += ' - CMDERR Invalid Parameter Index received'
                 msgBitField |= 2;			// set bit 1
               } else {
                 var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
@@ -255,7 +254,7 @@ module.exports = class opcodes_7x {
               msgBitField |= 4;			// set bit 2
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 if (msg.result == GRSP.InvalidParameterIndex){
-                  comment += ' - GRSP Invalid Event received'
+                  comment += ' - GRSP Invalid Parameter Index received'
                   msgBitField |= 8;			// set bit 3
                 } else {
                   var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidParameterIndex + ' but received ' + msg.result;
@@ -274,13 +273,10 @@ module.exports = class opcodes_7x {
             }
           }
         });
-        if (msgBitField == 15) {
-          comment += ' -  CMDERR & GRSP messages has been received correctly'
-          this.hasTestPassed = true;
-        }
+        if (msgBitField == 15) { this.hasTestPassed = true; }
         // check for missing messages
-        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing', this.hasTestPassed = false }
-        if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing', this.hasTestPassed = false }
+        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
+        if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_INVALID_INDEX (0x73)', comment);
         resolve(this.hasTestPassed);
       ;} , this.defaultTimeout );
@@ -341,13 +337,14 @@ module.exports = class opcodes_7x {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
             // ignore if node number doesn't match
             if (msg.mnemonic == "WRACK"){
+              comment += ' - WRACK received'
               msgBitField |= 1;   // set bit 0
             }
             if (msg.mnemonic == "GRSP"){
               msgBitField |= 2;			// set bit 1
               if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
                 if (msg.result == GRSP.OK){
-                  comment += ' - GRSP Invalid Event received'
+                  comment += ' - GRSP OK received'
                   msgBitField |= 4;			// set bit 2
                 } else {
                   var commentGRSP1 = ' - GRSP: expected result ' + GRSP.OK + ' but received ' + msg.result;
@@ -363,10 +360,7 @@ module.exports = class opcodes_7x {
             }
           }
         });
-        if (msgBitField == 7) {
-          comment =  ' - both WRACK and GRSP messages have been received correctly'
-          this.hasTestPassed = true;
-        }
+        if (msgBitField == 7) { this.hasTestPassed = true; }
         // check for missing messages
         if ((msgBitField & 1) == 0){ comment += '- WRACK messages missing'}
         if ((msgBitField & 2) == 0){ comment += ' - GRSP message missing'}
@@ -407,14 +401,10 @@ module.exports = class opcodes_7x {
             }
           }
         });
-        if (msgBitField == 3) {
-          // both messages has been received
-          this.hasTestPassed = true;
-        } else {
-          if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both CMDERR & GRSP messages missing/incorrect'}); }
-          if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
-          if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
-        }
+        if (msgBitField == 3) { this.hasTestPassed = true; }
+        if (msgBitField == 0){ winston.info({message: 'VLCB:      Fail: Both CMDERR & GRSP messages missing/incorrect'}); }
+        if (msgBitField == 1){ winston.info({message: 'VLCB:      Fail: GRSP message missing/incorrect'}); }
+        if (msgBitField == 2){ winston.info({message: 'VLCB:      Fail: CMDERR message missing/incorrect'}); }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'CANID_INVALID_VALUE');
         resolve(this.hasTestPassed);
       }, this.defaultTimeout );

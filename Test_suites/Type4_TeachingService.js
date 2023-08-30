@@ -132,7 +132,7 @@ module.exports = class TeachingServiceTests {
           utils.DisplayComment("stored events table should now be fully populated with " + RetrievedValues.data.nodeParameters[4].value + " events")
 
           // event store should now be full, so expect an error reponse when adding another
-          await this.opcodes_Dx.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
+          await this.opcodes_Dx.test_EVLRN_TOO_MANY_EVENTS(RetrievedValues, "FFF00000", 1, 1);
 
           // check EVULN invalid event error response
           await this.opcodes_9x.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");

@@ -328,34 +328,8 @@ module.exports = class mock_CbusNetwork {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
             if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
-                if (this.testOption == 0 ) {
-                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
-                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
-                }
-                if (this.testOption == 1 ) {
-                  this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
-                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
-                }
-                if (this.testOption == 2 ) {
-                  // no CMDERR
-                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
-                }
-                if (this.testOption == 3 ) {
-                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
-                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.OK); // wrong GRSP code
-                }
-                if (this.testOption == 4 ) {
-                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
-                  this.outputGRSP(this.learningNode, '0', 1, GRSP.InvalidParameterIndex); // wrong requestedOpcode
-                }
-                if (this.testOption == 5 ) {
-                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
-                  // no GRSP
-                }
-                if (this.testOption == 6 ) {
-                  // no CMDERR
-                  // no GRSP
-                }
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidParameterIndex, GRSP.InvalidParameterIndex, this.testOption)
             } else {
               var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
               this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);
@@ -481,34 +455,8 @@ module.exports = class mock_CbusNetwork {
               // don't bother actually deleting the event.....
               this.outputWRACK(this.learningNode);
             } else {
-              if (this.testOption == 0 ) {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
-                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
-              }
-              if (this.testOption == 1 ) {
-                this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
-                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
-              }
-              if (this.testOption == 2 ) {
-                // no CMDERR
-                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidEvent);
-              }
-              if (this.testOption == 3 ) {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
-                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.OK); // wrong GRSP code
-              }
-              if (this.testOption == 4 ) {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
-                this.outputGRSP(this.learningNode, '0', 1, GRSP.InvalidEvent); // wrong requestedOpcode
-              }
-              if (this.testOption == 5 ) {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
-                // no GRSP
-              }
-              if (this.testOption == 6 ) {
-                // no CMDERR
-                // no GRSP
-              }
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidEvent, GRSP.InvalidEvent, this.testOption)
             }
           }
           break;
@@ -561,10 +509,12 @@ module.exports = class mock_CbusNetwork {
               if (cbusMsg.eventVariableIndex <= this.getModule(this.learningNode).parameters[5]) {
                 this.outputEVANS(cbusMsg.nodeNumber, cbusMsg.eventNumber, cbusMsg.eventVariableIndex)
               } else {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEventVariableIndex)
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidEventVariableIndex, GRSP.InvalidEventVariableIndex, this.testOption)
               }
             } else {
-              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidEvent, GRSP.InvalidEvent, this.testOption)
             }
           }
           break;
@@ -578,13 +528,15 @@ module.exports = class mock_CbusNetwork {
             this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else {
             if (this.eventLimitReached) {
-              this.outputCMDERR(this.learningNode, GRSP.InvalidEvent)
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.TooManyEvents, GRSP.TooManyEvents, this.testOption)
               this.eventLimitReached = false
             } else {
               if (cbusMsg.eventVariableIndex < 255) {
                 this.outputWRACK(this.learningNode);
               } else {
-                this.outputCMDERR(this.learningNode, GRSP.InvalidEventVariableIndex)
+              // send error responses
+              this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidEventVariableIndex, GRSP.InvalidEventVariableIndex, this.testOption)
               }
             }
           }
@@ -647,6 +599,38 @@ module.exports = class mock_CbusNetwork {
     if (module != undefined){
       module.endSetupMode();
     }
+  }
+
+  outputCMDERRandGRSP(opCode, CMDERR_code, GRSP_code, option) {
+    if (option == 0 ) {
+      this.outputCMDERR(this.learningNode, CMDERR_code)
+      this.outputGRSP(this.learningNode, opCode, 1, GRSP_code);
+    }
+    if (option == 1 ) {
+      this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
+      this.outputGRSP(this.learningNode, opCode, 1, GRSP_code);
+    }
+    if (option == 2 ) {
+      // no CMDERR
+      this.outputGRSP(this.learningNode, opCode, 1, GRSP_code);
+    }
+    if (option == 3 ) {
+      this.outputCMDERR(this.learningNode, CMDERR_code)
+      this.outputGRSP(this.learningNode, opCode, 1, GRSP.OK); // wrong GRSP code
+    }
+    if (option == 4 ) {
+      this.outputCMDERR(this.learningNode, CMDERR_code)
+      this.outputGRSP(this.learningNode, '0', 1, GRSP_code); // wrong requestedOpcode
+    }
+    if (option == 5 ) {
+      this.outputCMDERR(this.learningNode, CMDERR_code)
+      // no GRSP
+    }
+    if (option == 6 ) {
+      // no CMDERR
+      // no GRSP
+    }
+
   }
   
 

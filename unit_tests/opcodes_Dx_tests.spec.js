@@ -61,6 +61,24 @@ describe('opcodes_Dx unit tests', function(){
   // 				Tests
   //
 
+  // Used where an opcode returns both a CMDERR and a GRSP on a fault
+  //
+  function GetTestCase_DoubleFaultCode() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 7; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = false}
+      if (a == 3) {arg1 = 2, arg2 = false}
+      if (a == 4) {arg1 = 3, arg2 = false}
+      if (a == 5) {arg1 = 4, arg2 = false}
+      if (a == 6) {arg1 = 5, arg2 = false}
+      if (a == 7) {arg1 = 6, arg2 = false}
+      testCases.push({ 'testOption':arg1, 'expectedResult':arg2 });
+    }
+    return testCases;
+  }
+
+
   function GetTestCase_EVLRN() {
     var arg1, arg2, arg3, arg4, arg5, testCases = [];
     for (var a = 1; a<= 4; a++) {
@@ -111,31 +129,32 @@ describe('opcodes_Dx unit tests', function(){
   })
     
 
-  // 0xD2 - EVLRN
+  // 0xD2 - EVLRN_TOO_MANY_EVENTS
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-  it("EVLRN_INVALID_EVENT", async function () {
-    winston.info({message: 'UNIT TEST:: BEGIN EVLRN_INVALID_EVENT test'});
+  itParam("EVLRN_TOO_MANY_EVENTS test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
+    winston.info({message: 'UNIT TEST:: BEGIN EVLRN_TOO_MANY_EVENTS test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
+    mock_Cbus.testOption = value.testOption
     mock_Cbus.eventLimitReached = true;   // set to ensure error condition is met
-    var result = await tests.test_EVLRN_INVALID_EVENT(RetrievedValues, "FFF00000", 1, 1);
-    expect(result).to.equal(true);  
-    expect(tests.hasTestPassed).to.equal(true);  
-    winston.info({message: 'UNIT TEST: EVLRN_INVALID_EVENT ended'});
+    var result = await tests.test_EVLRN_TOO_MANY_EVENTS(RetrievedValues, "FFF00000", 1, 1);
+    expect(result).to.equal(value.expectedResult);  
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);  
+    winston.info({message: 'UNIT TEST: EVLRN_TOO_MANY_EVENTS ended'});
   })
 
 
-
-
   // 0xD2 - EVLRN
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-  it("EVLRN_INVALID_INDEX", async function () {
+  itParam("EVLRN_INVALID_INDEX test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
+//    it("EVLRN_INVALID_INDEX", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN EVLRN_INVALID_INDEX test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
+    mock_Cbus.testOption = value.testOption
     var result = await tests.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", 255, 1);
-    expect(result).to.equal(true);  
-    expect(tests.hasTestPassed).to.equal(true);  
+    expect(result).to.equal(value.expectedResult);  
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);  
     winston.info({message: 'UNIT TEST: EVLRN_INVALID_INDEX ended'});
   })
 

@@ -57,12 +57,14 @@ module.exports = class opcodes_Dx {
 	} // end Test_EVLRN
 
 
-	// 0xD2 - EVLRN_INVALID_EVENT
+	// 0xD2 - EVLRN_TOO_MANY_EVENTS
+  // expects that the maximum number of events has already been reached
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-  test_EVLRN_INVALID_EVENT(RetrievedValues, eventIdentifier, eventVariableIndex, eventVariableValue) {
+  test_EVLRN_TOO_MANY_EVENTS(RetrievedValues, eventIdentifier, eventVariableIndex, eventVariableValue) {
     return new Promise(function (resolve, reject) {      
-      winston.debug({message: 'VLCB: BEGIN EVLRN_INVALID_EVENT test'});
+      winston.debug({message: 'VLCB: BEGIN EVLRN_TOO_MANY_EVENTS test'});
       this.hasTestPassed = false;
+      var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];
       // now create message and start test
       var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
@@ -75,22 +77,45 @@ module.exports = class opcodes_Dx {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "CMDERR"){
-              if (msg.errorNumber == GRSP.InvalidEvent) {
-                this.hasTestPassed = true;
-                comment = ' - received expected CMDERR Invalid Event'
+              msgBitField |= 1;			// set bit 0
+              if (msg.errorNumber == GRSP.TooManyEvents) {
+                comment += ' - CMDERR TooManyEvents received'
+                msgBitField |= 2;			// set bit 1
               } else {
-                comment = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
-                winston.info({message: 'VLCB:      FAIL' + comment}); 
+                var commentCMDERR = ' - CMDERR: expected '+ GRSP.TooManyEvents + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+                comment += commentCMDERR
+              }
+            }
+            if (msg.mnemonic == "GRSP"){
+              msgBitField |= 4;			// set bit 2
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.TooManyEvents){
+                  comment += ' - GRSP TooManyEvents received'
+                  msgBitField |= 8;			// set bit 3
+                } else {
+                  var commentGRSP1 = ' - GRSP: expected result ' + GRSP.TooManyEvents + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+                  comment += commentGRSP1
+                }
+              } else{
+                var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+                comment += commentGRSP2
               }
             }
           }
         });
-        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_EVENT (0xD2)', comment);
+        if (msgBitField == 15) { this.hasTestPassed = true; }
+        // check for missing messages
+        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
+        if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
+        utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_TOO_MANY_EVENTS (0xD2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
     }.bind(this));
-	} // end Test_EVLRN_INVALID_EVENT
+	} // end test_EVLRN_TOO_MANY_EVENTS
 
 
 	// 0xD2 - EVLRN_INVALID_INDEX/
@@ -99,6 +124,7 @@ module.exports = class opcodes_Dx {
     return new Promise(function (resolve, reject) {      
       winston.debug({message: 'VLCB: BEGIN EVLRN_INVALID_INDEX test'});
       this.hasTestPassed = false;
+      var msgBitField = 0;	// bit field to capture when each message has been received
       this.network.messagesIn = [];
       // now create message and start test
       var eventNodeNumber = parseInt(eventIdentifier.substr(0, 4), 16);
@@ -111,17 +137,40 @@ module.exports = class opcodes_Dx {
           if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
             // ok - it's the right node
             if (msg.mnemonic == "CMDERR"){
+              msgBitField |= 1;			// set bit 0
               if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
-                this.hasTestPassed = true;
-                comment = ' - received expected CMDERR Invalid Event Variable Index'
+                comment += ' - CMDERR Invalid Event Variable Index received'
+                msgBitField |= 2;			// set bit 1
               } else {
-                comment = ' - CMDERR: expected '+ GRSP.InvalidEventVariableIndex + ' received ' + msg.errorNumber
-                winston.info({message: 'VLCB:      FAIL' + comment}); 
+                var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidEventVariableIndex + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+                comment += commentCMDERR
+              }
+            }
+            if (msg.mnemonic == "GRSP"){
+              msgBitField |= 4;			// set bit 2
+              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+                if (msg.result == GRSP.InvalidEventVariableIndex){
+                  comment += ' - GRSP Invalid Event Variable Index received'
+                  msgBitField |= 8;			// set bit 3
+                } else {
+                  var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidEventVariableIndex + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+                  comment += commentGRSP1
+                }
+              } else{
+                var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                + ' but received ' + msg.requestOpCode;
+                winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+                comment += commentGRSP2
               }
             }
           }
         });
-        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected CMDERR'; } }
+        if (msgBitField == 15) { this.hasTestPassed = true; }
+        // check for missing messages
+        if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
+        if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'EVLRN_INVALID_INDEX (0xD2)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
