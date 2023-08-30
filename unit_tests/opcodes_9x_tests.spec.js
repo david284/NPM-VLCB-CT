@@ -98,6 +98,23 @@ describe('opcodes_9x unit tests', function(){
     return testCases;
   }
 
+  // Used where an opcode returns both a CMDERR and a GRSP on a fault
+  //
+  function GetTestCase_DoubleFaultCode() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 7; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = false}
+      if (a == 3) {arg1 = 2, arg2 = false}
+      if (a == 4) {arg1 = 3, arg2 = false}
+      if (a == 5) {arg1 = 4, arg2 = false}
+      if (a == 6) {arg1 = 5, arg2 = false}
+      if (a == 7) {arg1 = 6, arg2 = false}
+      testCases.push({ 'testOption':arg1, 'expectedResult':arg2 });
+    }
+    return testCases;
+  }
+
   // 0x92 - AREQ
   itParam("AREQ test ${JSON.stringify(value)}", GetTestCase_NodeAndEvent(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN AREQ test ' + JSON.stringify(value)});
@@ -120,23 +137,8 @@ describe('opcodes_9x unit tests', function(){
   })
 
     
-  function GetTestCase_EVULN_INVALID_EVENT() {
-    var arg1, arg2, testCases = [];
-    for (var a = 1; a<= 7; a++) {
-      if (a == 1) {arg1 = 0, arg2 = true}
-      if (a == 2) {arg1 = 1, arg2 = false}
-      if (a == 3) {arg1 = 2, arg2 = false}
-      if (a == 4) {arg1 = 3, arg2 = false}
-      if (a == 5) {arg1 = 4, arg2 = false}
-      if (a == 6) {arg1 = 5, arg2 = false}
-      if (a == 7) {arg1 = 6, arg2 = false}
-      testCases.push({ 'testOption':arg1, 'expectedResult':arg2 });
-    }
-    return testCases;
-  }
-
   // 0x95 - EVULN
-  itParam("EVULN_INVALID_EVENT test ${JSON.stringify(value)}", GetTestCase_EVULN_INVALID_EVENT(), async function (value) {
+  itParam("EVULN_INVALID_EVENT test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
     winston.info({message: 'UNIT TEST:: BEGIN EVULN_INVALID_EVENT test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
@@ -192,6 +194,7 @@ describe('opcodes_9x unit tests', function(){
     expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: NVSET ended'});
   })
+
   
   // 0x96 - NVSET
   // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
@@ -203,6 +206,7 @@ describe('opcodes_9x unit tests', function(){
     expect(tests.hasTestPassed).to.equal(true);  
     winston.info({message: 'UNIT TEST: NVSET_INVALID_INDEX ended'});
   })
+
 
   // 0x96 - NVSET
   // Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>

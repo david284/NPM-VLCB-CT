@@ -290,8 +290,34 @@ module.exports = class mock_CbusNetwork {
               }
             }
             if (cbusMsg.nodeVariableIndex + 1 > nodeVariables.length) {
-              this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidNodeVariableIndex);
-              this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+              if (this.testOption == 0 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidNodeVariableIndex)
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+              }
+              if (this.testOption == 1 ) {
+                this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+              }
+              if (this.testOption == 2 ) {
+                // no CMDERR
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidNodeVariableIndex);
+              }
+              if (this.testOption == 3 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidNodeVariableIndex)
+                this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.OK); // wrong GRSP code
+              }
+              if (this.testOption == 4 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidNodeVariableIndex)
+                this.outputGRSP(this.learningNode, '0', 1, GRSP.InvalidNodeVariableIndex); // wrong requestedOpcode
+              }
+              if (this.testOption == 5 ) {
+                this.outputCMDERR(this.learningNode, GRSP.InvalidNodeVariableIndex)
+                // no GRSP
+              }
+              if (this.testOption == 6 ) {
+                // no CMDERR
+                // no GRSP
+              }
             }
           }
           break;
@@ -302,8 +328,34 @@ module.exports = class mock_CbusNetwork {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
             if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
-                this.outputCMDERR(cbusMsg.nodeNumber, GRSP.InvalidParameterIndex);
-                this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);                  
+                if (this.testOption == 0 ) {
+                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
+                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
+                }
+                if (this.testOption == 1 ) {
+                  this.outputCMDERR(this.learningNode, GRSP.OK)   // wrong CMDERR code
+                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
+                }
+                if (this.testOption == 2 ) {
+                  // no CMDERR
+                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.InvalidParameterIndex);
+                }
+                if (this.testOption == 3 ) {
+                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
+                  this.outputGRSP(this.learningNode, cbusMsg.opCode, 1, GRSP.OK); // wrong GRSP code
+                }
+                if (this.testOption == 4 ) {
+                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
+                  this.outputGRSP(this.learningNode, '0', 1, GRSP.InvalidParameterIndex); // wrong requestedOpcode
+                }
+                if (this.testOption == 5 ) {
+                  this.outputCMDERR(this.learningNode, GRSP.InvalidParameterIndex)
+                  // no GRSP
+                }
+                if (this.testOption == 6 ) {
+                  // no CMDERR
+                  // no GRSP
+                }
             } else {
               var paramValue = this.getModule(cbusMsg.nodeNumber).getParameter(cbusMsg.parameterIndex);
               this.outputPARAN(cbusMsg.nodeNumber, cbusMsg.parameterIndex, paramValue);

@@ -124,8 +124,9 @@ module.exports = class opcodes_9x {
                 comment += ' - CMDERR Invalid Event received'
                 msgBitField |= 2;			// set bit 1
               } else {
-                comment = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
-                winston.info({message: 'VLCB:      FAIL' + comment}); 
+                var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidEvent + ' received ' + msg.errorNumber
+                winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+                comment += commentCMDERR
               }
             }
             if (msg.mnemonic == "GRSP"){
@@ -135,18 +136,23 @@ module.exports = class opcodes_9x {
                   comment += ' - GRSP Invalid Event received'
                   msgBitField |= 8;			// set bit 3
                 } else {
-                  comment += ' - GRSP: expected result ' + GRSP.InvalidEvent + ' but received ' + msg.result;
-                  winston.info({message: 'VLCB:      ' + comment}); 
+                  var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidEvent + ' but received ' + msg.result;
+                  winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+                  comment += commentGRSP1
                 }
               } else{
-                comment += ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+                var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
                 + ' but received ' + msg.requestOpCode;
-                winston.info({message: 'VLCB:      ' + comment}); 
+                winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+                comment += commentGRSP2
               }
             }
           }
         });
-        if (msgBitField == 15) {this.hasTestPassed =  true} 
+        if (msgBitField == 15) {
+          comment += ' -  CMDERR & GRSP messages has been received correctly'
+          this.hasTestPassed = true;
+        }
         // check for missing messages
         if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
         if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }

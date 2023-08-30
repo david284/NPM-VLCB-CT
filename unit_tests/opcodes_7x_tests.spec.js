@@ -64,6 +64,24 @@ describe('opcodes_7x unit tests', function(){
 // 				Tests
 //
 
+  // Used where an opcode returns both a CMDERR and a GRSP on a fault
+  //
+  function GetTestCase_DoubleFaultCode() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 7; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = false}
+      if (a == 3) {arg1 = 2, arg2 = false}
+      if (a == 4) {arg1 = 3, arg2 = false}
+      if (a == 5) {arg1 = 4, arg2 = false}
+      if (a == 6) {arg1 = 5, arg2 = false}
+      if (a == 7) {arg1 = 6, arg2 = false}
+      testCases.push({ 'testOption':arg1, 'expectedResult':arg2 });
+    }
+    return testCases;
+  }
+
+  
 
 	// directly set the mock node variables for the test, so we can reliably adjust the timeout for teh variable count
 	// could add lots more but only adds to the time needed to wait for completion of test
@@ -103,16 +121,17 @@ describe('opcodes_7x unit tests', function(){
 
 
   // 0x71 - NVRD
-	it("NVRD_INVALID_INDEX test", async function () {
+  itParam("NVRD_INVALID_INDEX test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NVRD_INVALID_INDEX test'});
 		mock_Cbus.modules[0].nodeVariables = nodeVariables;
+    mock_Cbus.testOption = value.testOption
 		RetrievedValues.setNodeNumber(0);
 		RetrievedValues.data.Services[1] = {};
 		RetrievedValues.data.nodeParameters = { "6":{ "value":nodeVariableCount } };	// set node variable count
   	var result = await tests.test_NVRD_INVALID_INDEX(RetrievedValues, 1, nodeVariableCount + 1);		// request non-existant index
     winston.info({message: 'UNIT TEST: NVRD_INVALID_INDEX ended'});
-    expect(result).to.equal(true);
-    expect(tests.hasTestPassed).to.equal(true);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 	})
 
 
@@ -160,12 +179,14 @@ describe('opcodes_7x unit tests', function(){
 
 
   // 0x73 - RQNPN_INVALID_INDEX
-  it("RQNPN_INVALID_INDEX test", async function () {
+  itParam("RQNPN_INVALID_INDEX test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
+//    it("RQNPN_INVALID_INDEX test", async function () {
 		winston.info({message: 'UNIT TEST:: BEGIN RQNPN_INVALID_INDEX test'});
+    mock_Cbus.testOption = value.testOption
 		RetrievedValues.setNodeNumber(0);
   	var result = await tests.test_RQNPN_INVALID_INDEX(RetrievedValues, test_module_descriptor, 21);
-    expect(result).to.equal(true);
-    expect(tests.hasTestPassed).to.equal(true);
+    expect(result).to.equal(value.expectedResult);
+    expect(tests.hasTestPassed).to.equal(value.expectedResult);
 		winston.info({message: 'UNIT TEST:: END RQNPN_INVALID_INDEX test'});
 	})
 
