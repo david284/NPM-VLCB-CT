@@ -113,22 +113,12 @@ module.exports = class NodeVariableServiceTests {
 	test_NodeVariableCount(RetrievedValues, serviceIndex) {
 		this.hasTestPassed = false;
 		var nodeVariableCount = RetrievedValues.getNodeVariableCount();
-		winston.debug({message: 'VLCB: NVRD Node Variable Count test '
-						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
-						+ '\n      actual   ' + nodeVariableCount 
-						});
-		
 		if (RetrievedValues.data.nodeParameters[6].value == nodeVariableCount){
 			this.hasTestPassed = true;
-		} else {
-			winston.info({message: 'VLCB:       NVRD Node Variable Count '
-						+ '\n      expected ' + RetrievedValues.data.nodeParameters[6].value
-						+ '\n      actual   ' + nodeVariableCount 
-						});
 		}
-		
-		utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD Node Variable Count');
-		
+    var comment = ' - expected: ' + RetrievedValues.data.nodeParameters[6].value + ' received: ' + nodeVariableCount 
+    winston.info({message: 'VLCB:       NVRD Node Variable Count ' + comment });
+		utils.processResult(RetrievedValues, this.hasTestPassed, 'NVRD Node Variable Count', comment);
 	}
 
 }
