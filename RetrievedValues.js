@@ -285,6 +285,10 @@ class RetrievedValues {
     winston.debug({message: 'VLCB: event Variable stored' + JSON.stringify(selectedEvent)});
   }
 
+  clearEvents(){
+    this.data.events = {}
+  }
+
   ///////////////////////////////////////////////////////////////////////////////
   //
   // File related methods

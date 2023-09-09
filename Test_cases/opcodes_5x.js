@@ -183,6 +183,8 @@ module.exports = class opcodes_5x {
 
 
   // 0x57 - NERD
+  // this will also clear the RetrievedValues of events, so that only the ones returned by this operation
+  // will then be in RetrivedEvents - we can use it to check if a 'taught' event is now present
   test_NERD(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NERD test: node ' + RetrievedValues.getNodeNumber()});
     return new Promise(function (resolve, reject) {
@@ -190,6 +192,7 @@ module.exports = class opcodes_5x {
       this.network.messagesIn = [];
       var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
       this.network.write(msgData);
+      RetrievedValues.clearEvents()
       var comment = ''
       setTimeout(()=>{
         this.network.messagesIn.forEach(msg => {
