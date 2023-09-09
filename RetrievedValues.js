@@ -289,6 +289,15 @@ class RetrievedValues {
     this.data.events = {}
   }
 
+  getEvent(eventIdentifier){
+    for (var event in this.data.events) {
+      if (this.data.events[event].eventIdentifier == eventIdentifier) {
+        winston.debug({message: 'VLCB: RetrievedValues.getEvent: matching event found'});
+        return this.data.events[event]
+      }
+    }
+  }
+
   ///////////////////////////////////////////////////////////////////////////////
   //
   // File related methods
