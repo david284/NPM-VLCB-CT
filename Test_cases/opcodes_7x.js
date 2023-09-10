@@ -187,27 +187,27 @@ module.exports = class opcodes_7x {
               // and fail the test if any of these tests fail
               this.hasTestPassed = true;					
               //start building the comment string now we have a PARAN message
-              comment += ' - parameter index: ' + parameterIndex;
+              comment += ' - parameter index: ' + msg.parameterIndex;
               comment += ' received value: ' + msg.parameterValue;
-              if (RetrievedValues.data["nodeParameters"][parameterIndex] != null){
+              if (RetrievedValues.data["nodeParameters"][msg.parameterIndex] != null){
                 // we have previously read this value, so check it's still the same
-                if ( RetrievedValues.data["nodeParameters"][parameterIndex].value != msg.parameterValue){
+                if ( RetrievedValues.data["nodeParameters"][msg.parameterIndex].value != msg.parameterValue){
                   this.hasTestPassed = false;
-                  comment += ' retrieved value: ' + RetrievedValues.data["nodeParameters"][parameterIndex].value
-                  winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + fail_output});  
+                  comment += ' retrieved value: ' + RetrievedValues.data["nodeParameters"][msg.parameterIndex].value
+                  winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + comment});  
                 }
               } else {
                 // new value, so save it
                 RetrievedValues.addNodeParameter(msg.parameterIndex, msg.parameterValue);
-                winston.debug({message: 'VLCB:      Node Parameter ' + parameterIndex + ' added to retrieved_values'});
+                winston.debug({message: 'VLCB:      Node Parameter ' + msg.parameterIndex + ' added to retrieved_values'});
               }
               // if it's in the module_descriptor, we need to check we've read the same value
-              if (module_descriptor.nodeParameters[parameterIndex] != null) {
-                if (module_descriptor.nodeParameters[parameterIndex].value != null) {
-                  if ( module_descriptor.nodeParameters[parameterIndex].value != msg.parameterValue) {
+              if (module_descriptor.nodeParameters[msg.parameterIndex] != null) {
+                if (module_descriptor.nodeParameters[msg.parameterIndex].value != null) {
+                  if ( module_descriptor.nodeParameters[msg.parameterIndex].value != msg.parameterValue) {
                     this.hasTestPassed = false;
-                    comment += ' module descriptor value: ' + module_descriptor.nodeParameters[parameterIndex].value
-                    winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + fail_output});
+                    comment += ' module descriptor value: ' + module_descriptor.nodeParameters[msg.parameterIndex].value
+                    winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + comment});
                   }
                 } else {
                   winston.debug({message: 'VLCB: :: info: No matching module_descriptor value entry'});
@@ -218,7 +218,11 @@ module.exports = class opcodes_7x {
             }
           }
         })
-        if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected PARAN message'; } }
+        if(!this.hasTestPassed){
+           if (comment == '') {comment = ' - missing expected PARAN message'; } 
+        } else {
+          comment = '' // test passed, no comment
+        }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN (0x73)', comment);
         resolve(this.hasTestPassed);
       } , this.defaultTimeout );
