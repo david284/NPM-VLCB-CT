@@ -103,29 +103,20 @@ async function run_main(){
     }
 	}
 	if(options.connection == 'serialPort'){
+    let serialPort_info = {'path': options.serialPort}
+		utils.checkSerialPort(serialPort_info)
+    await utils.sleep(500);   // wait for serial port check to complete
+		if(serialPort_info.valid){
+			connection = new CANUSB4.CANUSB4(serialPort_info.path)
+		} else {
+			winston.info({message: '\nVLCB: ******** ERROR: port ' + options.serialPort + ' not found - terminating \n'});
+      process.exit()
+		}
 	}
 
-/*
-  if (networkSelected()){
-    // create network connection for tests to use
-    connection = new IP_Network(NET_ADDRESS, NET_PORT);
-    winston.info({message: '---- network selected ----'});
-  } else {
-    let canbus4_info = {'path': null}  // seems we have to create an object so it passes by ref
-    utils.findCANUSB4(canbus4_info)
-    await utils.sleep(500);   // wait for serial port check to complete
-    winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
-    if (canbus4_info.path) {
-      connection = new CANUSB4.CANUSB4(canbus4_info.path)
-      winston.info({message: 'VLCB: CANUSB4 found ' + canbus4_info.path + '\n'});
-    }else{
-      winston.info({message: '\nVLCB: ******** ERROR: No CANUSB4 found - terminating \n'});
-      process.exit()
-    }
-  }
-*/
 
   if (connection) {
+		winston.info({message: '\n'});
     winston.info({message: ' ==== enter node number to be tested, followed by enter'});
     winston.info({message: ' ==== or just enter if putting module into setup using the button'});
 
