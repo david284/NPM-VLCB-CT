@@ -31,15 +31,18 @@ To prove the installation has worked, run the stand alone unit-tests using 'npm 
 
 # Connection
 The application is expecting to communicate with the module to be tested, typically residing on a CANBUS network   
-To access the CANBUS network, the application is expecting to use a network connection to something that provides a CANBUS connection   
-Typically, this would be a combination of a CANUBS4 device and the cbusserver application   
+By default, the application will attempt to automatically find a CANUSB4 device connected via USB,
+and then use that to connect to the CANBUS network
+
+Alternatively, a network connection can be used, using an optional command line parameter 'network', so that applications like 'cbusServer' can be used, typically on a remote machine
 The cbusServer service here -> See https://www.merg.org.uk/merg_wiki/doku.php?id=cbus_server:cbus_server&s[]=cbusserver   
 See details on cbusServer on setting up the serial port   
 
 The default IP settings should work 'out the box'   
 But the ip & port settings are in the server.js file, and can easily changed for a remote IP connection or a different port if required   
 
-Alternatively, there is a software simulation of a CBUS network available, which avoids the need for anything else   
+Alternatively, there is a software simulation of a CBUS network available, again using the 'network' option, 
+which avoids the need for any other physical hardware   
 This application provides a simulation of multiple modules on a VLCB network, and has been used to test operation of this conformance test   
 https://github.com/david284/CbusNetworkSimulator.git
 
