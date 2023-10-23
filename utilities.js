@@ -122,10 +122,13 @@ exports.findCANUSB4 = function findCANUSB4(canbus4_info) {
 
 exports.showSerials = function showSerials() {
   winston.info({message: 'utils: showSerials:'});
+  var portCount = 0;
   SerialPort.list().then(ports => {
     ports.forEach(function(port) {
+      portCount++
       winston.info({message: 'utils: showSerials: found port: ' + JSON.stringify(port)});
     })
+    winston.info({message: 'utils: showSerials: portCount: ' + portCount});
   })
 }
 

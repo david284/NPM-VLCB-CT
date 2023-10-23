@@ -80,6 +80,7 @@ async function run_main(){
 	getCommandLineOptions();
 	if(options.showSerials){
 		utils.showSerials();
+    await utils.sleep(500);   // wait for serial port check to complete
 		process.exit()
 	}
 
