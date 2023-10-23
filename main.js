@@ -63,6 +63,9 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+
+let options = {};
+
 //
 // NOTE: Much use is made of the async/await methods
 // as many tests have to wait for an expected response to check if it's passed or failed
@@ -73,6 +76,35 @@ const rl = readline.createInterface({
 run_main()
 
 async function run_main(){
+
+	getCommandLineOptions();
+	if(options.showSerials){
+		utils.showSerials();
+		process.exit()
+	}
+
+	if(options.connection == 'network'){
+    // create network connection for tests to use
+    connection = new IP_Network(NET_ADDRESS, NET_PORT);
+    winston.info({message: '---- network selected ----'});
+	}
+	if(options.connection == 'auto'){
+    let canbus4_info = {'path': null}  // seems we have to create an object so it passes by ref
+    utils.findCANUSB4(canbus4_info)
+    await utils.sleep(500);   // wait for serial port check to complete
+    winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
+    if (canbus4_info.path) {
+      connection = new CANUSB4.CANUSB4(canbus4_info.path)
+      winston.info({message: 'VLCB: CANUSB4 found ' + canbus4_info.path + '\n'});
+    }else{
+      winston.info({message: '\nVLCB: ******** ERROR: No CANUSB4 found - terminating \n'});
+      process.exit()
+    }
+	}
+	if(options.connection == 'serialPort'){
+	}
+
+/*
   if (networkSelected()){
     // create network connection for tests to use
     connection = new IP_Network(NET_ADDRESS, NET_PORT);
@@ -90,6 +122,7 @@ async function run_main(){
       process.exit()
     }
   }
+*/
 
   if (connection) {
     winston.info({message: ' ==== enter node number to be tested, followed by enter'});
@@ -270,7 +303,27 @@ function networkSelected() {
   return false;
 }
   
+function getCommandLineOptions(){
+	// command line arguments will be 'node' <javascript file started> '--' <arguments starting at index 3>
+	for (var item in process.argv){
+    winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
+		options["connection"] = 'auto'
+    if (process.argv[item].toLowerCase() == 'network'){
+      options["connection"] = 'network'
+    }
+    if (process.argv[item].toLowerCase() == 'showserials'){
+      options["showSerials"] = true
+    }
+    if (process.argv[item].toLowerCase().includes('serialport')){
+			const myArray = process.argv[item].split("=");
+      options["connection"] = 'serialPort'
+			options["serialPort"] = myArray[1]
+    }
+	}
 
+	winston.info({message: '\noptions selected ' + JSON.stringify(options) + '\n'});
+
+}
 
 
 
