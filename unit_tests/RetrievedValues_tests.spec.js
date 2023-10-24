@@ -73,6 +73,7 @@ describe('RetrievedValues unit tests', function(){
     //
 	it("Add Service test", function () {
 		winston.info({message: 'UNIT TEST: BEGIN Add Service test'});
+    RetrievedValues.clearAllServices();
     RetrievedValues.addService(1,2,3);
     winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
 		expect(RetrievedValues.data.Services[1].ServiceIndex).to.equal(1);
@@ -84,6 +85,7 @@ describe('RetrievedValues unit tests', function(){
   //
   it("Add Undefined Service test", function () {
     winston.info({message: 'UNIT TEST: BEGIN Add Undefined Service test'});
+    RetrievedValues.clearAllServices();
     RetrievedValues.addService(2,9999,3);
     winston.debug({message: 'Constructed object \n' + JSON.stringify(RetrievedValues.data.Services, null, '    ')});        
     expect(RetrievedValues.data.Services[2].ServiceIndex).to.equal(2);
