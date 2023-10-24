@@ -121,28 +121,22 @@ exports.findCANUSB4 = function findCANUSB4(canbus4_info) {
 }
 
 exports.checkSerialPort = function checkSerialPort(serialPort_info) {
-  winston.debug({message: 'utils: checkSerialPort: ' + serialPort_info.path});
-  SerialPort.list().then(ports => {
-    ports.forEach(function(port) {
-      winston.debug({message: 'utils: CANUSB4: checking port: ' + JSON.stringify(port)});
-      if (serialPort_info.path == port.path) {
-        winston.info({message: 'utils: Port found ' + port.path});
-        serialPort_info["valid"] = true
-      }
-    })
-  })
-}
-
-
-exports.showSerials = function showSerials() {
-  winston.info({message: 'utils: showSerials:'});
   var portCount = 0;
   SerialPort.list().then(ports => {
     ports.forEach(function(port) {
       portCount++
-      winston.info({message: 'utils: showSerials: found port: ' + JSON.stringify(port)});
+      winston.debug({message: 'utils: serial port found: ' + JSON.stringify(port)});
+      winston.info({message: 'utils: serial port found: ' + JSON.stringify(port.path)});
+      if (serialPort_info != undefined) {
+        winston.debug({message: 'utils: checkSerialPort: ' + serialPort_info.path});
+        if (serialPort_info.path == port.path) {
+          winston.info({message: 'utils: Port match ' + port.path});
+          serialPort_info["valid"] = true
+        }
+      }
     })
-    winston.info({message: 'utils: showSerials: portCount: ' + portCount});
+    winston.info({message: 'utils: serial port count: ' + portCount + '\n'});
   })
 }
+
 

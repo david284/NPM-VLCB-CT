@@ -33,6 +33,8 @@ To prove the installation has worked, run the stand alone unit-tests using 'npm 
 The application is expecting to communicate with the module to be tested, typically residing on a CANBUS network   
 By default, the application will attempt to automatically find a CANUSB4 device connected via USB,
 and then use that to connect to the CANBUS network
+A specific serial port can be selected using the 'serialPort=<xxxx>' option - see 'command line options' below
+This would be used for a serial port that doesn't use a CANUSB4
 
 Alternatively, a network connection can be used, using an optional command line parameter 'network', so that applications like 'cbusServer' can be used, typically on a remote machine
 The cbusServer service here -> See https://www.merg.org.uk/merg_wiki/doku.php?id=cbus_server:cbus_server&s[]=cbusserver   
@@ -47,10 +49,19 @@ This application provides a simulation of multiple modules on a VLCB network, an
 https://github.com/david284/CbusNetworkSimulator.git
 
 # Execution:
-To run the app, use 'npm start'   
+To run the app, use 'npm start'
+or  'npm start [command line options]' - see below for command line options
 The program will prompt to put the module under test into setup mode (press it's button),   
 and will proceed with testing once it receives the intial contact with the module   
 As well as the screen display of the results, there are files saved in the folder 'Test_Results'   
+
+# Command line options
+use 'npm start [command line options]'
+   help             - just shows this, and terminates
+   auto             - (or just 'npm start') attempts to automatically find CANUSB4
+   network          - uses tcp connection
+   serialPort=<XXX> - selects specific serial port (e.g. COM3)
+   showserials      - just lists all serial ports, and terminates
 
 # Test-Results folder
 'TestReport.txt' is basically a copy of the screen output   

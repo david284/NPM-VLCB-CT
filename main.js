@@ -52,6 +52,7 @@ winston.info({message: '----------------------------- VLCB Compliance Test -----
 winston.info({message: '--------------------------------------------------------------------------------'});
 winston.info({message: '- Test Version : ' + pjson.version});
 winston.info({message: '- Test Run : ' + new Date()});
+winston.info({message: "*** use 'npm start help' to show command line options ***"});
 winston.info({message: '================================================================================'});
 winston.info({message: ' '});
 
@@ -78,8 +79,20 @@ run_main()
 async function run_main(){
 
 	getCommandLineOptions();
-	if(options.showSerials){
-		utils.showSerials();
+	if(options.help){
+    winston.info({message: ' Command line options...'});
+    winston.info({message: '   help             - just shows this, and terminates'});
+    winston.info({message: '   auto             - (or blank) attempts to automatically find CANUSB4'});
+    winston.info({message: '   network          - uses tcp connection'});
+    winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
+    winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
+    winston.info({message: '\n'});
+    await utils.sleep(100);   // wait for printing
+		process.exit()
+  }
+
+  if(options.showSerials){
+    utils.checkSerialPort()
     await utils.sleep(500);   // wait for serial port check to complete
 		process.exit()
 	}
@@ -300,6 +313,9 @@ function getCommandLineOptions(){
 	for (var item in process.argv){
     winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
 		options["connection"] = 'auto'
+    if (process.argv[item].toLowerCase() == 'help'){
+      options["help"] = true
+    }
     if (process.argv[item].toLowerCase() == 'network'){
       options["connection"] = 'network'
     }
