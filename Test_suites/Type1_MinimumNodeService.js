@@ -46,10 +46,14 @@ module.exports = class MinimumNodeServiceTests{
 				await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
-				//using value now stored in parameter 0
-				for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
-					await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
-				}
+				//using value now stored in parameter 0 - but check it exists first
+        if (RetrievedValues.data["nodeParameters"]["0"].value){
+          for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
+            await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
+          }
+        } else {
+          utils.DisplayComment("No value for Node Parameter[0] - number of node parameters, so all other node parameters skipped")
+        }
 				
 				// now test the last node parameter + 1, expecting an error message
 				await this.opcodes_7x.test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
