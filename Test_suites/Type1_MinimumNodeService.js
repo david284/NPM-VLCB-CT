@@ -47,7 +47,7 @@ module.exports = class MinimumNodeServiceTests{
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
 				//using value now stored in parameter 0 - but check it exists first
-        if (RetrievedValues.data["nodeParameters"]["0"].value){
+        if (RetrievedValues.data["nodeParameters"]["0"]){
           for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
             await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
           }
