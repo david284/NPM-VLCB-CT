@@ -19,6 +19,8 @@ class RetrievedValues {
 		//                        0123456789012345678901234567890123456789
 		winston.debug({message:  '------------ RetrievedValues Constructor'});
 		
+    this.path = './Test_Results/Retrieved Values.txt'
+
 		this.data = { "DateTime" : new Date(),	// include datetime of test run start
 								"NAME": null,
                 "DescriptorIdentity": null,
@@ -59,6 +61,8 @@ class RetrievedValues {
     } else{
 		  this.data.nodeParameters[parameterIndex]["name"] = 'unknown node parameter'
     }
+    //
+    this.writeToDisk()
 	}
 	
   ///////////////////////////////////////////////////////////////////////////////
@@ -125,6 +129,8 @@ class RetrievedValues {
     } else {
       winston.error({message: 'VLCB: RetrievedValues: addService(): invalid parameter ' + ServiceIndex + ' ' + ServiceType + ' ' + ServiceVersion});  
     }
+    //
+    this.writeToDisk()
   }
 
 
@@ -136,13 +142,16 @@ class RetrievedValues {
 		this.data["Services"][ServiceIndex]["Data2"] = Data2;
 		this.data["Services"][ServiceIndex]["Data3"] = Data3;
 		this.data["Services"][ServiceIndex]["Data4"] = Data4;
-		
+    //
+    this.writeToDisk()		
 	}
 
   clearAllServices(){
     this.data["Services"] = {}
     this.data.ServicesActualCount = 0;
     this.data.ServicesReportedCount = 0;
+    //
+    this.writeToDisk()
   }
 	
   getServiceName(ServiceIndex){
@@ -186,6 +195,7 @@ class RetrievedValues {
 
   // add a diagnostic code, but only if the service has already been created
 	addDiagnosticCode(ServiceIndex, DiagnosticCode, DiagnosticValue){
+    var result = false;
 		if (this.data["Services"][ServiceIndex] != null) {
 		
       // lets create a shorter reference to make the code a bit more readable
@@ -221,12 +231,13 @@ class RetrievedValues {
       service.diagnostics[DiagnosticCode]["DiagnosticName"] = DiagnosticName;
       service.diagnostics[DiagnosticCode]["DiagnosticCode"] = DiagnosticCode;
       service.diagnostics[DiagnosticCode]["DiagnosticValue"] = DiagnosticValue;
-      return true
+      result = true
     } else {
       winston.info({message: 'VLCB:      FAIL: RetrievedValues: add diagnostic code: service index does not exist: ' + ServiceIndex});
-      return false      
     }
-
+    //
+    if (result) this.writeToDisk()  // only write if result is true
+    return result;
 	}
 
 
@@ -283,10 +294,13 @@ class RetrievedValues {
     // now store value
     selectedEvent.eventVariables[eventVariableIndex] = eventVariableValue
     winston.debug({message: 'VLCB: event Variable stored' + JSON.stringify(selectedEvent)});
+    //
+    this.writeToDisk()
   }
 
   clearEvents(){
     this.data.events = {}
+    this.writeToDisk()
   }
 
   getEvent(eventIdentifier){
@@ -303,14 +317,21 @@ class RetrievedValues {
   // File related methods
   //
 
-	writeToDisk(path) {
+  setFilePath(path){
+    this.path = path;
+		winston.debug({message: 'VLCB: set file path: ' + this.path});
+  }
+
+	writeToDisk() {
 		// now write retrieved_values to disk
 		var text = JSON.stringify(this.data, null, '    ');
-		fs.writeFileSync(path, text);
-		winston.debug({message: 'VLCB: Write to disk: retrieved_values \n' + text});
+		fs.writeFileSync(this.path, text);
+//		winston.debug({message: 'VLCB: Write to disk: retrieved_values \n' + text});
+		winston.debug({message: 'VLCB: Write to disk: path: ' + this.path});
 	}
 
 
 }
 
 module.exports = new RetrievedValues();
+//module.exports = ( path ) => { return new RetrievedValues(path) }

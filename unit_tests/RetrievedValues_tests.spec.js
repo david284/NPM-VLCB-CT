@@ -13,6 +13,7 @@ describe('RetrievedValues unit tests', function(){
 
 	before(function() {
     utils.DisplayUnitTestHeader('RetrievedValues unit tests');
+    RetrievedValues.setFilePath('./unit_tests/logs/Retrieved Values unit test.txt');
 	})
     
     beforeEach (function() {
@@ -227,8 +228,9 @@ describe('RetrievedValues unit tests', function(){
 
     //
 	it("RetrievedValues Write test", function () {
-        RetrievedValues.writeToDisk('./unit_tests/logs/Retrieved Values unit test.txt');
-    })
+		winston.info({message: 'UNIT TEST: BEGIN Retrieved values write to disk test'});
+    RetrievedValues.writeToDisk('./unit_tests/logs/Retrieved Values unit test.txt');
+  })
 
 
 })

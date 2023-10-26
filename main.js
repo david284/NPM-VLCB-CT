@@ -279,10 +279,8 @@ async function runtests() {
 				+ '\n Passed count : ' + RetrievedValues.data.TestsPassed 
 				+ '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
 
-	
-	// now write RetrievedValues to disk
-	RetrievedValues.writeToDisk('./Test_Results/Retrieved Values.txt');
-	
+  // ensure RetrievedValues is updated on disk
+  RetrievedValues.writeToDisk();
 	
 	await utils.sleep(500);		// delay to allow the log writes to catch up
 
@@ -290,7 +288,8 @@ async function runtests() {
 	winston.info({message: '\nVLCB: test sequence completed'});
 	rl.close();
 	process.stdin.destroy();
-	
+
+  // archive all results into zip file ...
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
 	winston.info({message: '\n\nVLCB: End\n\n\n'});
 	
