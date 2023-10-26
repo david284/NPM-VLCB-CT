@@ -219,8 +219,13 @@ async function runtests() {
 				case 6:
 					RetrievedValues = await (Consumer.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
-				// service types 7 & 8 currently unused
-				case 9:
+        case 7:
+          utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
+          break;
+        case 8:
+          utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
+          break;
+        case 9:
 					RetrievedValues = await (EventAck.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				case 10:

@@ -135,10 +135,20 @@ module.exports = {
 				}
 			}
 		}
-
 	},
-	// 7 - unassigned
-	// 8 - unassigned
+	"7":{
+		"name":"New Event Teaching Service"
+	},
+	"8":{
+    "name":"Consume Own Events Service",
+		"version":{ 
+			"0": {
+				"diagnostics":{
+					"1":{"name":"Own events consumed count"},
+				}
+			}
+		}
+  },
 	"9":{
 		"name":"Event Acknowledge Service"
 	},
