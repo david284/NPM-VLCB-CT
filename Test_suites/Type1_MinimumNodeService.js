@@ -51,12 +51,13 @@ module.exports = class MinimumNodeServiceTests{
           for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
             await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
           }
+				
+          // now test the last node parameter + 1, expecting an error message
+          await this.opcodes_7x.test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
+
         } else {
           utils.DisplayComment("No value for Node Parameter[0] - number of node parameters, so all other node parameters skipped")
         }
-				
-				// now test the last node parameter + 1, expecting an error message
-				await this.opcodes_7x.test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
 
 				// now test a short RQNPN message, expecting an error message
 				await this.opcodes_7x.test_RQNPN_SHORT(RetrievedValues, module_descriptor, 1);
