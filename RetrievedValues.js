@@ -26,6 +26,7 @@ class RetrievedValues {
                 "DescriptorIdentity": null,
                 "CANID": null,
 								"nodeNumber": null,
+                "TestIndex": 0,
 								"TestsPassed": 0,
 								"TestsFailed": 0,
 								"setup_completed": null,

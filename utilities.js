@@ -21,15 +21,16 @@ const failLogger = winston.createLogger({
 
 exports.processResult = function processResult(RetrievedValues, hasTestPassed, testName, comment)
 {
+  RetrievedValues.data.TestIndex++
 	if (comment == null) { comment = ""; }
 	if (hasTestPassed){ 
     process.stdout.write('\x1B[92m');   // bright green
-		winston.info({message: 'VLCB: PASS ' +  testName + ' passed ' + comment}); 
+		winston.info({message: 'VLCB: TestIndex:' + RetrievedValues.data.TestIndex + ' PASS ' +  testName + ' passed ' + comment}); 
     process.stdout.write('\x1B[37m');   // white
 		RetrievedValues.data.TestsPassed++;
 	}else{
     process.stdout.write('\x1B[91m');   // bright red
-		winston.info({message: 'VLCB: FAIL ' +  testName + ' failed ' + comment});
+		winston.info({message: 'VLCB: TestIndex:' + RetrievedValues.data.TestIndex + ' FAIL ' +  testName + ' failed ' + comment});
     failLogger.log({ level: 'error', message: 'VLCB: FAIL ' +  testName + ' failed ' + comment });
     process.stdout.write('\x1B[37m');   // white
     RetrievedValues.data.TestsFailed++;
