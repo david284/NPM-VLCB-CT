@@ -4,7 +4,7 @@ const fs = require('fs');
 var pjson = require('./package.json');
 const readline = require('readline');
 const files = require('./copy_files.js');
-const CANUSB4 = require('./canusb4.js')
+const SerialGC = require('./serialGC.js')
 		
 
 const utils = require('./utilities.js');
@@ -108,7 +108,7 @@ async function run_main(){
     await utils.sleep(500);   // wait for serial port check to complete
     winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
     if (canbus4_info.path) {
-      connection = new CANUSB4.CANUSB4(canbus4_info.path)
+      connection = new SerialGC.SerialGC(canbus4_info.path)
       winston.info({message: 'VLCB: CANUSB4 found ' + canbus4_info.path + '\n'});
     }else{
       winston.info({message: '\nVLCB: ******** ERROR: No CANUSB4 found - terminating \n'});
@@ -120,7 +120,7 @@ async function run_main(){
 		utils.checkSerialPort(serialPort_info)
     await utils.sleep(500);   // wait for serial port check to complete
 		if(serialPort_info.valid){
-			connection = new CANUSB4.CANUSB4(serialPort_info.path)
+			connection = new SerialGC.SerialGC(serialPort_info.path)
 		} else {
 			winston.info({message: '\nVLCB: ******** ERROR: port ' + options.serialPort + ' not found - terminating \n'});
       process.exit()
