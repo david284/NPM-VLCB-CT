@@ -94,9 +94,6 @@ module.exports = class SetupMode_tests {
         }
 		
 		utils.DisplayEndDivider(this.Title + ' tests finished');
-		// update total tests counts
-		RetrievedValues.data.TestsPassed += this.passed_count;
-		RetrievedValues.data.TestsFailed += this.failed_count;
 		
 		winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 		return RetrievedValues;
