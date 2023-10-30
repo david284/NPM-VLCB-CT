@@ -11,7 +11,7 @@ describe('serialGC unit tests', function(){
 	const serialGC = new SerialGC.SerialGC('MOCK_PORT');
 
 	before(function() {
-    utils.DisplayUnitTestHeader('canusb4 unit tests');
+    utils.DisplayUnitTestHeader('SerialGC unit tests');
 	})
     
     beforeEach (function() {
@@ -22,7 +22,7 @@ describe('serialGC unit tests', function(){
     // bit of timing to ensure all winston messages get sent before closing tests completely
 		setTimeout(function(){
       // timeout to allow tests to print
-      utils.DisplayUnitTestFooter('opcodes_0x unit tests finished');
+      utils.DisplayUnitTestFooter('SerialGC unit tests finished');
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();

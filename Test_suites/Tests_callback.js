@@ -39,7 +39,7 @@ module.exports = class callbackTests {
 			if (msg.nodeNumber == this.RetrievedValues.getNodeNumber()) {
 				this.RetrievedValues.data["HEARTB"] = 'passed';
 				winston.debug({message: 'VLCB: ' + msg.text});		
-				winston.info({message: 'VLCB: >>>> HEARTB received'});
+				winston.info({message: 'VLCB:      >>>> HEARTB received'});
 			}
 		}
 	}

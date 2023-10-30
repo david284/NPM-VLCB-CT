@@ -59,7 +59,7 @@ class SerialGC {
       this.messagesIn.push(decodedMsg)
       winston.debug({message: 'SerialGC: <<< receive message ' + message + " " + decodedMsg.text});
       if (this.testStarted) {
-        winston.info({message: `SerialGC:      >>> Receive: ${decodedMsg.text}`})
+        winston.info({message: `VLCB:      >>> Receive: ${decodedMsg.text}`})
       }
       this.callback(decodedMsg);
     }.bind(this));
@@ -70,7 +70,9 @@ class SerialGC {
       // we want to drop any characters before that, including any extra '[' characters
       const msgArray = serialData.toString().split(";");
       var message = msgArray[msgArray.length-1]
-      winston.info({message: 'SerialGC: <<< module debug output: ' + message});
+      if(message.length > 0) {
+        winston.info({message: 'VLCB: <<< module debug output: ' + message});
+      }
     }.bind(this));
 
     this.serialPort.on("error", function (err) {
@@ -85,7 +87,7 @@ class SerialGC {
     var decodedMsg = cbusLib.decode(msgData);
     this.serialPort.write(msgData)
     winston.debug({message: 'SerialGC: Transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
-    winston.info({message: 'SerialGC:      >>> transmitted: ' + decodedMsg.text}); 
+    winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
   }
 
 	closeConnection(){
