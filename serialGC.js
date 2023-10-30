@@ -41,15 +41,15 @@ class SerialGC {
     // grid connect message end with ';'
     this.GCparser = this.serialPort.pipe(new ReadlineParser({ delimiter: ';' }))
 
-    // debug message end with '#'
-    this.debugParser = this.serialPort.pipe(new ReadlineParser({ delimiter: ']' }))
+    // debug message end with ':'
+    this.debugParser = this.serialPort.pipe(new ReadlineParser({ delimiter: ':' }))
 
     this.serialPort.on("open", function () {
-      winston.debug({message: `SerialGC: Serial Port : ${USB_PORT} Open`})
+      winston.debug({message: `SerialGC: Serial Port: ${USB_PORT} Open`})
     }.bind(this));
     
     this.GCparser.on('data', function (serialData) {
-      winston.debug({message: 'SerialGC: <<< receive serial data ' + serialData});
+      winston.debug({message: 'SerialGC: GC parser <<< receive serial data: ' + serialData});
       // we want the last portion of the string that starts with ':' and ends with ';'
       // we want to drop any characters before that, including any extra ':' characters
       const msgArray = serialData.toString().split(":");
@@ -59,19 +59,18 @@ class SerialGC {
       this.messagesIn.push(decodedMsg)
       winston.debug({message: 'SerialGC: <<< receive message ' + message + " " + decodedMsg.text});
       if (this.testStarted) {
-        winston.info({message: `SerialGC:      >>> Receive : ${decodedMsg.text}`})
+        winston.info({message: `SerialGC:      >>> Receive: ${decodedMsg.text}`})
       }
       this.callback(decodedMsg);
     }.bind(this));
 
     this.debugParser.on('data', function (serialData) {
-      winston.debug({message: 'SerialGC: <<< receive serial data: ' + serialData});
+      winston.debug({message: 'SerialGC: debug parser <<< receive serial data: ' + serialData});
       // we want the last portion of the string that starts with '[' and ends with ']'
       // we want to drop any characters before that, including any extra '[' characters
-      const msgArray = serialData.toString().split("[");
-      // get last element that we really want & restore start & end characters
-      var message = '[' + msgArray[msgArray.length-1] + ']'
-      winston.info({message: 'SerialGC: <<< receive module debug ' + message});
+      const msgArray = serialData.toString().split(";");
+      var message = msgArray[msgArray.length-1]
+      winston.info({message: 'SerialGC: <<< module debug output: ' + message});
     }.bind(this));
 
     this.serialPort.on("error", function (err) {
