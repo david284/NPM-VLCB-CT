@@ -66,8 +66,11 @@ module.exports = class TeachingServiceTests {
           // following tests only possible in learn mode          
           utils.DisplayComment("now in Learn mode")
 
-          // add new event & event variable #1
+          // create a test event id based on the current node number & an event number thats unlikely to be used
+          // the event number ends in the service number so that the 'AAA_' pattern can be used in another test suite
           var testEventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAA4'
+
+          // add new event & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, 1, 1);
           
           // now request all events stored, as we know there should be at least one event
@@ -81,7 +84,7 @@ module.exports = class TeachingServiceTests {
             utils.processResult(RetrievedValues, false, 'Check programmed event returned by NERD', ' - event NOT found');            
           }
         
-          // update last event variable with it's own index number
+          // update test event, last event variable with it's own index number
           // number of event variables in node parameter 5
           var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, eventVariableCount, eventVariableCount);
@@ -105,8 +108,9 @@ module.exports = class TeachingServiceTests {
           
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
 
-          // now read back event variables just added
+          // now read back event variable 1
           await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, 1);
+          // now read back max event variable 
           await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, eventVariableCount);
           // test REQEV invalid event
           await this.opcodes_Bx.test_REQEV_INVALID_EVENT(RetrievedValues, "FF00FF00", 1);
