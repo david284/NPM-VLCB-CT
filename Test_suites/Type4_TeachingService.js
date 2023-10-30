@@ -58,22 +58,24 @@ module.exports = class TeachingServiceTests {
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
         
+        // ------------------------------------------------------------------------------------
+        // enter learn mode
+        
         if(RetrievedValues.data.inLearnMode){
 
-          // following tests only possible in learn mode
-          
+          // following tests only possible in learn mode          
           utils.DisplayComment("now in Learn mode")
 
           // add new event & event variable #1
-          var eventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAA4'
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
+          var testEventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAA4'
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, 1, 1);
           
           // now request all events stored, as we know there should be at least one event
           // will clear any existing record of events in RetrievedValues
           await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // check if programmed event has been returned by the NERD operation - should be in Retrievedvalues.data.events{}
-          if (RetrievedValues.getEvent(eventIdentifier)){
+          if (RetrievedValues.getEvent(testEventIdentifier)){
             utils.processResult(RetrievedValues, true, 'Check programmed event returned by NERD', ' - event found');
           } else {
             utils.processResult(RetrievedValues, false, 'Check programmed event returned by NERD', ' - event NOT found');            
@@ -82,18 +84,18 @@ module.exports = class TeachingServiceTests {
           // update last event variable with it's own index number
           // number of event variables in node parameter 5
           var eventVariableCount = RetrievedValues.data.nodeParameters[5].value
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", eventVariableCount, eventVariableCount);
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, eventVariableCount, eventVariableCount);
           
           // now test response to invalid event variable index, but only if there is an invalid index (i.e. there are less than 255 indexes supported)
           if (eventVariableCount < 255) {
             // check error response to first invalid event variable index
-            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", eventVariableCount+1, 1);
+            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, testEventIdentifier, eventVariableCount+1, 1);
             // check error response to last invalid event variable index
-            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, "01000200", 255, 1);
+            await this.opcodes_Dx.test_EVLRN_INVALID_INDEX(RetrievedValues, testEventIdentifier, 255, 1);
           }
 
           // check EVLRN_SHORT error response
-          await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, "01000200", 1, 1);
+          await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, testEventIdentifier, 1, 1);
 
           // now request all events stored, as a double check
           await this.opcodes_5x.test_NERD(RetrievedValues);
@@ -104,24 +106,24 @@ module.exports = class TeachingServiceTests {
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
 
           // now read back event variables just added
-          await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", 1);
-          await this.opcodes_Bx.test_REQEV(RetrievedValues, "01000200", eventVariableCount);
+          await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, 1);
+          await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, eventVariableCount);
           // test REQEV invalid event
           await this.opcodes_Bx.test_REQEV_INVALID_EVENT(RetrievedValues, "FF00FF00", 1);
           
           // now test response to invalid event variable index, but only if there is an invalid index (i.e. there are less than 255 indexes supported)
           if (eventVariableCount < 255) {
             // test REQEV first invalid event variable index
-            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", eventVariableCount+1);
+            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, testEventIdentifier, eventVariableCount+1);
             // test REQEV last invalid event variable index
-            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, "01000200", 255);
+            await this.opcodes_Bx.test_REQEV_INVALID_INDEX(RetrievedValues, testEventIdentifier, 255);
           }
           
           // test REQEV short message
-          await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, "01000200", 1);
+          await this.opcodes_Bx.test_REQEV_SHORT(RetrievedValues, testEventIdentifier, 1);
           
           // remove added event event
-          await this.opcodes_9x.test_EVULN(RetrievedValues, "01000200");
+          await this.opcodes_9x.test_EVULN(RetrievedValues, testEventIdentifier);
           
           // now request number of events stored so we can check if event has been removed
           await this.opcodes_5x.test_RQEVN(RetrievedValues);
