@@ -76,7 +76,7 @@ module.exports = class opcodes_8x {
               this.hasTestPassed = false
             }
             else if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
-              COMMENT += ' - mix of expected diagnostics do not match mix of received diagnostics'
+              comment += ' - mix of expected diagnostics do not match mix of received diagnostics'
               winston.info({message: 'VLCB:      FAIL' + comment});
               this.hasTestPassed = false
             }
