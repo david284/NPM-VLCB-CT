@@ -54,13 +54,13 @@ module.exports = class ProducerServiceTests {
           
           utils.DisplayComment("now in Learn mode")
 
-          // add new long event 0xAAAA (43690d) for this node (produced event) & event variable #1
-          var eventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAAA'
+          // add new long event 0xAAA5 (43685) for this node (produced event) & event variable #1
+          var eventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAA5'
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
-          // add new 'spoofed' long event (65,280:48059) & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, 'FF00BBBB', 1, 2);
-          // add new short event 0x0000CCCC (0:52428) & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "0000CCCC", 1, 3);
+          // add new 'spoofed' long event (65,280:48053) & event variable #1
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, 'FF00BBB5', 1, 2);
+          // add new short event 0x0000CCC5 (0:52421) & event variable #1
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "0000CCC5", 1, 3);
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          
@@ -78,12 +78,12 @@ module.exports = class ProducerServiceTests {
         // now request all events stored, so we can firm the events have been added
         await this.opcodes_5x.test_NERD(RetrievedValues);
 
-        // get long event 0xAAAA (this node number:43690d)
-        await this.opcodes_9x.test_AREQ(RetrievedValues, RetrievedValues.getNodeNumber(), 43690);
-        // get 'spoofed' long event 0xFF00BBBB (65,280:48059)
-        await this.opcodes_9x.test_AREQ(RetrievedValues, 65280, 48059);
-				// get short event 0x0000CCCC (0:52428)
-        await this.opcodes_9x.test_ASRQ(RetrievedValues, RetrievedValues.getNodeNumber(), 52428);
+        // get long event 0xAAA5 (this node number:43685)
+        await this.opcodes_9x.test_AREQ(RetrievedValues, RetrievedValues.getNodeNumber(), 43685);
+        // get 'spoofed' long event 0xFF00BBB5 (65,280:48053)
+        await this.opcodes_9x.test_AREQ(RetrievedValues, 65280, 48053);
+				// get short event 0x0000CCC5 (0:52421)
+        await this.opcodes_9x.test_ASRQ(RetrievedValues, RetrievedValues.getNodeNumber(), 52421);
         
 			} else {
 				winston.info({message: 'VLCB: tests aborted - invalid module descriptor file'});

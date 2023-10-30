@@ -65,14 +65,15 @@ module.exports = class TeachingServiceTests {
           utils.DisplayComment("now in Learn mode")
 
           // add new event & event variable #1
-          await this.opcodes_Dx.test_EVLRN(RetrievedValues, "01000200", 1, 1);
+          var eventIdentifier = utils.decToHex(RetrievedValues.getNodeNumber(), 4) + 'AAA4'
+          await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           
           // now request all events stored, as we know there should be at least one event
           // will clear any existing record of events in RetrievedValues
           await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // check if programmed event has been returned by the NERD operation - should be in Retrievedvalues.data.events{}
-          if (RetrievedValues.getEvent("01000200")){
+          if (RetrievedValues.getEvent(eventIdentifier)){
             utils.processResult(RetrievedValues, true, 'Check programmed event returned by NERD', ' - event found');
           } else {
             utils.processResult(RetrievedValues, false, 'Check programmed event returned by NERD', ' - event NOT found');            
