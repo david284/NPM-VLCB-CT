@@ -142,20 +142,28 @@ module.exports = class TeachingServiceTests {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
-          // now request number of events stored
-          await this.opcodes_5x.test_RQEVN(RetrievedValues);          
-          utils.DisplayComment("stored events table should now be fully populated with " + RetrievedValues.data.nodeParameters[4].value + " events")
 
-          // event store should now be full, so expect an error reponse when adding another
-          await this.opcodes_Dx.test_EVLRN_TOO_MANY_EVENTS(RetrievedValues, "FFF00000", 1, 1);
+          // now request number of events stored, so we can check the event tablke has been filled
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);          
+
+          // check the event table has been filled
+          // by comparing the reported stored event count with the node parameter for maximum number of events
+          if (RetrievedValues.data.StoredEventCount == RetrievedValues.data.nodeParameters[4].value){
+            utils.DisplayComment("stored events table now fully populated with " + RetrievedValues.data.nodeParameters[4].value + " events")
+            utils.processResult(RetrievedValues, true, 'number of events matches event limit', ' - ' + RetrievedValues.data.StoredEventCount);
+            //
+            // event store is now full, so expect an error reponse when attempting to add another event
+            await this.opcodes_Dx.test_EVLRN_TOO_MANY_EVENTS(RetrievedValues, "FFF00000", 1, 1);
+          } else {
+            utils.processResult(RetrievedValues, false, 'number of stored events does not match event limit ', ' - stored ' + RetrievedValues.data.StoredEventCount + ' limit ' + RetrievedValues.data.nodeParameters[4].value);
+            utils.DisplayComment("events table not full, so skipping 'too many events' test")
+          }
 
           // check EVULN invalid event error response
           await this.opcodes_9x.test_EVULN_INVALID_EVENT(RetrievedValues, "FFF0FFF0");
-          
-          
+                    
           // check EVULN short message error response
           await this.opcodes_9x.test_EVULN_SHORT(RetrievedValues, "FFF0FFF0");
-          
           
           // before leaving learn mode, test erase all events
           await this.opcodes_5x.test_NNCLR(RetrievedValues);

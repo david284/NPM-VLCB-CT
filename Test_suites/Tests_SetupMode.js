@@ -83,6 +83,8 @@ module.exports = class SetupMode_tests {
             await this.opcodes_1x.test_RQMN(RetrievedValues);
             await this.opcodes_1x.test_RQNP(RetrievedValues);
             // consider it completed if we exit setup succesfully using SNN
+            // if enerted node number != nodenUmber
+            if (RetrievedValues.data.enteredNodeNumber > 0) RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber);
             RetrievedValues.data.setup_completed = await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
 			
 			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)

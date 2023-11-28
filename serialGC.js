@@ -57,17 +57,16 @@ class SerialGC {
       var message = ':' + msgArray[msgArray.length-1] + ';'
       var decodedMsg = cbusLib.decode(message)
       this.messagesIn.push(decodedMsg)
-      winston.debug({message: 'SerialGC: <<< receive message ' + message + " " + decodedMsg.text});
       if (this.testStarted) {
-        winston.info({message: `VLCB:      >>> Receive: ${decodedMsg.text}`})
+        winston.info({message: `VLCB:      <<< Received: ${message} ${decodedMsg.text}`})
       }
       this.callback(decodedMsg);
     }.bind(this));
 
     this.debugParser.on('data', function (serialData) {
-      winston.debug({message: 'SerialGC: debug parser <<< receive serial data: ' + serialData});
-      // we want the last portion of the string that starts with '[' and ends with ']'
-      // we want to drop any characters before that, including any extra '[' characters
+//      winston.debug({message: 'SerialGC: debug parser <<< receive serial data: ' + serialData});
+      // we want the last portion of the string that starts with ';' and ends with ':'
+      // we want to drop any characters before that, including any extra ';' characters
       const msgArray = serialData.toString().split(";");
       var message = msgArray[msgArray.length-1]
       if(message.length > 0) {
@@ -87,7 +86,7 @@ class SerialGC {
     var decodedMsg = cbusLib.decode(msgData);
     this.serialPort.write(msgData)
     winston.debug({message: 'SerialGC: Transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
-    winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
+    winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.encoded + ' ' + decodedMsg.text}); 
   }
 
 	closeConnection(){

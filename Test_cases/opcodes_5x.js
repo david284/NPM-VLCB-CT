@@ -149,7 +149,7 @@ module.exports = class opcodes_5x {
         if(!this.hasTestPassed){ comment = ' - missing expected WRACK'; }
         utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR (0x55)', comment);
         resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
+      } , 800 );
     }.bind(this));
   }
 

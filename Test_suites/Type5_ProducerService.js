@@ -80,9 +80,11 @@ module.exports = class ProducerServiceTests {
 
         // get long event 0xAAA5 (this node number:43685)
         await this.opcodes_9x.test_AREQ(RetrievedValues, RetrievedValues.getNodeNumber(), 43685);
+
         // get 'spoofed' long event 0xFF00BBB5 (65,280:48053)
         await this.opcodes_9x.test_AREQ(RetrievedValues, 65280, 48053);
-				// get short event 0x0000CCC5 (0:52421)
+
+        // get short event 0x0000CCC5 (0:52421)
         await this.opcodes_9x.test_ASRQ(RetrievedValues, RetrievedValues.getNodeNumber(), 52421);
         
 			} else {
