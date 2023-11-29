@@ -253,10 +253,9 @@ async function runtests() {
 					RetrievedValues = await (LongMessage.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 
-
 				default:
-          var comment = ' - unknown ServiceType ' + serviceType
-        }
+          var comment = 'No tests defined for ServiceType ' + serviceType
+          winston.info({message: 'VLCB:      ' + comment + '\n'});        }
 			
 		}
 	} else {
