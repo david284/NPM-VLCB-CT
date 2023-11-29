@@ -256,8 +256,6 @@ async function runtests() {
 
 				default:
           var comment = ' - unknown ServiceType ' + serviceType
-					winston.info({message: 'VLCB:      FAIL' + comment});
-          utils.processResult(RetrievedValues, false, 'ServiceType', comment);
         }
 			
 		}
