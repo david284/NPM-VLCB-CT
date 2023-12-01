@@ -44,5 +44,13 @@ describe('example_testCase unit tests', function(){
     expect(examples.hasTestPassed).to.equal(true);
   })
 
-
+    //
+    it("test_wait", async function () {
+      winston.info({message: 'UNIT TEST: BEGIN test_wait test'});
+      var result = await examples.test_wait(RetrievedValues);
+      winston.info({message: 'UNIT TEST: END test_wait test'});
+      expect(examples.hasTestPassed).to.equal(true);
+    })
+  
+  
 })

@@ -47,6 +47,18 @@ module.exports = class example_testCase  extends BaseTestCase{
     winston.debug({message: 'VLCB: test_function'});
   }
 	
+  async test_wait(RetrievedValues)  {
+      winston.debug({message: 'VLCB: BEGIN test_wait test case'});
+      this.hasTestPassed = false;
+			// would typically be sending a command to the module under test here
+
+      for (var i =0; i<5; i++){
+        await utils.sleep(1000);
+      }
+
+      this.hasTestPassed = true;
+      utils.processResult(RetrievedValues, this.hasTestPassed, 'test_wait');
+    }
 
 }
 
