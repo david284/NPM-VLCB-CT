@@ -15,84 +15,95 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 
 module.exports = class opcodes_4x {
 
-    constructor(NETWORK) {
-		//                        0123456789012345678901234567890123456789
-		winston.debug({message:  '----------------- opcodes_4x Constructor'});
-		
-		this.network = NETWORK;
-        this.hasTestPassed = false;
-        this.defaultTimeout = 250;
-    }
+  constructor(NETWORK) {
+    //                        0123456789012345678901234567890123456789
+    winston.debug({message:  '----------------- opcodes_4x Constructor'});
+    
+    this.network = NETWORK;
+    this.hasTestPassed = false;
+  }
 	
 
   // 0x42 SNN
 	//
-  test_SNN(RetrievedValues) {
-    return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN SNN test'});
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "NNACK"){
-              this.hasTestPassed = true;
-              comment = ' - received NNACK message'
-            }
+  async test_SNN(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN SNN test'});
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeSNN(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1000 seconds, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "NNACK"){
+            this.hasTestPassed = true;
+            comment = ' - received NNACK message'
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN (0x42)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+
+    if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'SNN (0x42)', comment);
+    return this.hasTestPassed
   }
     
 	
   // 0x4F - NNRSM
-  test_NNRSM(RetrievedValues) {
-    return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN NNRSM test'});
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNRSM(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        var GRSPreceived = false;
-        this.network.messagesIn.forEach(msg => {
-          if (msg.mnemonic == "GRSP"){
-            GRSPreceived = true;
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-              if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-              winston.debug({message: 'VLCB:      GRSP received: ' + msg.result})
-                if (msg.result == GRSP.OK) {
-                  this.hasTestPassed = true;
-                  comment = ' - GPRS OK received'
-                } else {
-                  comment = ' - GRSP result:  Expected ' + GRSP.OK + ' Actual ' + msg.result
-                  winston.info({message: 'VLCB:      ' + comment}); 
-                }
-              }else {
-                comment = 'GRSP requestOpCode: Expected ' + cbusLib.decode(msgData).opCode
-                + ' Actual ' + msg.requestOpCode
+  async test_NNRSM(RetrievedValues) {
+    winston.debug({message: 'VLCB: BEGIN NNRSM test'});
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeNNRSM(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1000 seconds, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      var GRSPreceived = false;
+      this.network.messagesIn.forEach(msg => {
+        if (msg.mnemonic == "GRSP"){
+          GRSPreceived = true;
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+            winston.debug({message: 'VLCB:      GRSP received: ' + msg.result})
+              if (msg.result == GRSP.OK) {
+                this.hasTestPassed = true;
+                comment = ' - GPRS OK received'
+              } else {
+                comment = ' - GRSP result:  Expected ' + GRSP.OK + ' Actual ' + msg.result
                 winston.info({message: 'VLCB:      ' + comment}); 
               }
-            } else {
-              comment = 'GRSP nodeNumber: Expected ' + cbusLib.decode(msgData).nodeNumber
-              + ' Actual ' + msg.nodeNumber
+            }else {
+              comment = 'GRSP requestOpCode: Expected ' + cbusLib.decode(msgData).opCode
+              + ' Actual ' + msg.requestOpCode
               winston.info({message: 'VLCB:      ' + comment}); 
             }
+          } else {
+            comment = 'GRSP nodeNumber: Expected ' + cbusLib.decode(msgData).nodeNumber
+            + ' Actual ' + msg.nodeNumber
+            winston.info({message: 'VLCB:      ' + comment}); 
           }
-        });
-        if (!GRSPreceived) { comment = ' - no GRSP received'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      });
+      if(this.hasTestPassed){ break; }
+    }
+
+    if (!GRSPreceived) { comment = ' - no GRSP received'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRSM', comment);
+    return this.hasTestPassed
   }
 	
 	

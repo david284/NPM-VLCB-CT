@@ -22,7 +22,6 @@ module.exports = class opcodes_Dx {
 		
 		this.network = NETWORK;
     this.hasTestPassed = false;
-    this.defaultTimeout = 250;
     }
 
 

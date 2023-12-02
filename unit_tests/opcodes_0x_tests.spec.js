@@ -23,7 +23,6 @@ const NET_PORT = 5560;			// 5560 + opcode catagory offset
 const NET_ADDRESS = "127.0.0.1"
 
 
-
 describe('opcodes_0x unit tests', function(){
 	const mock_Cbus = new Mock_Cbus(NET_PORT);
 	const Network = new IP_Network(NET_ADDRESS, NET_PORT);
@@ -33,13 +32,12 @@ describe('opcodes_0x unit tests', function(){
     utils.DisplayUnitTestHeader('opcodes_0x unit tests');
     Network.testStarted = true;
     RetrievedValues.data.unitTestsRunning = true;
-    tests.defaultTimeout = 10
 	})
     
-    beforeEach (function() {
-   		winston.info({message: ' '});   // blank line to separate tests
+  beforeEach (function() {
+    winston.info({message: ' '});   // blank line to separate tests
 		Network.messagesIn = [];
-    })
+  })
 
 	after(function(done) {
     // bit of timing to ensure all winston messages get sent before closing tests completely
@@ -50,10 +48,9 @@ describe('opcodes_0x unit tests', function(){
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
-      }, 50);
-		}, 50);
+      }, 10);
+		}, 10);
   });
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,21 +58,21 @@ describe('opcodes_0x unit tests', function(){
 // 				Tests
 //
 
-function GetTestCase_NodeNumber() {
-  var arg1, arg2, testCases = [];
-  for (var a = 1; a<= 4; a++) {
-    if (a == 1) {arg1 = 0, arg2 = true}
-    if (a == 2) {arg1 = 1, arg2 = true}
-    if (a == 3) {arg1 = 65535, arg2 = true}
-    if (a == 4) {arg1 = 2, arg2 = false}
-    testCases.push({'nodeNumber':arg1, 'expectedResult': arg2});
+  function GetTestCase_NodeNumber() {
+    var arg1, arg2, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = true}
+      if (a == 3) {arg1 = 65535, arg2 = true}
+      if (a == 4) {arg1 = 2, arg2 = false}
+      testCases.push({'nodeNumber':arg1, 'expectedResult': arg2});
+    }
+    return testCases;
   }
-  return testCases;
-}
 
 
-    // 0x0D - QNN
-    itParam("QNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
+  // 0x0D - QNN
+  itParam("QNN test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN QNN test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);    // sets node number of expected response
     var result = await tests.test_QNN(RetrievedValues);
@@ -83,8 +80,6 @@ function GetTestCase_NodeNumber() {
     expect(tests.hasTestPassed).to.equal(value.expectedResult);
     winston.info({message: 'UNIT TEST: QNN ended'});
 	})
-
-
 
 
 })

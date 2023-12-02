@@ -35,13 +35,12 @@ describe('opcodes_Dx unit tests', function(){
     utils.DisplayUnitTestHeader('opcodes_Dx unit tests');
     Network.testStarted = true;
     RetrievedValues.data.unitTestsRunning = true;
-    tests.defaultTimeout = 10
 	})
     
-    beforeEach (function() {
-   		winston.info({message: ' '});   // blank line to separate tests
+  beforeEach (function() {
+ 		winston.info({message: ' '});   // blank line to separate tests
 		Network.messagesIn = [];
-    })
+  })
 
 	after(function(done) {
     // bit of timing to ensure all winston messages get sent before closing tests completely
@@ -52,15 +51,15 @@ describe('opcodes_Dx unit tests', function(){
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
-      }, 100);
-		}, 100);
+      }, 10);
+		}, 10);
   });
 
 
-  ///////////////////////////////////////////////////////////////////////////////
-  //
-  // 				Tests
-  //
+///////////////////////////////////////////////////////////////////////////////
+//
+// 				Tests
+//
 
   // Used where an opcode returns both a CMDERR and a GRSP on a fault
   //
@@ -148,7 +147,6 @@ describe('opcodes_Dx unit tests', function(){
   // 0xD2 - EVLRN
   // Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
   itParam("EVLRN_INVALID_INDEX test ${JSON.stringify(value)}", GetTestCase_DoubleFaultCode(), async function (value) {
-//    it("EVLRN_INVALID_INDEX", async function () {
     winston.info({message: 'UNIT TEST:: BEGIN EVLRN_INVALID_INDEX test'});
 		RetrievedValues.setNodeNumber(1);
     mock_Cbus.learningNode = 1;
