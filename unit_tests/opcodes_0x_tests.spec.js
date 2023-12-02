@@ -32,6 +32,7 @@ describe('opcodes_0x unit tests', function(){
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_0x unit tests');
     Network.testStarted = true;
+    RetrievedValues.data.unitTestsRunning = true;
     tests.defaultTimeout = 10
 	})
     
