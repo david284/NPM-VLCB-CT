@@ -39,6 +39,7 @@ class RetrievedValues {
                 "StoredEventCount" : null,
                 "ServicesActualCount": 0,
 								"ServicesReportedCount": null,
+                "unitTestsRunning": false,
 								"MaxServiceIndex": 0,
 								"Services": {},
 								"modules": {}

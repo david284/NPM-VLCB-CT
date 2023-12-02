@@ -52,8 +52,12 @@ module.exports = class example_testCase  extends BaseTestCase{
       this.hasTestPassed = false;
 			// would typically be sending a command to the module under test here
 
-      for (var i =0; i<5; i++){
-        await utils.sleep(1000);
+      var startTime = Date.now();
+      while(Date.now()-startTime < 1000) {
+        await utils.sleep(100);
+        var t = Date.now()-startTime
+        winston.debug({message: 'VLCB: elapsed time ' + t});
+//        break;
       }
 
       this.hasTestPassed = true;
