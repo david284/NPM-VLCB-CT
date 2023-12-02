@@ -24,8 +24,7 @@ module.exports = class opcodes_0x {
 	
             
   // 0x0D - QNN
-  test_QNN(RetrievedValues) {
-    return new Promise(function (resolve, reject) {
+  async test_QNN(RetrievedValues) {
       winston.debug({message: 'VLCB: BEGIN QNN test'});
       this.hasTestPassed = false;
       this.network.messagesIn = [];
@@ -33,7 +32,13 @@ module.exports = class opcodes_0x {
       this.network.write(msgData);
       var comment = ''
       var expectedNodeNumber = RetrievedValues.getNodeNumber()
-      setTimeout(()=>{
+
+    var startTime = Date.now();
+    // set maximum wait as 1000 milliSeconds, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
         this.network.messagesIn.forEach(msg => {
           if (msg.mnemonic == "PNN"){
             // allow messages from all nodes as we can build up an array of all the modules
@@ -60,12 +65,13 @@ module.exports = class opcodes_0x {
             }
           }
         })
-        if(!this.hasTestPassed){ comment = ' - missing expected PNN for node ' + expectedNodeNumber; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN (0x0D)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout*2 );
-    }.bind(this));
-  } // end test_QNN
+        if(this.hasTestPassed){ break; }
+      }
+
+      if(!this.hasTestPassed){ comment = ' - missing expected PNN for node ' + expectedNodeNumber; }
+      utils.processResult(RetrievedValues, this.hasTestPassed, 'QNN (0x0D)', comment);
+      return this.hasTestPassed
+    } // end test_QNN
 
 }
 
