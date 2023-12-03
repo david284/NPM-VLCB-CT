@@ -26,21 +26,26 @@ module.exports = class example_testCase  extends BaseTestCase{
   }
 	
             
-  test_harness(RetrievedValues)  {
-    return new Promise(function (resolve, reject) {
-      winston.debug({message: 'VLCB: BEGIN test_harness test case'});
-      this.hasTestPassed = false;
-			// would typically be sending a command to the module under test here
-			
-      setTimeout(()=>{
-				// would typically be checking that a response has been received from the module under test here
-        this.test_function();
-				this.passed_count++;
-				this.hasTestPassed = true;
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'test_harness');
-        resolve(this.hasTestPassed);
-      ;} , this.defaultTimeout  );
-    }.bind(this));
+  async test_harness(RetrievedValues)  {
+    winston.debug({message: 'VLCB: BEGIN test_harness test case'});
+    this.hasTestPassed = false;
+    // would typically be sending a command to the module under test here
+    
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      // would typically be checking that a response has been received from the module under test here
+      this.test_function();
+      this.passed_count++;
+      this.hasTestPassed = true;
+      // would loop until timeout or break out early if test passed 
+      if(this.hasTestPassed){ break; }
+    }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'test_harness');
+    return this.hasTestPassed
   }
 
   test_function(){
@@ -53,8 +58,8 @@ module.exports = class example_testCase  extends BaseTestCase{
 			// would typically be sending a command to the module under test here
 
       var startTime = Date.now();
-      while(Date.now()-startTime < 1000) {
-        await utils.sleep(100);
+      while(Date.now()-startTime < 100) {
+        await utils.sleep(10);
         var t = Date.now()-startTime
         winston.debug({message: 'VLCB: elapsed time ' + t});
 //        break;

@@ -33,7 +33,7 @@ module.exports = class example_testSuite extends BaseTestSuite{
     utils.DisplayStartDivider(this.Title + ' tests');
 		
 
-    await this.sleep(1000);								// example of a delay
+    await utils.sleep(100);								// example of a delay
     await this.example.test_harness(RetrievedValues);
 		
 		utils.DisplayEndDivider(this.Title + ' tests finished');
@@ -43,17 +43,6 @@ module.exports = class example_testSuite extends BaseTestSuite{
 
 
 
-
-  sleep(timeout) {
-    return new Promise(function (resolve, reject) {
-      winston.debug({message: 'BEGIN sleep ' + timeout});
-      //here our function should be implemented 
-      setTimeout(()=>{
-        winston.debug({message: 'END sleep ' + timeout});
-        resolve();
-      }, timeout )
-    });
-  }
 	
 
 }
