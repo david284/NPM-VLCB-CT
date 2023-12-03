@@ -59,73 +59,85 @@ module.exports = class opcodes_5x {
   // 0x53 - NNLRN
   // there is no response specified for this command
   // to check if this succeeded, read node parameter 8, and check bit 5 is set
-  test_NNLRN(RetrievedValues) {
+  async test_NNLRN(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNLRN test'});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNLRN(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        // to check if it's in learn mode, read node parameter 8
-        msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
-        this.network.write(msgData);
-        setTimeout(()=>{
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-              if (msg.mnemonic == "PARAN"){
-                comment = ' - received PARAN message'
-                // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
-                if (msg.parameterValue & 0x20) { 
-                  RetrievedValues.data.inLearnMode = true;
-                  this.hasTestPassed = true; 
-                  comment = ' - in learn mode'
-                }
-              }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var comment = ''
+    var msgData = cbusLib.encodeNNLRN(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    await utils.sleep(100);    // allow time for command to be processed - can't check this directly
+
+    // to check if it's in learn mode, read node parameter 8
+    msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
+    this.network.write(msgData);
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+          if (msg.mnemonic == "PARAN"){
+            comment = ' - received PARAN message'
+            // ok - we have a returned value, so check bit 5 (0x20) is set (in learn mode)
+            if (msg.parameterValue & 0x20) { 
+              RetrievedValues.data.inLearnMode = true;
+              this.hasTestPassed = true; 
+              comment = ' - in learn mode'
             }
-          })
-          if(!this.hasTestPassed){ comment = ' - missing expected PARAN message'; }
-          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN (0x53)', comment);
-          resolve(this.hasTestPassed);
-        }, 250 );
-      }, 250 );
-    }.bind(this));
+          }
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected PARAN message'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN (0x53)', comment);
+    return this.hasTestPassed
   }
 
 
   // 0x54 - NNULN
-  test_NNULN(RetrievedValues) {
+  // there is no response specified for this command
+  // to check if this succeeded, read node parameter 8, and check bit 5 is clear
+  async test_NNULN(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNULN test'});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNULN(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        // to check if it's no longer in learn mode, read node parameter 8
-        msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
-        this.network.write(msgData);
-        setTimeout(()=>{
-          this.network.messagesIn.forEach(msg => {
-            if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-              if (msg.mnemonic == "PARAN"){
-                // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
-                if (!(msg.parameterValue & 0x20)) { 
-                  RetrievedValues.data.inLearnMode = false;
-                  this.hasTestPassed = true; 
-                  comment = ' - out of learn mode'
-                }
-              }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var comment = ''
+    var msgData = cbusLib.encodeNNULN(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    await utils.sleep(100);    // allow time for command to be processed - can't check this directly
+
+    // to check if it's no longer in learn mode, read node parameter 8
+    msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), 8);
+    this.network.write(msgData);
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+          if (msg.mnemonic == "PARAN"){
+            // ok - we have a returned value, so check bit 5 (0x20) is clear (in learn mode)
+            if (!(msg.parameterValue & 0x20)) { 
+              RetrievedValues.data.inLearnMode = false;
+              this.hasTestPassed = true; 
+              comment = ' - out of learn mode'
             }
-          })
-          if(!this.hasTestPassed){ comment = ' - missing expected PARAN'; }
-          utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN (0x54)', comment);
-          resolve(this.hasTestPassed);
-        }, 250 );
-      } , 250 );
-    }.bind(this));
+          }
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected PARAN'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN (0x54)', comment);
+    return this.hasTestPassed
   }
 
 
@@ -296,58 +308,66 @@ module.exports = class opcodes_5x {
 
 
   // 0x5E - NNRST
-  test_NNRST(RetrievedValues, serviceIndex) {
+  // there is no response specified for this command
+  // to check if this succeeded, read MNS diagnostics, and check uptime has been reset
+  async test_NNRST(RetrievedValues, serviceIndex) {
     winston.debug({message: 'VLCB: BEGIN NNRST test'});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var comment = ''
+    var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    await utils.sleep(100);    // allow time for command to be processed - can't check this directly
+
+    if (serviceIndex) {
+      // get all diagnostics for MNS service, so we can check uptime has been reset
+      winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
+      var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
       this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        if (serviceIndex) {
-          // get all diagnostics for MNS service, so we can check uptime has been reset
-          winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
-          var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), serviceIndex, 0);
-          this.network.write(msgData);
-          setTimeout(()=>{
-            var MSB_Uptime 
-            var LSB_Uptime 
-            this.network.messagesIn.forEach(msg => {
-              if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-                if (msg.mnemonic == "DGN"){
-                  if (msg.DiagnosticCode == 2) {
-                    MSB_Uptime = msg.DiagnosticValue
-                    winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
-                  }
-                  if (msg.DiagnosticCode == 3) {
-                    LSB_Uptime = msg.DiagnosticValue
-                    winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
-                  }
-                }
+
+      var startTime = Date.now();
+      // set maximum wait as 1 second, unless local unit tests running...
+      var timeout = 1000;
+      if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+      while(Date.now()-startTime < timeout) {
+        await utils.sleep(10);
+        var MSB_Uptime 
+        var LSB_Uptime 
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+            if (msg.mnemonic == "DGN"){
+              if (msg.DiagnosticCode == 2) {
+                MSB_Uptime = msg.DiagnosticValue
+                winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
               }
-            })
-            // now check uptime if we've received both parts
-            if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
-              var uptime = (MSB_Uptime << 8) + LSB_Uptime
-              winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-              if (uptime < 2){ 
-                this.hasTestPassed = true 
-                comment = ' - uptime is less than 2'
-              } else {
-                comment = ' - uptime is ' + uptime + ', but expected < 2'
+              if (msg.DiagnosticCode == 3) {
+                LSB_Uptime = msg.DiagnosticValue
+                winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
               }
-            } else {
-              comment = ' -  uptime after NNRST has undefined value'
             }
-            utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST (0x5E)', comment);
-            resolve(this.hasTestPassed);
-          } , 1000 );
+          }
+        })
+        // now check uptime if we've received both parts
+        if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
+          var uptime = (MSB_Uptime << 8) + LSB_Uptime
+          winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
+          if (uptime < 2){ 
+            this.hasTestPassed = true 
+            comment = ' - uptime is less than 2'
+          } else {
+            comment = ' - uptime is ' + uptime + ', but expected < 2'
+          }
         } else {
-            winston.info({message: 'VLCB:      No Service 1 found '}); 
+          comment = ' -  uptime after NNRST has undefined value'
         }
-      } , 250 );
-    }.bind(this));
+        if(this.hasTestPassed){ break; }
+      }
+    } else {
+      comment = ' - No Service 1 found'
+      winston.info({message: 'VLCB:      No Service 1 found '}); 
+    }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST (0x5E)', comment);
+    return this.hasTestPassed
   }
 
 
