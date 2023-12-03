@@ -27,7 +27,6 @@ module.exports = class opcodes_5x {
       this.hasTestPassed = false;
       this.inSetupMode = false;
       this.test_nodeNumber = 0;
-      this.defaultTimeout = 250
    }
 
 
@@ -58,6 +57,8 @@ module.exports = class opcodes_5x {
 
 
   // 0x53 - NNLRN
+  // there is no response specified for this command
+  // to check if this succeeded, read node parameter 8, and check bit 5 is set
   test_NNLRN(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNLRN test'});
     return new Promise(function (resolve, reject) {
@@ -87,8 +88,8 @@ module.exports = class opcodes_5x {
           if(!this.hasTestPassed){ comment = ' - missing expected PARAN message'; }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNLRN (0x53)', comment);
           resolve(this.hasTestPassed);
-        }, this.defaultTimeout );
-      }, this.defaultTimeout );
+        }, 250 );
+      }, 250 );
     }.bind(this));
   }
 
@@ -122,149 +123,175 @@ module.exports = class opcodes_5x {
           if(!this.hasTestPassed){ comment = ' - missing expected PARAN'; }
           utils.processResult(RetrievedValues, this.hasTestPassed, 'NNULN (0x54)', comment);
           resolve(this.hasTestPassed);
-        }, this.defaultTimeout );
-      } , this.defaultTimeout );
+        }, 250 );
+      } , 250 );
     }.bind(this));
   }
 
 
   // 0x55 - NNCLR
-  test_NNCLR(RetrievedValues) {
+  async test_NNCLR(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNCLR test'});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNCLR(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-            if (msg.mnemonic == "WRACK"){
-              this.hasTestPassed = true; 
-              comment = ' - WRACK received'
-            }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeNNCLR(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+          if (msg.mnemonic == "WRACK"){
+            this.hasTestPassed = true; 
+            comment = ' - WRACK received'
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected WRACK'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR (0x55)', comment);
-        resolve(this.hasTestPassed);
-      } , 800 );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+
+    if(!this.hasTestPassed){ comment = ' - missing expected WRACK'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNCLR (0x55)', comment);
+    return this.hasTestPassed
   }
 
 
   // 0x56 - NNEVN
-  test_NNEVN(RetrievedValues) {
+  async test_NNEVN(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NNEVN test: node ' + RetrievedValues.getNodeNumber()});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNNEVN(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "EVNLF"){
-              this.hasTestPassed = true;
-              // store the returned value
-              RetrievedValues.data["EventSpaceLeft"] = msg.EVSPC;
-              comment = ' - EVNLF received'
-            }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeNNEVN(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "EVNLF"){
+            this.hasTestPassed = true;
+            // store the returned value
+            RetrievedValues.data["EventSpaceLeft"] = msg.EVSPC;
+            comment = ' - EVNLF received'
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected EVNLF message'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN (0x56)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected EVNLF message'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NNEVN (0x56)', comment);
+    return this.hasTestPassed
   }
 
 
   // 0x57 - NERD
   // this will also clear the RetrievedValues of events, so that only the ones returned by this operation
   // will then be in RetrivedEvents - we can use it to check if a 'taught' event is now present
-  test_NERD(RetrievedValues) {
+  async test_NERD(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN NERD test: node ' + RetrievedValues.getNodeNumber()});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      RetrievedValues.clearEvents()
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "ENRSP"){
-              this.hasTestPassed = true;
-              comment = ' - received ENRSP'
-              // store the returned value
-              if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
-              RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
-            }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeNERD(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    RetrievedValues.clearEvents()
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "ENRSP"){
+            this.hasTestPassed = true;
+            comment = ' - received ENRSP'
+            // store the returned value
+            if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
+            RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
+    return this.hasTestPassed
   }
 
 
   // 0x58 - RQEVN
-  test_RQEVN(RetrievedValues) {
+  async test_RQEVN(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN RQEVN test: node ' + RetrievedValues.getNodeNumber()});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeRQEVN(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "NUMEV"){
-              this.hasTestPassed = true;
-              comment = ' - received NUMEV'
-              // store the returned value
-              RetrievedValues.data["StoredEventCount"] = msg.eventCount;
-            }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeRQEVN(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "NUMEV"){
+            this.hasTestPassed = true;
+            comment = ' - received NUMEV'
+            // store the returned value
+            RetrievedValues.data["StoredEventCount"] = msg.eventCount;
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected NUMEV'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN (0x58)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected NUMEV'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'RQEVN (0x58)', comment);
+    return this.hasTestPassed
   }
 
 
   // 0x5D - ENUM
-  test_ENUM(RetrievedValues) {
+  async test_ENUM(RetrievedValues) {
     winston.debug({message: 'VLCB: BEGIN ENUM test'});
-    return new Promise(function (resolve, reject) {
-      this.hasTestPassed = false;
-      this.network.messagesIn = [];
-      var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
-      this.network.write(msgData);
-      var comment = ''
-      setTimeout(()=>{
-        this.network.messagesIn.forEach(msg => {
-          if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-            if (msg.mnemonic == "NNACK"){
-              this.hasTestPassed = true;
-              comment = ' - received NNACK'
-            }
+    this.hasTestPassed = false;
+    this.network.messagesIn = [];
+    var msgData = cbusLib.encodeENUM(RetrievedValues.getNodeNumber());
+    this.network.write(msgData);
+    var comment = ''
+
+    var startTime = Date.now();
+    // set maximum wait as 1 second, unless local unit tests running...
+    var timeout = 1000;
+    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    while(Date.now()-startTime < timeout) {
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "NNACK"){
+            this.hasTestPassed = true;
+            comment = ' - received NNACK'
           }
-        })
-        if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
-        utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM (0x5D)', comment);
-        resolve(this.hasTestPassed);
-      } , this.defaultTimeout );
-    }.bind(this));
+        }
+      })
+      if(this.hasTestPassed){ break; }
+    }
+    if(!this.hasTestPassed){ comment = ' - missing expected NNACK'; }
+    utils.processResult(RetrievedValues, this.hasTestPassed, 'ENUM (0x5D)', comment);
+    return this.hasTestPassed
   }
 
 
@@ -315,11 +342,11 @@ module.exports = class opcodes_5x {
             }
             utils.processResult(RetrievedValues, this.hasTestPassed, 'NNRST (0x5E)', comment);
             resolve(this.hasTestPassed);
-          } , this.defaultTimeout*4 );
+          } , 1000 );
         } else {
             winston.info({message: 'VLCB:      No Service 1 found '}); 
         }
-      } , this.defaultTimeout );
+      } , 250 );
     }.bind(this));
   }
 
