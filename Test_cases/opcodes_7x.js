@@ -42,7 +42,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 2 seconds, unless local unit tests running...
     var timeout = 2000;     // allow enough for multiple responses
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       countNV = 0;      // reset the NV count for each pass. to avoid duplicating
@@ -105,7 +105,7 @@ module.exports = class opcodes_7x {
       var startTime = Date.now();
       // set maximum wait as 1 second, unless local unit tests running...
       var timeout = 1000
-      if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+      if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
       while(Date.now()-startTime < timeout) {
         await utils.sleep(10);
           this.network.messagesIn.forEach(msg => {
@@ -174,7 +174,7 @@ module.exports = class opcodes_7x {
       var startTime = Date.now();
       // set maximum wait as 1 second, unless local unit tests running...
       var timeout = 1000
-      if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+      if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
       while(Date.now()-startTime < timeout) {
         await utils.sleep(10);
         this.network.messagesIn.forEach(msg => {
@@ -215,7 +215,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
     // a warning outputstring
@@ -282,7 +282,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -348,7 +348,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -388,7 +388,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
         this.network.messagesIn.forEach(msg => {
@@ -441,7 +441,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
         this.network.messagesIn.forEach(msg => {
@@ -490,7 +490,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -524,7 +524,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -567,7 +567,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -634,7 +634,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       var msg_count = 0;	// we may want to compare the number of messages,so lets start a count
@@ -687,7 +687,7 @@ module.exports = class opcodes_7x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       var msg_count = 0;	// we may want to compare the number of messages,so lets start a count

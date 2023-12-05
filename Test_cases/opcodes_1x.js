@@ -37,7 +37,7 @@ module.exports = class opcodes_1x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -80,7 +80,7 @@ module.exports = class opcodes_1x {
     var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {

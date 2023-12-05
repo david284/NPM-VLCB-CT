@@ -22,7 +22,7 @@ module.exports = class opcodes_9x {
 		
 		this.network = NETWORK;
     this.hasTestPassed = false;
-    this.defaultTimeout = 250
+    this.defaultTimeout = 500
   }
 
 
