@@ -36,7 +36,7 @@ describe('opcodes_9x unit tests', function(){
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_9x unit tests');
     Network.testStarted = true;
-    tests.defaultTimeout = 10
+    RetrievedValues.data.unitTestsRunning = true;
   	})
     
     beforeEach (function() {
