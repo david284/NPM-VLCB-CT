@@ -107,27 +107,24 @@ class RetrievedValues {
         if(Service_Definitions[ServiceType] != null) {
           this.data.Services[ServiceIndex]["ServiceName"] = Service_Definitions[ServiceType].name;
         }
-
+        // create a bit field & count for expected diagnostic codes for this service 
+        // so we can check against actual received diagnostic codes
+        if(Service_Definitions[ServiceType] != null) {
+          if ( (Service_Definitions[ServiceType].version!= null) 
+            && (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
+            && (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
+            for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
+              this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
+              this.data["Services"][ServiceIndex].diagnosticExpectedCount++;
+            }
+          }
+        }
         this.data.ServicesActualCount++;
         if (ServiceIndex > this.data.MaxServiceIndex) {this.data.MaxServiceIndex = ServiceIndex};
         winston.debug({message: 'VLCB: RetrievedValues: service added - index ' + ServiceIndex});
       } else {
         winston.debug({message: 'VLCB:      WARNING: service already exists - index ' + ServiceIndex});
       }
-      
-      // create a bit field & count for expected diagnostic codes for this service 
-      // so we can check against actual received diagnostic codes
-      if(Service_Definitions[ServiceType] != null) {
-        if ( (Service_Definitions[ServiceType].version!= null) 
-          && (Service_Definitions[ServiceType].version[ServiceVersion]!= null)
-          && (Service_Definitions[ServiceType].version[ServiceVersion].diagnostics != null)) {
-          for (var entry in Service_Definitions[ServiceType].version[ServiceVersion].diagnostics) {
-            this.data["Services"][ServiceIndex].diagnosticCodeExpectedBitfield |= 2 ** entry;
-            this.data["Services"][ServiceIndex].diagnosticExpectedCount++;
-          }
-        }
-      }
-
     } else {
       winston.error({message: 'VLCB: RetrievedValues: addService(): invalid parameter ' + ServiceIndex + ' ' + ServiceType + ' ' + ServiceVersion});  
     }

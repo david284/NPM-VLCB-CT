@@ -23,7 +23,6 @@ module.exports = class opcodes_7x {
 		
 		this.network = NETWORK;
     this.hasTestPassed = false;
-    this.defaultTimeout = 250
   }
 
 
