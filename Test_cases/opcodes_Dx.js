@@ -41,7 +41,7 @@ module.exports = class opcodes_Dx {
     var startTime = Date.now();
     // set maximum wait as 5.1 seconds, unless local unit tests running...
     var timeout = 5100;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -80,7 +80,7 @@ module.exports = class opcodes_Dx {
     var startTime = Date.now();
     // set maximum wait as 1000 seconds, unless local unit tests running...
     var timeout = 1000;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -147,7 +147,7 @@ module.exports = class opcodes_Dx {
     var startTime = Date.now();
     // set maximum wait as 1000 seconds, unless local unit tests running...
     var timeout = 1000;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -216,7 +216,7 @@ module.exports = class opcodes_Dx {
     var startTime = Date.now();
     // set maximum wait as 1000 seconds, unless local unit tests running...
     var timeout = 1000;
-    if (RetrievedValues.data.unitTestsRunning){timeout = 30 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
