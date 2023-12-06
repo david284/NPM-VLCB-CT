@@ -581,11 +581,8 @@ module.exports = class opcodes_7x {
                 // also assume to start with that this defines the maximum service index
                 RetrievedValues.data.MaxServiceIndex = msg.ServiceVersion
                 this.hasTestPassed = true;	// accept test has passed if we get this one message
-                winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
               } else {
                 RetrievedValues.addService(msg.ServiceIndex, msg.ServiceType, msg.ServiceVersion);
-                winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex 
-                            +  ' - ' + RetrievedValues.data.Services[msg.ServiceIndex.toString()].ServiceName});
               }
             }
           } else {
@@ -616,6 +613,19 @@ module.exports = class opcodes_7x {
       }
       if (this.hasTestPassed){ break; }
     }
+    // print out each service received
+    this.network.messagesIn.forEach(msg => {
+      if (msg.mnemonic == "SD"){
+        if (msg.ServiceIndex == 0){
+          winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
+        } else {
+          // winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex });
+          winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex 
+          +  ' - ' + RetrievedValues.data.Services[msg.ServiceIndex.toString()].ServiceName});
+        }  
+      }
+    });
+
     if(!this.hasTestPassed){ if (comment == '') {comment = ' - no response to RQSD received'; } }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'RQSD (0x78)', comment);
     return this.hasTestPassed
