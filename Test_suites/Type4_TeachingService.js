@@ -55,6 +55,10 @@ module.exports = class TeachingServiceTests {
         // save value for later use
         var initialStoredEventCount = RetrievedValues.data.StoredEventCount
 
+        // now request all events stored
+        // will clear any existing record of events in RetrievedValues
+        await this.opcodes_5x.test_NERD(RetrievedValues);
+
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
         
@@ -143,7 +147,7 @@ module.exports = class TeachingServiceTests {
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
 
-          // now request number of events stored, so we can check the event tablke has been filled
+          // now request number of events stored, so we can check the event table has been filled
           await this.opcodes_5x.test_RQEVN(RetrievedValues);          
 
           // check the event table has been filled
@@ -168,6 +172,9 @@ module.exports = class TeachingServiceTests {
           // before leaving learn mode, test erase all events
           await this.opcodes_5x.test_NNCLR(RetrievedValues);
           
+          // now request number of events stored, so we can check the event table has been cleared
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);          
+
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          

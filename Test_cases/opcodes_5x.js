@@ -218,16 +218,27 @@ module.exports = class opcodes_5x {
     RetrievedValues.clearEvents()
     var comment = ''
 
-    var startTime = Date.now();
-    // set maximum wait as 1 second, unless local unit tests running...
-    var timeout = 1000;
+    // we're expecting all the events to be returned, so lets try to find out just how many we should expect
+    var expectedEventCount = 0;
+    if (RetrievedValues.data.StoredEventCount != null){
+      expectedEventCount = RetrievedValues.data.StoredEventCount
+    } else if (4 in RetrievedValues.data.nodeParameters) {
+      expectedEventCount = RetrievedValues.data.nodeParameters[4].value
+    } else {
+      // ok, so don't know how many events - so assume worse case
+      expectedEventCount = 255
+    }
+    winston.debug({message: 'VLCB: NERD - expecting ' + expectedEventCount + ' events'});
+    var timeout = 1000 + expectedEventCount * 20
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
+    var eventCount = 0;
+    var startTime = Date.now();
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
         if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
           if (msg.mnemonic == "ENRSP"){
-            this.hasTestPassed = true;
+            eventCount++
             comment = ' - received ENRSP'
             // store the returned value
             if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
@@ -235,8 +246,8 @@ module.exports = class opcodes_5x {
           }
         }
       })
-      if(this.hasTestPassed){ break; }
     }
+    if (eventCount > 0) this.hasTestPassed = true
     if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
     return this.hasTestPassed
