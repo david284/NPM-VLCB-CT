@@ -51,7 +51,8 @@ module.exports = class TeachingServiceTests {
         var initialEventSpaceLeft = RetrievedValues.data.EventSpaceLeft
 
 				// now request number of events stored
-				await this.opcodes_5x.test_RQEVN(RetrievedValues);
+        // will update StoredEventCount, used by the NERD test
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
         // save value for later use
         var initialStoredEventCount = RetrievedValues.data.StoredEventCount
 
@@ -76,6 +77,10 @@ module.exports = class TeachingServiceTests {
 
           // add new event & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, 1, 1);
+         
+          // now request number of events stored
+          // will update StoredEventCount, used by the NERD test
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           // now request all events stored, as we know there should be at least one event
           // will clear any existing record of events in RetrievedValues
@@ -104,13 +109,14 @@ module.exports = class TeachingServiceTests {
           // check EVLRN_SHORT error response
           await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, testEventIdentifier, 1, 1);
 
-          // now request all events stored, as a double check
-          await this.opcodes_5x.test_NERD(RetrievedValues);
-
           // now request number of events stored
+          // will update StoredEventCount, used by the NERD test
           await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
+
+          // now request all events stored, as a double check
+          await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // now read back event variable 1
           await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, 1);
@@ -134,6 +140,7 @@ module.exports = class TeachingServiceTests {
           await this.opcodes_9x.test_EVULN(RetrievedValues, testEventIdentifier);
           
           // now request number of events stored so we can check if event has been removed
+          // will update StoredEventCount, used by the NERD test
           await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)

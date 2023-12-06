@@ -228,6 +228,7 @@ module.exports = class opcodes_5x {
       // ok, so don't know how many events - so assume worse case
       expectedEventCount = 255
     }
+    utils.DisplayComment("NERD test - expecting " + expectedEventCount + " events")
     winston.debug({message: 'VLCB: NERD - expecting ' + expectedEventCount + ' events'});
     var timeout = 1000 + expectedEventCount * 20
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
