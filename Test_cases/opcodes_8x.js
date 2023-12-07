@@ -83,6 +83,14 @@ module.exports = class opcodes_8x {
         if (this.hasTestPassed){ break; }
       }
     }
+    // lets display what we have
+    this.network.messagesIn.forEach(msg => {
+      if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+        if (msg.mnemonic == "DGN"){
+          winston.info({message: 'VLCB:      ' + RetrievedValues.DiagnosticCodeToString(msg.ServiceIndex, msg.DiagnosticCode)});
+        }
+      }
+    })
     if(!this.hasTestPassed){ if (comment == '') {comment = ' - no response received to RDGN'; } }
     // add some context to result
     comment = " - " + ServiceName +" ServiceIndex " + requestedServiceIndex + " Diagnostic Code " + DiagnosticCode + comment;

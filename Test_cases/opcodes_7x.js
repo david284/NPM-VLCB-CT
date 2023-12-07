@@ -615,14 +615,16 @@ module.exports = class opcodes_7x {
     }
     // print out each service received
     this.network.messagesIn.forEach(msg => {
-      if (msg.mnemonic == "SD"){
-        if (msg.ServiceIndex == 0){
-          winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
-        } else {
-          // winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex });
-          winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex 
-          +  ' - ' + RetrievedValues.data.Services[msg.ServiceIndex.toString()].ServiceName});
-        }  
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+        if (msg.mnemonic == "SD"){
+          if (msg.ServiceIndex == 0){
+            winston.info({message: 'VLCB:      Service Discovery : Service count ' + msg.ServiceVersion });
+          } else {
+            // winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex });
+            winston.info({message: 'VLCB:      Service Discovery : Service found: index ' + msg.ServiceIndex 
+            +  ' - ' + RetrievedValues.data.Services[msg.ServiceIndex.toString()].ServiceName});
+          }  
+        }
       }
     });
 
