@@ -565,8 +565,8 @@ module.exports = class opcodes_7x {
     var comment = ''
 
     var startTime = Date.now();
-    // set maximum wait as 1 second, unless local unit tests running...
-    var timeout = 1000
+    // set maximum wait as 2 seconds, unless local unit tests running...
+    var timeout = 2000
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);

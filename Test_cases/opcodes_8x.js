@@ -27,20 +27,26 @@ module.exports = class opcodes_8x {
 
 	
 	// 0x87 - RDGN
-	async test_RDGN(RetrievedValues, ServiceIndex, DiagnosticCode) {
-    winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + ServiceIndex});
+	async test_RDGN(RetrievedValues, requestedServiceIndex, DiagnosticCode) {
+    winston.debug({message: 'VLCB: BEGIN RDGN test - ServiceIndex ' + requestedServiceIndex});
     this.hasTestPassed = false;
     this.network.messagesIn = [];
     var comment = ''
     // now create message and start test
-    var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), ServiceIndex, DiagnosticCode);
+    var msgData = cbusLib.encodeRDGN(RetrievedValues.getNodeNumber(), requestedServiceIndex, DiagnosticCode);
     this.network.write(msgData);
-    var ServiceName = RetrievedValues.getServiceName(ServiceIndex);
+    var ServiceName = RetrievedValues.getServiceName(requestedServiceIndex);
 
-    var startTime = Date.now();
-    // set maximum wait as 2 seconds, unless local unit tests running...
+    // assume diagnotic(s) for just one service requested
     var timeout = 2000
+    // if requestedServiceIndex = 0, then we don't really know how many diagnostics will be returned
+    // so base a timeout on the number of services that has been previously detected
+    // and don't allow an early break;
+    if (requestedServiceIndex == 0){
+      timeout = 500 + RetrievedValues.data.ServicesActualCount * 100
+    }
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
+    var startTime = Date.now();
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
       this.network.messagesIn.forEach(msg => {
@@ -61,24 +67,25 @@ module.exports = class opcodes_8x {
           }
         }
       });
-      if(ServiceIndex != 0) {
+      if(requestedServiceIndex != 0) {
         if ( DiagnosticCode == 0) { 
-          if(RetrievedValues.data.Services[ServiceIndex].diagnosticExpectedCount != RetrievedValues.data.Services[ServiceIndex].diagnosticReportedCount) {
-            comment = ' - expected diagnostic count ' + RetrievedValues.data.Services[ServiceIndex].diagnosticExpectedCount +
-                                  ' does not match received diagnostic count ' + RetrievedValues.data.Services[ServiceIndex].diagnosticReportedCount
+          if(RetrievedValues.data.Services[requestedServiceIndex].diagnosticExpectedCount != RetrievedValues.data.Services[requestedServiceIndex].diagnosticReportedCount) {
+            comment = ' - expected diagnostic count ' + RetrievedValues.data.Services[requestedServiceIndex].diagnosticExpectedCount +
+                                  ' does not match received diagnostic count ' + RetrievedValues.data.Services[requestedServiceIndex].diagnosticReportedCount
             this.hasTestPassed = false
           }
-          else if(RetrievedValues.data.Services[ServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[ServiceIndex].diagnosticCodeReceivedBitfield) {
+          else if(RetrievedValues.data.Services[requestedServiceIndex].diagnosticCodeExpectedBitfield != RetrievedValues.data.Services[requestedServiceIndex].diagnosticCodeReceivedBitfield) {
             comment = ' - mix of expected diagnostics do not match mix of received diagnostics'
             this.hasTestPassed = false
           }
         } 
+        // only allow break out early if single service requested
+        if (this.hasTestPassed){ break; }
       }
-      if (this.hasTestPassed){ break; }
     }
     if(!this.hasTestPassed){ if (comment == '') {comment = ' - no response received to RDGN'; } }
     // add some context to result
-    comment = " - " + ServiceName +" ServiceIndex " + ServiceIndex + " Diagnostic Code " + DiagnosticCode + comment;
+    comment = " - " + ServiceName +" ServiceIndex " + requestedServiceIndex + " Diagnostic Code " + DiagnosticCode + comment;
     utils.processResult(RetrievedValues, this.hasTestPassed, 'RDGN (0x87)', comment);
     return this.hasTestPassed
   } // end Test_RDGN

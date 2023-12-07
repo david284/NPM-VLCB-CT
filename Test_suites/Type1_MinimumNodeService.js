@@ -35,14 +35,15 @@ module.exports = class MinimumNodeServiceTests{
     async runTests(RetrievedValues, module_descriptor){
 		utils.DisplayStartDivider(this.Title + ' tests');
 			
-			// now do rest of 'normal' opcodes, but only if we have succesfully retrieved the module descriptor file
+      // 'setup' commands done in SetupMode test suite
+			// so do rest of MNS opcodes, but only if we have succesfully retrieved the module descriptor file
 			if (module_descriptor != null){
 				
 				// check for response to QNN from module under test
 				await this.opcodes_0x.test_QNN(RetrievedValues);
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
-				// we don't get that info from the RQNP command unfortunately
+				// we don't get that info from the RQNP command in SetupMode unfortunately
 				await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
 				
 				// now retrieve all the other node parameters, and check against module_descriptor file
@@ -62,18 +63,20 @@ module.exports = class MinimumNodeServiceTests{
 				// now test a short RQNPN message, expecting an error message
 				await this.opcodes_7x.test_RQNPN_SHORT(RetrievedValues, module_descriptor, 1);
 				
-				// this will get all the services that this module supports
-				// 
+				// now start testing the service commands
+        // this will get all the services that this module supports
 				await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
 								
 				// test the error returned with invalid service index
 				// so use reported maximum service index plus 1 for service index
 				await this.opcodes_7x.test_RQSD_INVALID_SERVICE(RetrievedValues, RetrievedValues.data.MaxServiceIndex+1);
 								
-				// test the error returned with short message
+				// test the error returned with a short message
 				await this.opcodes_7x.test_RQSD_SHORT(RetrievedValues, 1);
 								
-				// request all the diagnostics, for all services, not just MNS
+        // Now start testing the diagnostic commands, now we have the number of services
+        // First request all the diagnostics, for all services, not just MNS
+        // knowing how many services gives us a rough idea of how long to wait for all messages
 				await this.opcodes_8x.test_RDGN(RetrievedValues, 0, 0);
 
 				// request the diagnostics for an invalid service, test the error return
