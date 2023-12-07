@@ -39,7 +39,7 @@ describe('opcodes_Bx unit tests', function(){
     beforeEach (function() {
  		winston.info({message: ' '});   // blank line to separate tests
 		Network.messagesIn = [];
-    tests.defaultTimeout = 10
+    RetrievedValues.data.unitTestsRunning = true;
     })
 
 	after(function(done) {

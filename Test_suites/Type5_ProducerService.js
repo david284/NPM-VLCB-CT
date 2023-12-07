@@ -75,7 +75,11 @@ module.exports = class ProducerServiceTests {
           winston.info({message: 'VLCB:      FAIL: failed to exit Learn mode'});          
         }
         
-        // now request all events stored, so we can firm the events have been added
+        // now request number of events stored
+        // will update StoredEventCount, used by the NERD test
+        await this.opcodes_5x.test_RQEVN(RetrievedValues);
+          
+        // now request all events stored, so we can confirm the events have been added
         await this.opcodes_5x.test_NERD(RetrievedValues);
 
         // get long event 0xAAA5 (this node number:43685)

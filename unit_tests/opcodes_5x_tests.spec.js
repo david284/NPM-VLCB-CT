@@ -31,12 +31,12 @@ describe('opcodes_5x unit tests', function(){
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_5x unit tests');
     Network.testStarted = true;
-		tests.defaultTimeout = 10
+    RetrievedValues.data.unitTestsRunning = true;
 	})
     
   beforeEach (function() {
     winston.info({message: ' '});   // blank line to separate tests
-  Network.messagesIn = [];
+    Network.messagesIn = [];
   })
 
 	after(function(done) {
@@ -48,8 +48,8 @@ describe('opcodes_5x unit tests', function(){
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
-      }, 100);
-		}, 100);
+      }, 10);
+		}, 10);
   });
 
 

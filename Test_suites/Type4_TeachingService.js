@@ -51,9 +51,14 @@ module.exports = class TeachingServiceTests {
         var initialEventSpaceLeft = RetrievedValues.data.EventSpaceLeft
 
 				// now request number of events stored
-				await this.opcodes_5x.test_RQEVN(RetrievedValues);
+        // will update StoredEventCount, used by the NERD test
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
         // save value for later use
         var initialStoredEventCount = RetrievedValues.data.StoredEventCount
+
+        // now request all events stored
+        // will clear any existing record of events in RetrievedValues
+        await this.opcodes_5x.test_NERD(RetrievedValues);
 
         //put module into learn mode
 				await this.opcodes_5x.test_NNLRN(RetrievedValues);
@@ -72,6 +77,10 @@ module.exports = class TeachingServiceTests {
 
           // add new event & event variable #1
           await this.opcodes_Dx.test_EVLRN(RetrievedValues, testEventIdentifier, 1, 1);
+         
+          // now request number of events stored
+          // will update StoredEventCount, used by the NERD test
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           // now request all events stored, as we know there should be at least one event
           // will clear any existing record of events in RetrievedValues
@@ -100,13 +109,14 @@ module.exports = class TeachingServiceTests {
           // check EVLRN_SHORT error response
           await this.opcodes_Dx.test_EVLRN_SHORT(RetrievedValues, testEventIdentifier, 1, 1);
 
-          // now request all events stored, as a double check
-          await this.opcodes_5x.test_NERD(RetrievedValues);
-
           // now request number of events stored
+          // will update StoredEventCount, used by the NERD test
           await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
+
+          // now request all events stored, as a double check
+          await this.opcodes_5x.test_NERD(RetrievedValues);
 
           // now read back event variable 1
           await this.opcodes_Bx.test_REQEV(RetrievedValues, testEventIdentifier, 1);
@@ -130,6 +140,7 @@ module.exports = class TeachingServiceTests {
           await this.opcodes_9x.test_EVULN(RetrievedValues, testEventIdentifier);
           
           // now request number of events stored so we can check if event has been removed
+          // will update StoredEventCount, used by the NERD test
           await this.opcodes_5x.test_RQEVN(RetrievedValues);
           
           utils.DisplayComment('number of events - before ' + initialStoredEventCount + ' now ' + RetrievedValues.data.StoredEventCount)
@@ -143,7 +154,7 @@ module.exports = class TeachingServiceTests {
             await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
           }
 
-          // now request number of events stored, so we can check the event tablke has been filled
+          // now request number of events stored, so we can check the event table has been filled
           await this.opcodes_5x.test_RQEVN(RetrievedValues);          
 
           // check the event table has been filled
@@ -168,6 +179,9 @@ module.exports = class TeachingServiceTests {
           // before leaving learn mode, test erase all events
           await this.opcodes_5x.test_NNCLR(RetrievedValues);
           
+          // now request number of events stored, so we can check the event table has been cleared
+          await this.opcodes_5x.test_RQEVN(RetrievedValues);          
+
           //
         } else {
           winston.info({message: 'VLCB:      FAIL: tests skipped - failed to go into Learn mode'});          

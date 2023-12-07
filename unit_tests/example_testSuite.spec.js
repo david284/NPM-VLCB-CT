@@ -26,8 +26,8 @@ describe('example_testSuite unit tests', function(){
       setTimeout(function(){
         // timeout to allow the finish text above to print
         done();
-      }, 100);
-		}, 100);
+      }, 10);
+		}, 10);
   });
 
 

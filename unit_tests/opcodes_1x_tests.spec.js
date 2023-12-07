@@ -31,7 +31,7 @@ describe('opcodes_1x unit tests', function(){
 	before(function() {
     utils.DisplayUnitTestHeader('opcodes_1x unit tests');
     Network.testStarted = true;
-    tests.defaultTimeout = 10
+    RetrievedValues.data.unitTestsRunning = true;
 	})
     
     beforeEach (function() {
@@ -59,16 +59,15 @@ describe('opcodes_1x unit tests', function(){
 //
 
 
-function GetTestCase_Pass_Fail() {
-  var arg1, testCases = [];
-  for (var a = 1; a<= 2; a++) {
-    if (a == 1) {arg1 = true}
-    if (a == 2) {arg1 = false}
-    testCases.push({'expectedResult': arg1});
+  function GetTestCase_Pass_Fail() {
+    var arg1, testCases = [];
+    for (var a = 1; a<= 2; a++) {
+      if (a == 1) {arg1 = true}
+      if (a == 2) {arg1 = false}
+      testCases.push({'expectedResult': arg1});
+    }
+    return testCases;
   }
-  return testCases;
-}
-
 
 
   //10 - RQNP
@@ -84,9 +83,9 @@ function GetTestCase_Pass_Fail() {
 	})
 
 
-    // 0x11 - RQMN
-    //
-    itParam("RQMN test ${JSON.stringify(value)}", GetTestCase_Pass_Fail(), async function (value) {
+  // 0x11 - RQMN
+  //
+  itParam("RQMN test ${JSON.stringify(value)}", GetTestCase_Pass_Fail(), async function (value) {
 		winston.info({message: 'UNIT TEST: BEGIN RQMN test'});
     if (value.expectedResult == true) { mock_Cbus.enterSetup(0) }
     var result = await tests.test_RQMN(RetrievedValues);
