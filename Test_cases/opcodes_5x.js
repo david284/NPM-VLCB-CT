@@ -329,7 +329,7 @@ module.exports = class opcodes_5x {
     var comment = ''
     var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
     this.network.write(msgData);
-    await utils.sleep(100);    // allow time for command to be processed - can't check this directly
+    await utils.sleep(250);    // allow time for command to be processed - can't check this directly
 
     if (serviceIndex) {
       // get all diagnostics for MNS service, so we can check uptime has been reset
@@ -350,29 +350,27 @@ module.exports = class opcodes_5x {
             if (msg.mnemonic == "DGN"){
               if (msg.DiagnosticCode == 2) {
                 MSB_Uptime = msg.DiagnosticValue
-                winston.debug({message: 'VLCB:      NNRST: ' + ' uptime MSB ' + MSB_Uptime}); 
               }
               if (msg.DiagnosticCode == 3) {
                 LSB_Uptime = msg.DiagnosticValue
-                winston.debug({message: 'VLCB:      NNRST: ' + ' uptime LSB ' + LSB_Uptime}); 
               }
             }
           }
         })
-        // now check uptime if we've received both parts
-        if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
-          var uptime = (MSB_Uptime << 8) + LSB_Uptime
-          winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-          if (uptime < 2){ 
-            this.hasTestPassed = true 
-            comment = ' - uptime is less than 2'
-          } else {
-            comment = ' - uptime is ' + uptime + ', but expected < 2'
-          }
+        // don't break early, as there's more diagnostic messages transmitted as we requested all of
+      }
+      // now check uptime if we've received both parts
+      if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
+        var uptime = (MSB_Uptime << 8) + LSB_Uptime
+        winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
+        if (uptime < 2){ 
+          this.hasTestPassed = true 
+          comment = ' - uptime is less than 2'
         } else {
-          comment = ' -  uptime after NNRST has undefined value'
+          comment = ' - uptime is ' + uptime + ', but expected < 2'
         }
-        if(this.hasTestPassed){ break; }
+      } else {
+        comment = ' -  uptime after NNRST has undefined value'
       }
     } else {
       comment = ' - No Service 1 found'

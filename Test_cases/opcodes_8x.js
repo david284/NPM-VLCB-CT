@@ -38,7 +38,7 @@ module.exports = class opcodes_8x {
     var ServiceName = RetrievedValues.getServiceName(requestedServiceIndex);
 
     // assume diagnotic(s) for just one service requested
-    var timeout = 2000
+    var timeout = 1000
     // if requestedServiceIndex = 0, then we don't really know how many diagnostics will be returned
     // so base a timeout on the number of services that has been previously detected
     // and don't allow an early break;
@@ -80,7 +80,7 @@ module.exports = class opcodes_8x {
           }
         } 
         // only allow break out early if single service requested
-        if (this.hasTestPassed){ break; }
+//        if (this.hasTestPassed){ break; }
       }
     }
     // lets display what we have
