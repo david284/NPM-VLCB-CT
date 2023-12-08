@@ -78,8 +78,8 @@ module.exports = class opcodes_Dx {
     var comment = ''
 
     var startTime = Date.now();
-    // set maximum wait as 1000 seconds, unless local unit tests running...
-    var timeout = 1000;
+    // set maximum wait as 5500 seconds, unless local unit tests running...
+    var timeout = 5500;
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);

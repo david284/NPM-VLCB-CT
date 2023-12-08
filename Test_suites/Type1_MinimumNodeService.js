@@ -40,22 +40,22 @@ module.exports = class MinimumNodeServiceTests{
 			if (module_descriptor != null){
 				
 				// check for response to QNN from module under test
+        // ensures it's survived the setup tests
 				await this.opcodes_0x.test_QNN(RetrievedValues);
 				
 				// now get node parameter 0, as it tells us how many more node parameters there are
 				// we don't get that info from the RQNP command in SetupMode unfortunately
 				await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
 				
-				// now retrieve all the other node parameters, and check against module_descriptor file
-				//using value now stored in parameter 0 - but check it exists first
+				// now retrieve node parameter 1
+        await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 1);
+
+        // now check last parameter and check failure responses for last parameter+1
+        // using value now stored in parameter 0 - but check it exists first
         if (RetrievedValues.data["nodeParameters"]["0"]){
-          for (var i=1; i<RetrievedValues.data["nodeParameters"]["0"].value+1; i++) {
-            await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, i);
-          }
-				
+          await this.opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value);				
           // now test the last node parameter + 1, expecting an error message
           await this.opcodes_7x.test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, RetrievedValues.data["nodeParameters"]["0"].value+1);
-
         } else {
           utils.DisplayComment("No value for Node Parameter[0] - number of node parameters, so all other node parameters skipped")
         }

@@ -67,6 +67,14 @@ class RetrievedValues {
     this.writeToDisk()
 	}
 	
+  getNodeParameterName(parameterIndex){
+    var name = 'unknown node parameter'
+    if (NodeParameterNames[parameterIndex]){
+		  name = NodeParameterNames[parameterIndex]
+    }
+    return name
+  }
+
   ///////////////////////////////////////////////////////////////////////////////
   //
   // Node Variable related methods

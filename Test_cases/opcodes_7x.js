@@ -204,18 +204,18 @@ module.exports = class opcodes_7x {
 
 
 	// 0x73 - RQNPN
-  async test_RQNPN(RetrievedValues, module_descriptor, parameterIndex) {
-    winston.debug({message: 'VLCB: Get Param ' + parameterIndex});
+  async test_RQNPN(RetrievedValues, module_descriptor, requestedParameterIndex) {
+    winston.debug({message: 'VLCB: Get Param ' + requestedParameterIndex});
     this.hasTestPassed = false;
     this.network.messagesIn = [];
-    var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), parameterIndex);
+    var msgData = cbusLib.encodeRQNPN(RetrievedValues.getNodeNumber(), requestedParameterIndex);
     this.network.write(msgData);
     var comment = ''
-
-    var startTime = Date.now();
-    // set maximum wait as 1 second, unless local unit tests running...
+    
+    // set default timout as 1 second
     var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
+    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout if local unit tests
+    var startTime = Date.now();
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
     // a warning outputstring
@@ -257,8 +257,21 @@ module.exports = class opcodes_7x {
           }
         }
       })
-      if (this.hasTestPassed){ break; }
+      if (requestedParameterIndex > 0){
+        // don't break out early if all parameters requested
+        if (this.hasTestPassed){ break; }
+      }
     }
+    // lets display what we have
+    this.network.messagesIn.forEach(msg => {
+      if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+        if (msg.mnemonic == "PARAN"){
+          winston.info({message: 'VLCB:      Node Parameter ' + msg.parameterIndex + ' '
+           + RetrievedValues.getNodeParameterName(msg.parameterIndex)
+            + ': ' + msg.parameterValue});
+        }
+      }
+    })
     if(!this.hasTestPassed){
       if (comment == '') {comment = ' - missing expected PARAN message'; } 
     } else {
