@@ -64,7 +64,6 @@ module.exports = class opcodes_0x {
             }
           }
         })
-        if(this.hasTestPassed){ break; }
       }
 
       if(!this.hasTestPassed){ comment = ' - missing expected PNN for node ' + expectedNodeNumber; }

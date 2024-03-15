@@ -212,66 +212,76 @@ module.exports = class opcodes_7x {
     this.network.write(msgData);
     var comment = ''
     
-    // set default timout as 1 second
-    var timeout = 1000
-    if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout if local unit tests
-    var startTime = Date.now();
-    while(Date.now()-startTime < timeout) {
-      await utils.sleep(10);
-    // a warning outputstring
+    // Index 0 is a special case
+    // It returns the total number or parameters (not including itself)
+    // and in VLCB, it's followed by a message for each individual parameter
+    // so treat index 0 as a special case
+
+    if (requestedParameterIndex == 0){
+      // set default timout as 1 second
+      var timeout = 1000
+      if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout if local unit tests
+      var startTime = Date.now();
+      while(Date.now()-startTime < timeout) {
+        await utils.sleep(10);
+      }
+      var actualCount = 0;
+      var advertisedCount = 0;
       this.network.messagesIn.forEach(msg => {
         if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
           if (msg.mnemonic == "PARAN"){
+            if (msg.parameterIndex == 0) { 
+              advertisedCount = msg.parameterValue 
+            } else {
+              actualCount++   // only count non-zero indexes
+            }
             // ok - we have a value, so assume the test has passed - now do additional consistency tests
             // and fail the test if any of these tests fail
             this.hasTestPassed = true;					
-            //start building the comment string now we have a PARAN message
-            comment += ' - parameter index: ' + msg.parameterIndex;
-            comment += ' received value: ' + msg.parameterValue;
-            if (RetrievedValues.data["nodeParameters"][msg.parameterIndex] != null){
-              // we have previously read this value, so check it's still the same
-              if ( RetrievedValues.data["nodeParameters"][msg.parameterIndex].value != msg.parameterValue){
-                this.hasTestPassed = false;
-                comment += ' retrieved value: ' + RetrievedValues.data["nodeParameters"][msg.parameterIndex].value
-                winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + comment});  
-              }
-            } else {
-              // new value, so save it
-              RetrievedValues.addNodeParameter(msg.parameterIndex, msg.parameterValue);
-              winston.debug({message: 'VLCB:      Node Parameter ' + msg.parameterIndex + ' added to retrieved_values'});
-            }
-            // if it's in the module_descriptor, we need to check we've read the same value
-            if (module_descriptor.nodeParameters[msg.parameterIndex] != null) {
-              if (module_descriptor.nodeParameters[msg.parameterIndex].value != null) {
-                if ( module_descriptor.nodeParameters[msg.parameterIndex].value != msg.parameterValue) {
-                  this.hasTestPassed = false;
-                  comment += ' module descriptor value: ' + module_descriptor.nodeParameters[msg.parameterIndex].value
-                  winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + comment});
-                }
-              } else {
-                winston.debug({message: 'VLCB: :: info: No matching module_descriptor value entry'});
-              }
-            } else {
-              winston.debug({message: 'VLCB: :: info: No matching module_descriptor file entry'});
-            }
+            comment += this.checkPARAN(RetrievedValues, module_descriptor, msg)
           }
         }
       })
-      if (requestedParameterIndex > 0){
-        // don't break out early if all parameters requested
-        if (this.hasTestPassed){ break; }
+      if (actualCount != advertisedCount){
+        this.hasTestPassed = false;	
+        comment += "- parameters expected: " + advertisedCount + " received: " + actualCount			
+      }
+      winston.info({message: 'VLCB: RQNPN 0: actual count: ' + actualCount + ' advertised count: ' + advertisedCount})
+    } else {
+      // set default timout as 1 second
+      var timeout = 1000
+      if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout if local unit tests
+      var startTime = Date.now();
+      while(Date.now()-startTime < timeout) {
+        await utils.sleep(10);
+        this.network.messagesIn.forEach(msg => {
+          if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+            if (msg.mnemonic == "PARAN"){
+              // ok - we have a value, so assume the test has passed - now do additional consistency tests
+              // and fail the test if any of these tests fail
+              this.hasTestPassed = true;					
+              comment += this.checkPARAN(RetrievedValues, module_descriptor, msg)
+            }
+          }
+        })
+        if (requestedParameterIndex > 0){
+          // don't break out early if all parameters requested
+          if (this.hasTestPassed){ break; }
+        }
       }
     }
+
     // lets display what we have
     this.network.messagesIn.forEach(msg => {
       if(msg.nodeNumber == RetrievedValues.getNodeNumber()) {
         if (msg.mnemonic == "PARAN"){
           winston.info({message: 'VLCB:      Node Parameter ' + msg.parameterIndex + ' '
-           + RetrievedValues.getNodeParameterName(msg.parameterIndex)
+          + RetrievedValues.getNodeParameterName(msg.parameterIndex)
             + ': ' + msg.parameterValue});
         }
       }
     })
+
     if(!this.hasTestPassed){
       if (comment == '') {comment = ' - missing expected PARAN message'; } 
     } else {
@@ -280,7 +290,40 @@ module.exports = class opcodes_7x {
     utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN (0x73)', comment);
     return this.hasTestPassed
   }
- 
+
+  checkPARAN(RetrievedValues, module_descriptor, msg){
+    var comment = ""
+    if (RetrievedValues.data["nodeParameters"][msg.parameterIndex] != null){
+      // we have previously read this value, so check it's still the same
+      if ( RetrievedValues.data["nodeParameters"][msg.parameterIndex].value != msg.parameterValue){
+        this.hasTestPassed = false;
+        comment += ' retrieved value: ' + RetrievedValues.data["nodeParameters"][msg.parameterIndex].value
+        winston.debug({message: 'VLCB:      Failed Node - RetrievedValues value mismatch' + comment});  
+      }
+    } else {
+      // new value, so save it
+      RetrievedValues.addNodeParameter(msg.parameterIndex, msg.parameterValue);
+      winston.debug({message: 'VLCB:      Node Parameter ' + msg.parameterIndex + ' added to retrieved_values'});
+    }
+    // if it's in the module_descriptor, we need to check we've read the same value
+    if (module_descriptor.nodeParameters[msg.parameterIndex] != null) {
+      if (module_descriptor.nodeParameters[msg.parameterIndex].value != null) {
+        if ( module_descriptor.nodeParameters[msg.parameterIndex].value != msg.parameterValue) {
+          this.hasTestPassed = false;
+          comment += ' module descriptor value: ' + module_descriptor.nodeParameters[msg.parameterIndex].value
+          winston.debug({message: 'VLCB:      Failed module descriptor mismatch' + comment});
+        }
+      } else {
+        winston.debug({message: 'VLCB: :: info: No matching module_descriptor value entry'});
+      }
+    } else {
+      winston.debug({message: 'VLCB: :: info: No matching module_descriptor file entry'});
+    }
+    return comment
+  }  
+
+
+
     
 	// 0x73 - RQNPN - out of bounds test
   async test_RQNPN_INVALID_INDEX(RetrievedValues, module_descriptor, parameterIndex) {

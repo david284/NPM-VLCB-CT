@@ -3,7 +3,7 @@
 	"nodeParameters": {
 		"0": {
 			"name" : "Number of parameters",
-			"value" : 8
+			"value" : 20
 		},
 		"1": {
 			"name" : "Manufacturer’s Id",
@@ -15,7 +15,7 @@
 		},
 		"3": {
 			"name" : "Module Type",
-			"value" : 3
+			"value" : 52
 		},
 		"4": {
 			"name" : "No. of events supported",

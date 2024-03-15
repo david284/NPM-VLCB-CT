@@ -21,6 +21,16 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 //
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
+const Flags = {
+  Consumer: 1,
+  Producer: 2,
+  FLiM: 4,
+  Bootloading: 8,
+  SelfConsuming:16,
+  Learn:32,
+  VLCB: 64
+};
+
 
 //
 //
@@ -327,7 +337,8 @@ module.exports = class mock_CbusNetwork {
           if (cbusMsg.encoded.length < 16) {
             this.outputGRSP(cbusMsg.nodeNumber, cbusMsg.opCode, 1, GRSP.Invalid_Command);
           } else if (this.getModule(cbusMsg.nodeNumber) != undefined) {
-            if (cbusMsg.parameterIndex > this.getModule(cbusMsg.nodeNumber).parameters.length) {
+            // check if index outside bounds
+            if (cbusMsg.parameterIndex+1 > this.getModule(cbusMsg.nodeNumber).parameters.length) {
               // send error responses
               this.outputCMDERRandGRSP(cbusMsg.opCode, GRSP.InvalidParameterIndex, GRSP.InvalidParameterIndex, this.testOption)
             } else {
@@ -602,6 +613,7 @@ module.exports = class mock_CbusNetwork {
   }
 
   outputCMDERRandGRSP(opCode, CMDERR_code, GRSP_code, option) {
+    winston.debug({message: 'Mock CBUS Network: outputCMDERRandGRSP: option ' + option});
     if (option == 0 ) {
       this.outputCMDERR(this.learningNode, CMDERR_code)
       this.outputGRSP(this.learningNode, opCode, 1, GRSP_code);
@@ -796,12 +808,40 @@ module.exports = class mock_CbusNetwork {
   }
 
 
-  // 9B
-  outputPARAN(nodeNumber, parameterIndex, parameterValue) {
-    // Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
-    var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, parameterValue);
-    this.broadcast(msgData)
-  }
+	// 9B
+  outputPARAN(nodeNumber, parameterIndex) {
+    if (this.getModule(nodeNumber) != undefined) {
+      cbusLib.setCanHeader(2, this.getModule(nodeNumber).CanId);
+      // now, if parameter index is 0, the response should be the number of parameters
+      // and if VLCB, followed by futher PARAN messages for all the parameters
+      if(parameterIndex==0){
+        winston.info({message: 'Mock CBUS Network:  RQNPN zero parameter '});
+        var numberOfParameters = this.getModule(nodeNumber).getParameter(0);
+        var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, numberOfParameters)
+        this.broadcast(msgData)
+        // now check if VLCB
+        if (this.getModule(nodeNumber).isVLCB()) {
+          for (var i = 1; i <= numberOfParameters; i++ ){
+            var parameterValue = this.getModule(nodeNumber).getParameter(i);
+            var msgData1 = cbusLib.encodePARAN(nodeNumber, i, parameterValue)
+            this.broadcast(msgData1)
+          }
+        }
+      } else {
+        // single parameter requested
+        winston.info({message: 'Mock CBUS Network:  RQNPN single parameter ' + parameterIndex});
+        if (parameterIndex <= this.getModule(nodeNumber).getParameter(0)) {
+          var parameterValue = this.getModule(nodeNumber).getParameter(parameterIndex);
+          var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, parameterValue)
+          this.broadcast(msgData)
+        } else {
+          winston.info({message: 'Mock CBUS Network:  ************ parameter index exceeded ' + parameterIndex + ' ************'});
+          this.outputCMDERR(nodeNumber, GRSP.InvalidParameterIndex)
+          this.outputGRSP(nodeNumber, '73', 1, GRSP.InvalidParameterIndex);
+        }
+      }
+    }
+	}
 
   
   // 9D
@@ -997,7 +1037,7 @@ module.exports = class mock_CbusNetwork {
       if (this.getModule(nodeNumber) != undefined) {
       var msgData = cbusLib.encodeESD(nodeNumber, ServiceIndex, 1, 2, 3, 4);
       this.broadcast(msgData);
-      winston.info({message: 'CBUS Network Sim:  OUT>>  ' + msgData + " " + cbusLib.decode(msgData).text});
+      winston.info({message: 'Mock CBUS Network:  OUT>>  ' + msgData + " " + cbusLib.decode(msgData).text});
     }
   }
 
@@ -1074,24 +1114,21 @@ class CbusModule {
     this.nodeNumber = nodeNumber;
     this.setupMode = false;
     this.parameters =   [   
-      8,      // number of available parameters
+      20,     // number of available parameters
       165,    // param 1 manufacturer Id
       117,    // param 2 Minor code version
       0,      // param 3 module Id
       0,      // param 4 number of supported events
-      32,      // param 5 number of event variables
+      32,     // param 5 number of event variables
       0,      // param 6 number of supported node variables
       2,      // param 7 major version
-      13,     // param 8 node flags
+      0,      // param 8 node flags
       1,      // param 9 cpu type (1 = P18F2480)
       1,      // param 10 interface type (1 = CAN)
-      // NODE flags
-      //  Bit 0 : Consumer
-      //  Bit 1 : Producer
-      //  Bit 2 : FLiM Mode
-      //  Bit 3 : The module supports bootloading   
     ]
     this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
+    this.parameters[20] = 0;        // param 20
+
     this.nodeVariables = [ 8, 1, 2, 3, 4, 5, 6, 7, 8 ];
     this.parameters[6] = this.nodeVariables.length - 1
   }
@@ -1163,7 +1200,7 @@ class CbusModule {
     if (this.inSetupMode()){
       this.nodeNumber = newNodeNumber;
       this.endSetupMode();
-      winston.info({message: 'CBUS Network Sim: Module has new node number ' + newNodeNumber});
+      winston.info({message: 'Mock CBUS Network: Module has new node number ' + newNodeNumber});
     }
   }
         
@@ -1178,6 +1215,9 @@ class CbusModule {
   getFlags() {return this.parameters[8]}
   getFlagsHex() {return decToHex(this.parameters[8], 2)}
   setNodeFlags(flags) {this.parameters[8] = flags}
+  isVLCB() {
+    return this.parameters[8] & Flags.VLCB
+  }
 
   getCpuType() {return this.parameters[9]}
   getCpuTypeHex() {return decToHex(this.parameters[9], 2)}
@@ -1190,7 +1230,7 @@ class CANTEST extends CbusModule{
     super(nodeId);
     this.parameters[3] = 52;
     this.setManufacturerId(165);
-    this.setNodeFlags(7);
+    this.setNodeFlags(Flags.Consumer + Flags.Producer + Flags.FLiM + Flags.VLCB);
     this.setCputType(13);
         
     this.events.push({'eventIdentifier': "012D0103", "variables":[ 0, 0, 0, 0 ]})
