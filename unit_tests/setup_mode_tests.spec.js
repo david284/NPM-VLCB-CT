@@ -9,6 +9,7 @@ const IP_Network = require('./../ip_network.js')
 const SetupMode_tests = require('./../Test_suites/Tests_SetupMode.js');
 const utils = require('./../utilities.js');
 const assert = require('chai').assert;
+let RetrievedValues = require('./../RetrievedValues.js');
 
 const NET_PORT = 5555;
 const NET_ADDRESS = "127.0.0.1"
@@ -50,7 +51,27 @@ describe('Setup Mode unit tests', function(){
 // 				Tests 
 //
 
-	
-
-
+	    //
+      it("getNextFreeNodeNumber test", function () {
+        winston.info({message: 'UNIT TEST: BEGIN getNextFreeNodeNumber test'});
+        RetrievedValues.data.modules = {
+          "200": {
+            "nodeNumber": 200,
+            "manufacturerId": 13,
+            "moduleId": 0,
+            "flags": 71,
+            "CANID": 10
+          },
+          "201": {
+              "nodeNumber": 201,
+              "manufacturerId": 13,
+              "moduleId": 10,
+              "flags": 71,
+              "CANID": 11
+          }
+        }
+        expect(SetupMode.getNextFreeNodeNumber(200, RetrievedValues)).to.equal(202);
+        winston.info({message: 'UNIT TEST: END getNextFreeNodeNumber test'});
+      })
+    
 })

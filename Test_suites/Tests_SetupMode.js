@@ -17,6 +17,7 @@ const opcodes_7x = require('./../Test_cases/opcodes_7x.js');
 // var has function scope (or global if top level)
 // const has block sscope (like let), and can't be changed through reassigment or redeclared
 
+const name='SetupMode_tests'
 
 module.exports = class SetupMode_tests {
 
@@ -100,5 +101,25 @@ module.exports = class SetupMode_tests {
 		winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 		return RetrievedValues;
     }
+
+
+    getNextFreeNodeNumber(baseNodeNumber, RetrievedValues) {
+      var freeNode = 0
+      var nodes = Object.keys(RetrievedValues.data.modules)  // just get node numbers
+      // loop through all node numbers starting at base, checking it it already exists
+      for (var i = baseNodeNumber; i < 65535; i++){
+        if (nodes.includes(i.toString())) {
+          //console.log(name + " node number match: " + i)
+          // found node, so not free
+        } else {
+          winston.info({message: name + " first free node number: " + i});
+          freeNode = i
+          break
+        }
+      }
+      return freeNode
+    }
+    
+    
 }
 

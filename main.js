@@ -130,15 +130,32 @@ async function run_main(){
 
   if (connection) {
 		winston.info({message: '\n'});
-    winston.info({message: ' ==== enter node number to be tested, followed by enter'});
-    winston.info({message: ' ==== or just enter if putting module into setup using the button'});
+    winston.info({message: ' --------------------------- Test Instructions ------------------------------'});
+		winston.info({message: '\n'});
+    winston.info({message: 'If the module is already programmed with a node number, then just enter that node number and hit return'});
+		winston.info({message: '\n'});
+    winston.info({message: "If the module is uninitialised, and does not have a node number, you will need to force the module into setup mode "});
+    winston.info({message: "Typically this is done by holding the button down on the module until the yellow led flashes "});
+    winston.info({message: "First: hit enter with no node number (the test will allocate a free node number) "});
+    winston.info({message: "Second: force the module into setup (yellow led flashing), by holding the button down or any other method appropriate for the module under test"});
+    winston.info({message: "The test will then wait for up to 20 seconds for the module to go into setup "});
+		winston.info({message: '\n'});
+		winston.info({message: 'If you\'re unsure if the module has a node number, just hit enter, but don\'t force the module into setup '});
+		winston.info({message: 'The test will display all programmed nodes present so you can check if your module already has a node number '});
+		winston.info({message: 'and will timeout after 20 seconds '});
+		winston.info({message: '\n'});
+		
 
     // This will prompt for the node number, and then run the tests
     rl.question('\n Enter Node number > ', function(answer) {
       RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
-      winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+			if (Number.isNaN(RetrievedValues.getNodeNumber())){
+				winston.info({message: 'VLCB: ==== No Node number entered'});
+			} else {
+	      winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
+			}
       winston.info({message: ' '});
       runtests();                        // ok - now run actual tests.........
     });
