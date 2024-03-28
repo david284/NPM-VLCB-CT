@@ -40,66 +40,68 @@ module.exports = class SetupMode_tests {
 
 
     async runTests(RetrievedValues) {
-		utils.DisplayStartDivider(this.Title + ' tests');
+  		utils.DisplayStartDivider(this.Title + ' tests');
 
+      await utils.sleep(100);	//small delay to allow conenction to be established
+		
+      // we need the module in setup mode
+      // try to put the module into setup using the MODE command
+      // but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
+      
+      // check for response to QNN from module under test - otherwise node might not be responding
+      await this.opcodes_0x.test_QNN(RetrievedValues);
+      
+      winston.info({message: 'VLCB:      put module into setup'});
 
-        await utils.sleep(100);	//small delay to allow conenction to be established
-		
-		// we need the module in setup mode
-		// try to put the module into setup using the MODE command
-		// but prompt for manual intervention if that doesn't work (allows testing of legacy modules)
-    
-    // check for response to QNN from module under test - otherwise node might not be responding
-		await this.opcodes_0x.test_QNN(RetrievedValues);
-		
-    winston.info({message: 'VLCB:      put module into setup'});
+      await this.opcodes_7x.test_MODE(RetrievedValues, 0)
 
-    await this.opcodes_7x.test_MODE(RetrievedValues, 0)
+      // now lets check if it has really gone into setup & sent us an RQNN
+      RetrievedValues.data["setup_completed"]= false;
+      var setup_tries = 0;
 
-    // now lets check if it has really gone into setup & sent us an RQNN
-		RetrievedValues.data["setup_completed"]= false;
-        var setup_tries = 0;
+      await utils.sleep(200);		// delay to allow the MODE command to work
+
+      while (1){
+        setup_tries++;
+        this.opcodes_5x.checkForRQNN(RetrievedValues);
+        this.inSetupMode = this.opcodes_5x.inSetupMode;
+        this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
+        if (this.inSetupMode) break;
+        if (setup_tries > 20) break;
+        winston.info({message: 'VLCB:      waiting for RQNN (setup) ' + setup_tries + ' of 20' });
+        await utils.sleep(1000);
+      }
 		
-        await utils.sleep(200);		// delay to allow the MODE command to work
-		
-        while (1){
-            setup_tries++;
-			this.opcodes_5x.checkForRQNN(RetrievedValues);
-			this.inSetupMode = this.opcodes_5x.inSetupMode;
-            this.test_nodeNumber = this.opcodes_5x.test_nodeNumber;
-            if (this.inSetupMode) break;
-            if (setup_tries > 20) break;
-            winston.info({message: 'VLCB:      waiting for RQNN (setup) ' + setup_tries + ' of 20' });
-            await utils.sleep(1000);
+      // need module to be in setup mode to start the tests
+      if (this.inSetupMode) {
+        this.passed_count=1;     // passed first test if in setup
+
+        // do opcodes only possible in setup mode
+        await this.opcodes_1x.test_RQMN(RetrievedValues);
+        await this.opcodes_1x.test_RQNP(RetrievedValues);
+
+        // consider it completed if we exit setup succesfully using SNN
+        // but we need a valid node number first
+        // use value returned by node if valid (>0)
+        if (RetrievedValues.getNodeNumber() == 0) {
+          // if 0, then module was uninitialised, so get next free node number
+          RetrievedValues.setNodeNumber(getNextFreeNodeNumber(9000, RetrievedValues))
         }
+        
+        RetrievedValues.data.setup_completed = await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
+
+        // now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
+
+      } else {
+        winston.info({message: 'VLCB:'});
+        winston.info({message: 'VLCB: FAIL - failed to go into setup'});
+        RetrievedValues.data.TestsFailed++;
+      }
 		
-		// need module to be in setup mode to start the tests
-        if (this.inSetupMode) {
-            this.passed_count=1;     // passed first test if in setup
-            if (RetrievedValues.getNodeNumber() == 0) {
-              RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
-              utils.DisplayComment("using entered node number : " + RetrievedValues.getNodeNumber())
-            }
-            // do opcodes only possible in setup mode
-            await this.opcodes_1x.test_RQMN(RetrievedValues);
-            await this.opcodes_1x.test_RQNP(RetrievedValues);
-            // consider it completed if we exit setup succesfully using SNN
-            // if enerted node number != nodenUmber
-            if (RetrievedValues.data.enteredNodeNumber > 0) RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber);
-            RetrievedValues.data.setup_completed = await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
-			
-			// now setup mode completed, we should have retrieved all the identifying info about the module (RQMN & RQNP)
-			
-        } else {
-            winston.info({message: 'VLCB:'});
-            winston.info({message: 'VLCB: FAIL - failed to go into setup'});
-			RetrievedValues.data.TestsFailed++;
-        }
-		
-		utils.DisplayEndDivider(this.Title + ' tests finished');
-		
-		winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
-		return RetrievedValues;
+      utils.DisplayEndDivider(this.Title + ' tests finished');
+      
+      winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+      return RetrievedValues;
     }
 
 
