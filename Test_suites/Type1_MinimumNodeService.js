@@ -74,6 +74,9 @@ module.exports = class MinimumNodeServiceTests{
 					// now put back into norm 'run' mode
 					await this.opcodes_4x.test_SNN(RetrievedValues);
 
+					// turn heartbeats on for this node
+					await this.opcodes_7x.test_MODE(RetrievedValues, 0xC)
+
 					// now start testing the service commands
 					// this will get all the services that this module supports
 					await this.opcodes_7x.test_RQSD(RetrievedValues, 0);
@@ -131,10 +134,17 @@ module.exports = class MinimumNodeServiceTests{
         // just check we get an acknowledge (GRSP) to this command
 //        await this.opcodes_4x.test_NNRSM(RetrievedValues);
 				
-				//
-				// Add more tests.......
-				//
-				
+				//now lets wait for a heartbeat to arrive
+				await utils.sleep(5000);
+				if (RetrievedValues.data.HEARTB == 'passed') {
+					utils.processResult(RetrievedValues, true, 'HEARTB');
+				} else {
+					utils.processResult(RetrievedValues, false, 'HEARTB');
+				}
+				// turn heartbeats off for this node now, and set the capture to failed
+				await this.opcodes_7x.test_MODE(RetrievedValues, 0xD)
+				RetrievedValues.data.HEARTB = 'failed'
+							
 				} else {
 					winston.info({message: 'Module does not identify as VLCB - aborting'});							
 				}

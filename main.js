@@ -280,10 +280,11 @@ async function runtests() {
 	//
 	// Now do any checks on RetrievedValues
 	//	
+	//we're not expecting to receive any further heartbeats after the MNS test, so if we did receieve any, it's failed to turn them off
 	if (RetrievedValues.data.HEARTB == 'passed') {
-		utils.processResult(RetrievedValues, true, 'HEARTB');
-	} else {
 		utils.processResult(RetrievedValues, false, 'HEARTB');
+	} else {
+		utils.processResult(RetrievedValues, true, 'HEARTB');
 	}
 
 		
