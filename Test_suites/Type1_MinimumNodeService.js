@@ -4,6 +4,7 @@ const cbusLib = require('cbuslibrary');
 const utils = require('./../utilities.js');
 
 const opcodes_0x = require('./../Test_cases/opcodes_0x.js');
+const opcodes_1x = require('./../Test_cases/opcodes_1x.js');
 const opcodes_4x = require('./../Test_cases/opcodes_4x.js');
 const opcodes_5x = require('./../Test_cases/opcodes_5x.js');
 const opcodes_7x = require('./../Test_cases/opcodes_7x.js');
@@ -24,6 +25,7 @@ module.exports = class MinimumNodeServiceTests{
 		this.Title = 'Minimum Node Service';
 		
 		this.opcodes_0x = new opcodes_0x(this.network);
+		this.opcodes_1x = new opcodes_1x(this.network);
 		this.opcodes_4x = new opcodes_4x(this.network);
 		this.opcodes_5x = new opcodes_5x(this.network);
 		this.opcodes_7x = new opcodes_7x(this.network);
@@ -70,6 +72,9 @@ module.exports = class MinimumNodeServiceTests{
 					//now lets test the mode command
 					// put module into setup
 					await this.opcodes_7x.test_MODE(RetrievedValues, 0)
+
+					// lets do a "setup only" command to check it's in setup
+					await this.opcodes_1x.test_RQNP(RetrievedValues);
 
 					// now put back into norm 'run' mode
 					await this.opcodes_4x.test_SNN(RetrievedValues);
