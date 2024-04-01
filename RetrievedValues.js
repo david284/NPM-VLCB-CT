@@ -81,6 +81,7 @@ class RetrievedValues {
     if (this.data.nodeParameters[8]){
       result = Boolean(this.data.nodeParameters[8].value & FLAGS.VLCB)
     }
+    winston.debug({message: 'isVLCB ' + result});
     return result
   }
   ///////////////////////////////////////////////////////////////////////////////

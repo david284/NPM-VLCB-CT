@@ -233,13 +233,13 @@ async function runtests() {
 				case 6:
 					RetrievedValues = await (Consumer.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
-        case 7:
-          utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
-          break;
-        case 8:
-          utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
-          break;
-        case 9:
+				case 7:
+					utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
+					break;
+				case 8:
+					utils.DisplayComment(RetrievedValues.data["Services"][key]["ServiceName"] + " tests not implemented")
+					break;
+				case 9:
 					RetrievedValues = await (EventAck.runTests(RetrievedValues, module_descriptor, serviceIndex));
 					break;
 				case 10:
@@ -268,10 +268,10 @@ async function runtests() {
 					break;
 
 				default:
-          var comment = 'No tests defined for ServiceType ' + serviceType
-          winston.info({message: 'VLCB:      ' + comment + '\n'});        }
-			
+					var comment = 'No tests defined for ServiceType ' + serviceType
+					winston.info({message: 'VLCB:      ' + comment + '\n'});        }
 		}
+
 	} else {
 		winston.info({message: '\nFailed to complete setup - further tests aborted\n'});
 	}
