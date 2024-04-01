@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const fs = require('fs');
 const Service_Definitions = require('./Definitions/Service_Definitions.js');
 const NodeParameterNames = require('./Definitions/Text_NodeParameterNames.js');
+const FLAGS = require('./Definitions/Flags_definitions.js')
 
 
 // Scope:
@@ -63,7 +64,6 @@ class RetrievedValues {
     } else{
 		  this.data.nodeParameters[parameterIndex]["name"] = 'unknown node parameter'
     }
-    //
     this.writeToDisk()
 	}
 	
@@ -75,6 +75,14 @@ class RetrievedValues {
     return name
   }
 
+  isVLCB(){
+    var result = false
+    // check node parameter flags for VLCB (index 8)
+    if (this.data.nodeParameters[8]){
+      result = Boolean(this.data.nodeParameters[8].value & FLAGS.VLCB)
+    }
+    return result
+  }
   ///////////////////////////////////////////////////////////////////////////////
   //
   // Node Variable related methods

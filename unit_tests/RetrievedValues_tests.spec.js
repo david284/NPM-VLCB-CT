@@ -5,6 +5,7 @@ const itParam = require('mocha-param');
 const RetrievedValues = require('./../RetrievedValues.js');
 const utils = require('./../utilities.js');
 var assert = require('chai').assert;
+const FLAGS = require('./../Definitions/Flags_definitions.js')
 
 
 
@@ -33,6 +34,24 @@ describe('RetrievedValues unit tests', function(){
 		}, 100);
   });
 
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// 						Generic test cases
+//
+
+function GetTestCase_Boolean() {
+		var arg1, testCases = [];
+		for (var a = 1; a< 3; a++) {
+			if (a == 1) {arg1 = true}
+			if (a == 2) {arg1 = false}
+			testCases.push({'arg1':arg1});
+		}
+		return testCases;
+	}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -63,6 +82,16 @@ describe('RetrievedValues unit tests', function(){
 		expect(RetrievedValues.data.nodeParameters[1].value).to.equal(2);
 		winston.info({message: 'UNIT TEST: END Add Node Parameter test'});
   })
+
+	itParam("isVLCB test ${JSON.stringify(value)}", GetTestCase_Boolean(), function (value) {
+		winston.info({message: 'UNIT TEST: BEGIN isVLCB test'});
+		//condition ? true : false
+		value.arg1 ? RetrievedValues.addNodeParameter(8, FLAGS.VLCB) : RetrievedValues.addNodeParameter(8, 0);
+		var result = RetrievedValues.isVLCB();
+		winston.info({message: 'UNIT TEST: returned result ' + result});
+		expect(result).to.equal(value.arg1);
+		winston.info({message: 'UNIT TEST: END isVLCB test'});
+    })
 
 
 ///////////////////////////////////////////////////////////////////////////////

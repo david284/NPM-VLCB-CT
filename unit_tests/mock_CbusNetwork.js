@@ -4,6 +4,7 @@ const net = require('net');
 
 const cbusLib = require('cbuslibrary')
 const GRSP = require('./../Definitions/GRSP_definitions.js');
+const FLAGS = require('./../Definitions/Flags_definitions.js')
 
 //
 //  *************** mock cbus network ********************
@@ -20,16 +21,6 @@ const GRSP = require('./../Definitions/GRSP_definitions.js');
 //
 //
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
-
-const Flags = {
-  Consumer: 1,
-  Producer: 2,
-  FLiM: 4,
-  Bootloading: 8,
-  SelfConsuming:16,
-  Learn:32,
-  VLCB: 64
-};
 
 
 //
@@ -1216,7 +1207,7 @@ class CbusModule {
   getFlagsHex() {return decToHex(this.parameters[8], 2)}
   setNodeFlags(flags) {this.parameters[8] = flags}
   isVLCB() {
-    return this.parameters[8] & Flags.VLCB
+    return this.parameters[8] & FLAGS.VLCB
   }
 
   getCpuType() {return this.parameters[9]}
@@ -1230,7 +1221,7 @@ class CANTEST extends CbusModule{
     super(nodeId);
     this.parameters[3] = 52;
     this.setManufacturerId(165);
-    this.setNodeFlags(Flags.Consumer + Flags.Producer + Flags.FLiM + Flags.VLCB);
+    this.setNodeFlags(FLAGS.Consumer + FLAGS.Producer + FLAGS.FLiM + FLAGS.VLCB);
     this.setCputType(13);
         
     this.events.push({'eventIdentifier': "012D0103", "variables":[ 0, 0, 0, 0 ]})
