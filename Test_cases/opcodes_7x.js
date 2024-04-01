@@ -335,51 +335,47 @@ module.exports = class opcodes_7x {
     this.network.write(msgData);
     var comment = ''
 
-    var startTime = Date.now();
-    // set maximum wait as 1 second, unless local unit tests running...
-    var timeout = 1000
+    // set wait as 500mS, unless local unit tests running...
+    var timeout = 500
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
-    while(Date.now()-startTime < timeout) {
-      await utils.sleep(10);
-      this.network.messagesIn.forEach(msg => {
-        if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-          if (msg.mnemonic == "CMDERR"){
-            msgBitField |= 1;			// set bit 0
-            if (msg.errorNumber == GRSP.InvalidParameterIndex) {
-              comment += ' - CMDERR Invalid Parameter Index received'
-              msgBitField |= 2;			// set bit 1
-            } else {
-              var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
-              winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
-              comment += commentCMDERR
-            }
-          }
-          if (msg.mnemonic == "GRSP"){
-            msgBitField |= 4;			// set bit 2
-            if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-              if (msg.result == GRSP.InvalidParameterIndex){
-                comment += ' - GRSP Invalid Parameter Index received'
-                msgBitField |= 8;			// set bit 3
-              } else {
-                var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidParameterIndex + ' but received ' + msg.result;
-                winston.info({message: 'VLCB:      ' + commentGRSP1}); 
-                comment += commentGRSP1
-              }
-            } else{
-              var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
-              + ' but received ' + msg.requestOpCode;
-              winston.info({message: 'VLCB:      ' + commentGRSP2}); 
-              comment += commentGRSP2
-            }
-          }
-          if (msg.mnemonic == "PARAN"){
-            winston.info({message: 'VLCB:      unexpected PARAN response for index ' + parameterIndex}); 
+    await utils.sleep(timeout);
+    this.network.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+        if (msg.mnemonic == "CMDERR"){
+          msgBitField |= 1;			// set bit 0
+          if (msg.errorNumber == GRSP.InvalidParameterIndex) {
+            comment += ' - CMDERR Invalid Parameter Index received'
+            msgBitField |= 2;			// set bit 1
+          } else {
+            var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidParameterIndex + ' received ' + msg.errorNumber
+            winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+            comment += commentCMDERR
           }
         }
-      });
-      if (msgBitField == 15) { this.hasTestPassed = true; }
-      if (this.hasTestPassed){ break; }
-    }
+        if (msg.mnemonic == "GRSP"){
+          msgBitField |= 4;			// set bit 2
+          if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+            if (msg.result == GRSP.InvalidParameterIndex){
+              comment += ' - GRSP Invalid Parameter Index received'
+              msgBitField |= 8;			// set bit 3
+            } else {
+              var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidParameterIndex + ' but received ' + msg.result;
+              winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+              comment += commentGRSP1
+            }
+          } else{
+            var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+            + ' but received ' + msg.requestOpCode;
+            winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+            comment += commentGRSP2
+          }
+        }
+        if (msg.mnemonic == "PARAN"){
+          winston.info({message: 'VLCB:      unexpected PARAN response for index ' + parameterIndex}); 
+        }
+      }
+    });
+    if (msgBitField == 15) { this.hasTestPassed = true; }
     // check for missing messages
     if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
     if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
@@ -401,30 +397,26 @@ module.exports = class opcodes_7x {
     this.network.write(msgData);
     var comment = ''
 
-    var startTime = Date.now();
-    // set maximum wait as 1 second, unless local unit tests running...
-    var timeout = 1000
+    // set maximum wait as 500mS, unless local unit tests running...
+    var timeout = 500
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
-    while(Date.now()-startTime < timeout) {
-      await utils.sleep(10);
-      this.network.messagesIn.forEach(msg => {
-        if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-          if (msg.mnemonic == "GRSP"){
-            if (msg.result == GRSP.Invalid_Command) {
-              this.hasTestPassed = true;
-              comment = ' - GRSP Invalid Command received correctly'
-            } else {
-              comment = 'GRSP wrong result number - expected ' + GRSP.Invalid_Command + ' received ' + msg.result
-              winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
-            }
-          }
-          if (msg.mnemonic == "PARAN"){
-            winston.info({message: 'VLCB:      RQNPN_SHORT: unexpected PARAN response for index ' + parameterIndex}); 
+    await utils.sleep(timeout);
+    this.network.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+        if (msg.mnemonic == "GRSP"){
+          if (msg.result == GRSP.Invalid_Command) {
+            this.hasTestPassed = true;
+            comment = ' - GRSP Invalid Command received correctly'
+          } else {
+            comment = 'GRSP wrong result number - expected ' + GRSP.Invalid_Command + ' received ' + msg.result
+            winston.info({message: 'VLCB:      GRSP wrong result number - expected ' + GRSP.Invalid_Command}); 
           }
         }
-      });
-      if (this.hasTestPassed){ break; }
-    }
+        if (msg.mnemonic == "PARAN"){
+          winston.info({message: 'VLCB:      RQNPN_SHORT: unexpected PARAN response for index ' + parameterIndex}); 
+        }
+      }
+    });
     if(!this.hasTestPassed){ if (comment == '') {comment = ' - missing expected GRSP'; } }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'RQNPN_SHORT (0x73)', comment);
     return this.hasTestPassed

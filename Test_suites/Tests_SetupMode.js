@@ -85,7 +85,7 @@ module.exports = class SetupMode_tests {
         // use value returned by node if valid (>0)
         if (RetrievedValues.getNodeNumber() == 0) {
           // if 0, then module was uninitialised, so get next free node number
-          RetrievedValues.setNodeNumber(getNextFreeNodeNumber(9000, RetrievedValues))
+          RetrievedValues.setNodeNumber(this.getNextFreeNodeNumber(9000, RetrievedValues))
         }
         
         RetrievedValues.data.setup_completed = await this.opcodes_4x.test_SNN(RetrievedValues);      // takes module out of setup mode
