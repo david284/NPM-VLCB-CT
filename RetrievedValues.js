@@ -84,6 +84,8 @@ class RetrievedValues {
     winston.debug({message: 'isVLCB ' + result});
     return result
   }
+
+  getStoredEventCount(){ return this.data.StoredEventCount}
   ///////////////////////////////////////////////////////////////////////////////
   //
   // Node Variable related methods

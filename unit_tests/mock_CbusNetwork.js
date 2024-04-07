@@ -603,6 +603,22 @@ module.exports = class mock_CbusNetwork {
     }
   }
 
+  addStoredEvent(nodeNumber, eventIdentifier){
+    var module = this.getModule(nodeNumber);
+    winston.debug({message: 'Mock CBUS Network: node ' + nodeNumber + ' add stored event ' + eventIdentifier});
+    if (module != undefined){
+      module.addStoredEvent(eventIdentifier)
+    }
+  }
+
+  clearStoredEvents(nodeNumber){
+    var module = this.getModule(nodeNumber);
+    winston.debug({message: 'Mock CBUS Network: node ' + nodeNumber + ' clear stored events'});
+    if (module != undefined){
+      module.clearStoredEvents();
+    }
+  }
+
   outputCMDERRandGRSP(opCode, CMDERR_code, GRSP_code, option) {
     winston.debug({message: 'Mock CBUS Network: outputCMDERRandGRSP: option ' + option});
     if (option == 0 ) {
@@ -1163,6 +1179,10 @@ class CbusModule {
     this.services[1].diagnostics[3].DiagnosticValue = 0
   }
 
+  addStoredEvent(eventIdentifier){
+    this.events.push({'eventIdentifier': eventIdentifier, "variables":[ 0, 0, 0, 0 ]})
+  }
+  clearStoredEvents(){ this.events = []}
   getStoredEvents() { return this.events}
   getStoredEvent(eventIdentifier) { return this.events}
   getStoredEventsCount() { return this.events.length}
@@ -1224,12 +1244,12 @@ class CANTEST extends CbusModule{
     this.setNodeFlags(FLAGS.Consumer + FLAGS.Producer + FLAGS.FLiM + FLAGS.VLCB);
     this.setCputType(13);
         
-    this.events.push({'eventIdentifier': "012D0103", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventIdentifier': "012D0104", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventIdentifier': "00000000", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventIdentifier': "00000001", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventIdentifier': "00010000", "variables":[ 0, 0, 0, 0 ]})
-    this.events.push({'eventIdentifier': "FFFFFFFF", "variables":[ 0, 0, 0, 0 ]})
+    this.addStoredEvent("012D0103")
+    this.addStoredEvent("012D0104")
+    this.addStoredEvent("00000000")
+    this.addStoredEvent("00000001")
+    this.addStoredEvent("00010000")
+    this.addStoredEvent("FFFFFFFF")
   }
 }
 

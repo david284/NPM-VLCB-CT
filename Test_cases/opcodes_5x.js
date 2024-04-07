@@ -233,22 +233,19 @@ module.exports = class opcodes_5x {
     var timeout = 1000 + expectedEventCount * 20
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     var eventCount = 0;
-    var startTime = Date.now();
-    while(Date.now()-startTime < timeout) {
-      await utils.sleep(10);
-      this.network.messagesIn.forEach(msg => {
-        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-          if (msg.mnemonic == "ENRSP"){
-            eventCount++
-            comment = ' - received ENRSP'
-            // store the returned value
-            if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
-            RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
-          }
+    await utils.sleep(timeout);
+    this.network.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+        if (msg.mnemonic == "ENRSP"){
+          eventCount++
+          comment = ' - received ENRSP'
+          // store the returned value
+          if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
+          RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
         }
-      })
-    }
-    if (eventCount > 0) this.hasTestPassed = true
+      }
+    })
+    if (eventCount == expectedEventCount) this.hasTestPassed = true
     if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
     return this.hasTestPassed

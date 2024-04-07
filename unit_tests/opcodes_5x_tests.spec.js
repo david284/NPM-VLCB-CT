@@ -135,14 +135,43 @@ describe('opcodes_5x unit tests', function(){
 		winston.info({message: 'UNIT TEST:: END NNEVN test'});
 	})
   
+  function GetTestCase_Nerd() {
+    var arg1, arg2, arg3, testCases = [];
+    for (var a = 1; a<= 4; a++) {
+      if (a == 1) {arg1 = 0, arg2 = true}
+      if (a == 2) {arg1 = 1, arg2 = true}
+      if (a == 3) {arg1 = 65535, arg2 = true}
+      if (a == 4) {arg1 = 2, arg2 = false}
+      for (var c = 1; c<= 3; c++) {
+        if (c == 1) {arg3 = 0}
+        if (c == 2) {arg3 = 1}
+        if (c == 3) {arg3 = 32}
+        testCases.push({'nodeNumber':arg1, 'expectedResult': arg2, 'expectedCount':arg3});
+      }
+    }
+    return testCases;
+  }
+  
+
   
 	// 0x57 - NERD
-	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_NodeNumber(), async function (value) {
+	itParam("NERD test ${JSON.stringify(value)}", GetTestCase_Nerd(), async function (value) {
 		winston.info({message: 'UNIT TEST:: BEGIN NERD test ' + JSON.stringify(value)});
 		RetrievedValues.setNodeNumber(value.nodeNumber);
+    mock_Cbus.clearStoredEvents(value.nodeNumber)
+    for (var i = 0 ; i < value.expectedCount; i++){
+      mock_Cbus.addStoredEvent(value.nodeNumber, utils.decToHex(i+100, 8))
+    }
+    RetrievedValues.data.StoredEventCount = value.expectedCount
 		var result = await tests.test_NERD(RetrievedValues);
-    expect(result).to.equal(value.expectedResult);
-    expect(tests.hasTestPassed).to.equal(value.expectedResult);
+    if ((value.expectedResult == false) && (value.expectedCount == 0) ){
+      // special case
+      expect(result).to.equal(true);
+      expect(tests.hasTestPassed).to.equal(true);
+    } else {
+      expect(result).to.equal(value.expectedResult);
+      expect(tests.hasTestPassed).to.equal(value.expectedResult);
+    }
 		winston.info({message: 'UNIT TEST:: END NERD test'});
 	})
   
