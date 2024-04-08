@@ -145,15 +145,15 @@ async function run_main(){
 
     // This will prompt for the node number, and then run the tests
     rl.question('\n Enter Node number > ', function(answer) {
-      RetrievedValues.setNodeNumber(parseInt(answer));	// store nodenumber for use by tests
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
-			if (Number.isNaN(RetrievedValues.getNodeNumber())){
+			if (Number.isNaN(RetrievedValues.data.enteredNodeNumber)){
 				winston.info({message: 'VLCB: ==== No Node number entered'});
 			} else {
 	      winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
 			}
       winston.info({message: ' '});
+      RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
       runtests();                        // ok - now run actual tests.........
     });
   } else {

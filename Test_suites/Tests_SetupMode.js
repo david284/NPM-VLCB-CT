@@ -53,7 +53,9 @@ module.exports = class SetupMode_tests {
       
       winston.info({message: 'VLCB:      put module into setup'});
 
-      await this.opcodes_7x.test_MODE(RetrievedValues, 0)
+      if (RetrievedValues.getNodeNumber() > 0){
+        await this.opcodes_7x.test_MODE(RetrievedValues, 0)
+      }
 
       // now lets check if it has really gone into setup & sent us an RQNN
       RetrievedValues.data["setup_completed"]= false;
