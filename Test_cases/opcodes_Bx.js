@@ -143,50 +143,46 @@ module.exports = class opcodes_Bx {
     this.network.write(msgData);
     var comment = ''
 
-    var startTime = Date.now();
     // set maximum wait as 1 second, unless local unit tests running...
     var timeout = 1000
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
-    while(Date.now()-startTime < timeout) {
-      await utils.sleep(10);
-      this.network.messagesIn.forEach(msg => {
-        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-          // ok - it's the right node
-          if (msg.mnemonic == "CMDERR"){
-            msgBitField |= 1;			// set bit 0
-            if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
-              comment += ' - CMDERR Invalid Event Variable Index received'
-              msgBitField |= 2;			// set bit 1
-            } else {
-              var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidEventVariableIndex + ' received ' + msg.errorNumber
-              winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
-              comment += commentCMDERR
-            }
-          }
-          if (msg.mnemonic == "GRSP"){
-            msgBitField |= 4;			// set bit 2
-            if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
-              if (msg.result == GRSP.InvalidEventVariableIndex){
-                comment += ' - GRSP Invalid Event Variable Index received'
-                msgBitField |= 8;			// set bit 3
-              } else {
-                var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidEventVariableIndex + ' but received ' + msg.result;
-                winston.info({message: 'VLCB:      ' + commentGRSP1}); 
-                comment += commentGRSP1
-              }
-            } else{
-              var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
-              + ' but received ' + msg.requestOpCode;
-              winston.info({message: 'VLCB:      ' + commentGRSP2}); 
-              comment += commentGRSP2
-            }
+    await utils.sleep(timeout);
+    this.network.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+        // ok - it's the right node
+        if (msg.mnemonic == "CMDERR"){
+          msgBitField |= 1;			// set bit 0
+          if (msg.errorNumber == GRSP.InvalidEventVariableIndex) {
+            comment += ' - CMDERR Invalid Event Variable Index received'
+            msgBitField |= 2;			// set bit 1
+          } else {
+            var commentCMDERR = ' - CMDERR: expected '+ GRSP.InvalidEventVariableIndex + ' received ' + msg.errorNumber
+            winston.info({message: 'VLCB:      FAIL' + commentCMDERR});
+            comment += commentCMDERR
           }
         }
-      });
-      if (msgBitField == 15) { this.hasTestPassed = true; }
-      if (this.hasTestPassed){ break; }
-    }
-    // check for missing messages
+        if (msg.mnemonic == "GRSP"){
+          msgBitField |= 4;			// set bit 2
+          if (msg.requestOpCode == cbusLib.decode(msgData).opCode) {
+            if (msg.result == GRSP.InvalidEventVariableIndex){
+              comment += ' - GRSP Invalid Event Variable Index received'
+              msgBitField |= 8;			// set bit 3
+            } else {
+              var commentGRSP1 = ' - GRSP: expected result ' + GRSP.InvalidEventVariableIndex + ' but received ' + msg.result;
+              winston.info({message: 'VLCB:      ' + commentGRSP1}); 
+              comment += commentGRSP1
+            }
+          } else{
+            var commentGRSP2 = ' - GRSP: expected requested opcode ' + cbusLib.decode(msgData).opCode
+            + ' but received ' + msg.requestOpCode;
+            winston.info({message: 'VLCB:      ' + commentGRSP2}); 
+            comment += commentGRSP2
+          }
+        }
+      }
+    });
+    if (msgBitField == 15) { this.hasTestPassed = true; }
+      // check for missing messages
     if ((msgBitField & 1) == 0){ comment +=' - CMDERR message missing' }
     if ((msgBitField & 4) == 0){ comment += ' - GRSP message missing' }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'REQEV_INVALID_INDEX (B2)', comment);
