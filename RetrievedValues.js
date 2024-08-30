@@ -221,11 +221,16 @@ class RetrievedValues {
       
       if (service.diagnostics[DiagnosticCode] == null){
         // new diagnostic code
-        service.diagnosticReportedCount++;
-        // keep a record of highest diagnostic code
-        if (DiagnosticCode > service.MaxDiagnosticCode) { service.MaxDiagnosticCode = DiagnosticCode }
-        service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
-        service.diagnostics[DiagnosticCode] = {};
+        if (DiagnosticCode != 0){
+          // diagnostic code 0 is itself the count of codes, so don't add to count
+          service.diagnosticReportedCount++;
+        
+          // keep a record of highest diagnostic code
+          if (DiagnosticCode > service.MaxDiagnosticCode) { service.MaxDiagnosticCode = DiagnosticCode }
+          service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
+        }
+
+        service.diagnostics[DiagnosticCode] = {};        
       }
 
       var DiagnosticName = "Unknown Diagnostic Code";	//assume diagnostic code is unknown to start with
