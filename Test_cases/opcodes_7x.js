@@ -41,7 +41,7 @@ module.exports = class opcodes_7x {
     var countNV = 0;    // count the NV's received
     var startTime = Date.now();
     // set maximum wait as 2 seconds, unless local unit tests running...
-    var timeout = 2000;     // allow enough for multiple responses
+    var timeout = 5000;     // allow enough for multiple responses - will exit if completes early
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     while(Date.now()-startTime < timeout) {
       await utils.sleep(10);
