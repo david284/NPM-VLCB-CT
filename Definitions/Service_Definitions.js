@@ -86,7 +86,9 @@ module.exports = {
 					"13":{"name":"CANID enumeration count"},
 					"14":{"name":"CANID conflict count"},
 					"15":{"name":"CANID change count"},
-					"16":{"name":"CANID enumeration failure count"}
+					"16":{"name":"CANID enumeration failure count"},
+					"17":{"name":"Transmit buffer usage high watermark"},
+					"18":{"name":"Receive buffer usage high watermark"}
 				}
 			}
 		}
