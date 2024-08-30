@@ -151,7 +151,7 @@ module.exports = class TeachingServiceTests {
           var numEventsToAdd = RetrievedValues.data.nodeParameters[4].value - RetrievedValues.data.StoredEventCount
           for (var i = 1; i <= numEventsToAdd; i++) {
             var eventIdentifier = "F000" + utils.decToHex(i, 4)
-            await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 1);
+            await this.opcodes_Dx.test_EVLRN(RetrievedValues, eventIdentifier, 1, 254);
           }
 
           // now request number of events stored, so we can check the event table has been filled
