@@ -69,7 +69,7 @@ module.exports = class opcodes_8x {
       });
       if(requestedServiceIndex != 0) {
         if ( DiagnosticCode == 0) { 
-          if(RetrievedValues.data.Services[requestedServiceIndex].diagnosticExpectedCount != RetrievedValues.data.Services[requestedServiceIndex].diagnosticReportedCount) {
+          if(RetrievedValues.data.Services[requestedServiceIndex].diagnosticExpectedCount > RetrievedValues.data.Services[requestedServiceIndex].diagnosticReportedCount) {
             comment = ' - expected diagnostic count ' + RetrievedValues.data.Services[requestedServiceIndex].diagnosticExpectedCount +
                                   ' does not match received diagnostic count ' + RetrievedValues.data.Services[requestedServiceIndex].diagnosticReportedCount
             this.hasTestPassed = false

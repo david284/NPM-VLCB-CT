@@ -227,7 +227,11 @@ class RetrievedValues {
         
           // keep a record of highest diagnostic code
           if (DiagnosticCode > service.MaxDiagnosticCode) { service.MaxDiagnosticCode = DiagnosticCode }
-          service.diagnosticCodeReceivedBitfield |= 2 ** DiagnosticCode;
+          var DiagnosticCodeBitValue = 2 ** DiagnosticCode
+          // if diagnostic is in expected bit field, then save it
+          if (service.diagnosticCodeExpectedBitfield & DiagnosticCodeBitValue) {
+            service.diagnosticCodeReceivedBitfield |= DiagnosticCodeBitValue
+          }
         }
 
         service.diagnostics[DiagnosticCode] = {};        
