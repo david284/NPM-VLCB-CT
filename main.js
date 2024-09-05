@@ -31,6 +31,7 @@ const Type15_CANBridge = require('./Test_suites/Type15_CANBridgeService.js');
 const Type16_SLiM = require('./Test_suites/Type16_SLiMService.js');
 const Type17_LongMessage = require('./Test_suites/Type17_LongMessageService.js');
 
+const {run_module_tests} = require('./module_tests/common.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -86,6 +87,7 @@ async function run_main(){
     winston.info({message: '   network          - uses tcp connection'});
     winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
     winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
+    winston.info({message: '   universal        - runs test suite for universal firmware'});
     winston.info({message: '\n'});
     await utils.sleep(100);   // wait for printing
 		process.exit()
@@ -154,7 +156,12 @@ async function run_main(){
 			}
       winston.info({message: ' '});
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
-      runtests();                        // ok - now run actual tests.........
+      if (options.universal){
+        run_module_tests(connection, RetrievedValues)
+//        process.exit()
+      } else {
+        runtests();                        // ok - now run actual tests.........
+      }
     });
   } else {
     // end app if no connection found (this condition should never occur, but still.....)
@@ -326,9 +333,10 @@ function networkSelected() {
   
 function getCommandLineOptions(){
 	// command line arguments will be 'node' <javascript file started> '--' <arguments starting at index 3>
+  // aasume auto connection to start
+  options["connection"] = 'auto'
 	for (var item in process.argv){
     winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
-		options["connection"] = 'auto'
     if (process.argv[item].toLowerCase() == 'help'){
       options["help"] = true
     }
@@ -342,6 +350,9 @@ function getCommandLineOptions(){
 			const myArray = process.argv[item].split("=");
       options["connection"] = 'serialPort'
 			options["serialPort"] = myArray[1]
+    }
+    if (process.argv[item].toLowerCase() == 'universal'){
+      options["universal"] = true
     }
 	}
 
