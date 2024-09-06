@@ -87,7 +87,7 @@ async function run_main(){
     winston.info({message: '   network          - uses tcp connection'});
     winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
     winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
-    winston.info({message: '   universal        - runs test suite for universal firmware'});
+    winston.info({message: '   module           - runs module specific tests (if supported)'});
     winston.info({message: '\n'});
     await utils.sleep(100);   // wait for printing
 		process.exit()
@@ -146,7 +146,7 @@ async function run_main(){
 		
 
     // This will prompt for the node number, and then run the tests
-    rl.question('\n Enter Node number > ', function(answer) {
+    rl.question('\n Enter Node number > ', async function(answer) {
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
 			if (Number.isNaN(RetrievedValues.data.enteredNodeNumber)){
@@ -156,9 +156,10 @@ async function run_main(){
 			}
       winston.info({message: ' '});
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
-      if (options.universal){
+      if (options.module){
         run_module_tests(connection, RetrievedValues)
-//        process.exit()
+        await utils.sleep(2000);		// delay to allow the log writes to catch up
+        process.exit()
       } else {
         runtests();                        // ok - now run actual tests.........
       }
@@ -351,8 +352,8 @@ function getCommandLineOptions(){
       options["connection"] = 'serialPort'
 			options["serialPort"] = myArray[1]
     }
-    if (process.argv[item].toLowerCase() == 'universal'){
-      options["universal"] = true
+    if (process.argv[item].toLowerCase() == 'module'){
+      options["module"] = true
     }
 	}
 
