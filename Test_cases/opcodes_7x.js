@@ -227,7 +227,7 @@ module.exports = class opcodes_7x {
         await utils.sleep(10);
       }
       winston.debug({message: 'VLCB: Get Param ' + JSON.stringify(startTime)});
-      RetrievedValues.data.nodeParameters.advertisedCount = 0
+      // need to reset actual count as we increment it
       RetrievedValues.data.nodeParameters.actualCount = 0
       this.network.messagesIn.forEach(msg => {
         winston.debug({message: 'VLCB: Get Param ' + JSON.stringify(msg)});
