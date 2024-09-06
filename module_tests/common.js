@@ -31,6 +31,21 @@ exports.run_module_tests =  async function run_module_tests(connection, Retrieve
 	// as well as provoking all the parameters to be sent (as it's VLCB)
 	await opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
 
+  try {
+    winston.info({message: 'VLCB: Module tests : module ID : ' + RetrievedValues.data.nodeParameters[3].value});
+    switch (RetrievedValues.data.nodeParameters[3].value)
+    {
+      case 32:
+        winston.info({message: 'VLCB: Module tests : CANMIO-Universal detected'});
+        break
+      default:
+        winston.info({message: 'VLCB: Module tests : unsupported module'});
+        break
+    }
+  } catch (err){
+    winston.error({message: 'VLCB: Module tests : ' + err});
+  }
+
   winston.debug({message: 'VLCB: Module tests : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 
 }
