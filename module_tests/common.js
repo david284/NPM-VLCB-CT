@@ -4,6 +4,8 @@ const utils = require('./../utilities.js');
 
 const OpCodes_0x = require('./../Test_cases/opcodes_0x.js');
 const OpCodes_7x = require('./../Test_cases/opcodes_7x.js');
+const fetch_file = require('./../fetch_module_descriptor.js')
+
 
 
 // Block to call test suites to ensure they run in sequence
@@ -21,10 +23,14 @@ exports.run_module_tests =  async function run_module_tests(connection, Retrieve
 
   // check for response to QNN from module under test - otherwise node might not be responding
   await opcodes_0x.test_QNN(RetrievedValues);
-//  winston.debug({message: 'VLCB: Module tests : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
+
+// fetch matching module descriptor file
+	var module_descriptor = fetch_file.module_descriptor('./module_descriptors/', RetrievedValues); 			
 
   // now get node parameter 0, as it tells us how many more node parameters there are
 	// as well as provoking all the parameters to be sent (as it's VLCB)
 	await opcodes_7x.test_RQNPN(RetrievedValues, module_descriptor, 0);
+
+  winston.debug({message: 'VLCB: Module tests : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
 
 }

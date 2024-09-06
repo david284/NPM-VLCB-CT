@@ -33,7 +33,7 @@ class RetrievedValues {
 								"setup_completed": null,
                 "inLearnMode": false,
 								"HEARTB": 'failed',			// assume HEARTB not received to begin with
-								"nodeParameters": {},
+								"nodeParameters": {'actualCount':0, 'advertisedCount':0},
                 "nodeVariables":{},
                 "events": {},
                 "EventSpaceLeft": null,

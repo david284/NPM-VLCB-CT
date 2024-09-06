@@ -222,18 +222,19 @@ module.exports = class opcodes_7x {
       var timeout = 1000
       if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout if local unit tests
       var startTime = Date.now();
+      winston.debug({message: 'VLCB: Get Param ' + JSON.stringify(startTime)});
       while(Date.now()-startTime < timeout) {
         await utils.sleep(10);
       }
-      var actualCount = 0;
-      var advertisedCount = 0;
+      winston.debug({message: 'VLCB: Get Param ' + JSON.stringify(startTime)});
       this.network.messagesIn.forEach(msg => {
+        winston.debug({message: 'VLCB: Get Param ' + JSON.stringify(msg)});
         if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
           if (msg.mnemonic == "PARAN"){
             if (msg.parameterIndex == 0) { 
-              advertisedCount = msg.parameterValue 
+              RetrievedValues.data.nodeParameters.advertisedCount = msg.parameterValue
             } else {
-              actualCount++   // only count non-zero indexes
+              RetrievedValues.data.nodeParameters.actualCount++   // only count non-zero indexes
             }
             // ok - we have a value, so assume the test has passed - now do additional consistency tests
             // and fail the test if any of these tests fail
@@ -242,11 +243,11 @@ module.exports = class opcodes_7x {
           }
         }
       })
-      if (actualCount != advertisedCount){
+      if (RetrievedValues.data.nodeParameters.actualCount != RetrievedValues.data.nodeParameters.advertisedCount){
         this.hasTestPassed = false;	
-        comment += "- parameters expected: " + advertisedCount + " received: " + actualCount			
+        comment += "- parameters expected: " + RetrievedValues.data.nodeParameters.advertisedCount + " received: " + RetrievedValues.data.nodeParameters.actualCount			
       }
-      winston.info({message: 'VLCB: RQNPN 0: actual count: ' + actualCount + ' advertised count: ' + advertisedCount})
+      winston.info({message: 'VLCB: RQNPN 0: actual count: ' + RetrievedValues.data.nodeParameters.actualCount + ' advertised count: ' + RetrievedValues.data.nodeParameters.advertisedCount})
     } else {
       // set default timout as 1 second
       var timeout = 1000

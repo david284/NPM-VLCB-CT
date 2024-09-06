@@ -158,7 +158,9 @@ async function run_main(){
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
       if (options.module){
         run_module_tests(connection, RetrievedValues)
-        await utils.sleep(2000);		// delay to allow the log writes to catch up
+        // ensure RetrievedValues is updated on disk
+        RetrievedValues.writeToDisk();
+        await utils.sleep(5000);		// delay to allow the log writes to catch up
         process.exit()
       } else {
         runtests();                        // ok - now run actual tests.........
