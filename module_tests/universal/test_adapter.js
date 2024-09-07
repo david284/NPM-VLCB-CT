@@ -27,18 +27,18 @@ module.exports = class test_adapter {
     // node variable value for 'output' I/O type is 1
     var nodeVariableIndex = 16 + ((channel-1) * 7) 
     var msgData = cbusLib.encodeNVSET(this.nodeNumber, nodeVariableIndex, 1);
-    this.connection.write(msgData);
+    await this.connection.write(msgData);
 
     // assume default event exists
     // the default event number is the I/O channel number
     // send event
     if (value == 0){
       var msgData = cbusLib.encodeACOF(this.nodeNumber, channel)
-      this.connection.write(msgData);
+      await this.connection.write(msgData);
     }
     if (value == 1){
       var msgData = cbusLib.encodeACON(this.nodeNumber, channel)
-      this.connection.write(msgData);
+      await this.connection.write(msgData);
     }
 
 

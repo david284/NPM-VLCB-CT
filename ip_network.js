@@ -3,6 +3,8 @@ const winston = require('winston');		// use config from root instance
 const net = require('net');
 const io = require('socket.io-client');
 const cbusLib = require('cbuslibrary');
+const utils = require('./utilities.js');
+
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -52,11 +54,12 @@ module.exports = class IP_Network {
       
   } // end constructor
 
-	write(msgData) {
+	async write(msgData) {
     var decodedMsg = cbusLib.decode(msgData);
     this.testClient.write(msgData);
     winston.debug({message: 'IP_NETWORK: transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
     winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
+    utils.sleep(10)
   }
 	
 	closeConnection(){
