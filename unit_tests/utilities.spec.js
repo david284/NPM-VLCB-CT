@@ -56,7 +56,7 @@ describe('utilities unit tests', function(){
   it("sleep test", async function () {
 		winston.info({message: 'UNIT TEST: BEGIN sleep test'});
     var startTime = Date.now();
-    await utils.sleep(1000);
+    await utils.sleep(1001);
     var endTime = Date.now();
     expect(endTime-startTime).to.be.above(1000);
     expect(endTime-startTime).to.be.below(1100, "Upper limit");
