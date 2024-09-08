@@ -6,9 +6,10 @@ const utils = require('./../../utilities.js');
 
 exports.test_output =  async function test_output(connection, test_adapter, RetrievedValues, channel) {
 
-  await test_adapter.setInput(channel)
+  // set channel of test_adapter to input
+  await test_adapter.setChanneltoInput(channel)
 
-  // now set channel of unit under test to output
+  // set channel of unit under test to output
   await setChanneltoOutput(connection, RetrievedValues.getNodeNumber(), channel)
 
   // assume default events exist
