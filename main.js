@@ -158,13 +158,31 @@ async function run_main(){
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
       if (options.module){
         await run_module_tests(connection, RetrievedValues)
-        // ensure RetrievedValues is updated on disk
-        RetrievedValues.writeToDisk();
-        await utils.sleep(1000);		// delay to allow the log writes to catch up
-        process.exit()
       } else {
-        runtests();                        // ok - now run actual tests.........
+        await runtests();                        // ok - now run actual tests.........
       }
+
+      //
+      // all tests done, so do final items
+      //
+      winston.info({message: '\n\nAll Tests finished' 
+        + '\n Passed count : ' + RetrievedValues.data.TestsPassed 
+        + '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
+
+      // ensure RetrievedValues is updated on disk
+      RetrievedValues.writeToDisk();
+
+      await utils.sleep(500);		// delay to allow the log writes to catch up
+
+      connection.closeConnection()
+      winston.info({message: '\nVLCB: test sequence completed'});
+      rl.close();
+      process.stdin.destroy();
+
+      // archive all results into zip file ...
+      files.copyFiles(RetrievedValues.data.DescriptorIdentity);
+      winston.info({message: '\n\nVLCB: End\n\n\n'});
+
     });
   } else {
     // end app if no connection found (this condition should never occur, but still.....)
@@ -297,7 +315,7 @@ async function runtests() {
 		utils.processResult(RetrievedValues, true, 'HEARTB');
 	}
 
-		
+/*		
 
 	//
 	// all tests done, so do final items
@@ -319,6 +337,8 @@ async function runtests() {
   // archive all results into zip file ...
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
 	winston.info({message: '\n\nVLCB: End\n\n\n'});
+
+  */
 	
 }	// endRunTests()
 

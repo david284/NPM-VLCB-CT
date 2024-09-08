@@ -6,6 +6,8 @@ const utils = require('./../../utilities.js');
 
 
 exports.test_input =  async function test_input(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
+  
   // set channel of unit under test to input
   await setChanneltoInput(connection, RetrievedValues.getNodeNumber(), channel)
 
@@ -17,6 +19,7 @@ exports.test_input =  async function test_input(connection, test_adapter, Retrie
   await test_adapter.setOutput(channel, 0)
 
   // test input 'ON'
+  hasTestPassed = false;
   connection.messagesIn = [];
   await test_adapter.setOutput(channel, 1)    // set test_adapter output to 'on'
   await utils.sleep(100);
@@ -24,11 +27,16 @@ exports.test_input =  async function test_input(connection, test_adapter, Retrie
     if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
       if (msg.mnemonic == "ACON"){
         winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACON '});
+        if (msg.eventNumber == channel){
+          hasTestPassed = true;
+        }
       }
     }
   })
+  utils.processResult(RetrievedValues, hasTestPassed, 'input ON');
 
   // test input 'OFF'
+  hasTestPassed = false;
   connection.messagesIn = [];
   await test_adapter.setOutput(channel, 0)    // set test_adapter output to 'off'
   await utils.sleep(100);
@@ -36,9 +44,14 @@ exports.test_input =  async function test_input(connection, test_adapter, Retrie
     if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
       if (msg.mnemonic == "ACOF"){
         winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACOF '});
+        if (msg.eventNumber == channel){
+          hasTestPassed = true;
+        }
       }
     }
   })
+  utils.processResult(RetrievedValues, hasTestPassed, 'input OFF');
+
 }
 
 async function setChanneltoInput(connection, nodeNumber, channel){

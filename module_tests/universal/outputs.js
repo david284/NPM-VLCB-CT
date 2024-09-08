@@ -5,6 +5,7 @@ const utils = require('./../../utilities.js');
 
 
 exports.test_output =  async function test_output(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
 
   // set channel of test_adapter to input
   await test_adapter.setChanneltoInput(channel)
@@ -22,6 +23,7 @@ exports.test_output =  async function test_output(connection, test_adapter, Retr
 
 
   // test output 'ON'
+  hasTestPassed = false;
   connection.messagesIn = [];
   var msgData = cbusLib.encodeACON(RetrievedValues.getNodeNumber(), channel)
   await connection.write(msgData);
@@ -30,12 +32,17 @@ exports.test_output =  async function test_output(connection, test_adapter, Retr
     if (msg.nodeNumber == test_adapter.getNodeNumber()){
       if (msg.mnemonic == "ACON"){
         winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACON '});
-      }
+        if (msg.eventNumber == channel){
+          hasTestPassed = true;
+        }
+       }
     }
   })
+  utils.processResult(RetrievedValues, hasTestPassed, 'output ON');
   
   
   // test output 'OFF'
+  hasTestPassed = false;
   connection.messagesIn = [];
   var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
   await connection.write(msgData);
@@ -44,9 +51,13 @@ exports.test_output =  async function test_output(connection, test_adapter, Retr
     if (msg.nodeNumber == test_adapter.getNodeNumber()){
       if (msg.mnemonic == "ACOF"){
         winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACOF '});
+        if (msg.eventNumber == channel){
+          hasTestPassed = true;
+        }
       }
     }
   })
+  utils.processResult(RetrievedValues, hasTestPassed, 'output OFF');
   
 }
 
