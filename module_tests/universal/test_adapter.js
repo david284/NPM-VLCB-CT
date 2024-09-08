@@ -21,7 +21,7 @@ module.exports = class test_adapter {
 }
 
   async setOutput(channel, value) {
-    winston.info({message: 'test_adapter: setOutput ' + channel});
+    winston.info({message: 'test_adapter: setOutput ' + channel + ' to ' + value});
     // set channel to output (where channel is 1 to 16)
     // node variable index for I/O type is 16 + (channel-1) * 7
     // node variable value for 'output' I/O type is 1
