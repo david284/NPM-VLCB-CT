@@ -36,7 +36,7 @@ exports.run_module_tests =  async function run_module_tests(connection, Retrieve
     {
       case 32:
         winston.info({message: 'VLCB: Module tests : CANMIO-Universal detected'});
-        universal.run_tests(connection, RetrievedValues)
+        await universal.run_tests(connection, RetrievedValues)
         break
       default:
         winston.info({message: 'VLCB: Module tests : unsupported module'});

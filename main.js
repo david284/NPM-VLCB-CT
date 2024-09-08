@@ -157,10 +157,10 @@ async function run_main(){
       winston.info({message: ' '});
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
       if (options.module){
-        run_module_tests(connection, RetrievedValues)
+        await run_module_tests(connection, RetrievedValues)
         // ensure RetrievedValues is updated on disk
         RetrievedValues.writeToDisk();
-        await utils.sleep(5000);		// delay to allow the log writes to catch up
+        await utils.sleep(1000);		// delay to allow the log writes to catch up
         process.exit()
       } else {
         runtests();                        // ok - now run actual tests.........

@@ -16,7 +16,8 @@ exports.run_tests =  async function run_tests(connection, RetrievedValues) {
     await inputs.test_input(connection, test_adapter, RetrievedValues, channel)
   }
 
-  // test channel as output
-  await outputs.test_output(connection, test_adapter, RetrievedValues, 1)
-  
+  // test all I/O channels as output
+  for (var channel =1; channel <= 8; channel++){
+    await outputs.test_output(connection, test_adapter, RetrievedValues, channel)
+  }
 }

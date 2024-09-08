@@ -14,11 +14,15 @@ const opcodes_Dx = require('./../../Test_cases/opcodes_Dx.js');
 module.exports = class test_adapter {
 
   constructor(connection, nodeNumber) {
-  //                        012345678901234567890123456789987654321098765432109876543210
-  winston.debug({message:  '----------------- test_adapter Constructor -----------------'});
-  this.connection = connection;
-  this.nodeNumber = nodeNumber;
-}
+    //                        012345678901234567890123456789987654321098765432109876543210
+    winston.debug({message:  '----------------- test_adapter Constructor -----------------'});
+    this.connection = connection;
+    this.nodeNumber = nodeNumber;
+  }
+
+  getNodeNumber(){
+    return this.nodeNumber
+  }
 
   async setOutput(channel, value) {
     winston.info({message: 'test_adapter: setOutput ' + channel + ' to ' + value});

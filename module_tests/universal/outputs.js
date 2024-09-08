@@ -18,9 +18,36 @@ exports.test_output =  async function test_output(connection, test_adapter, Retr
   //set UUT output to 0 - but don't test response - we're setting initial state
   var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
   await connection.write(msgData);
+  await utils.sleep(100);
 
 
-
+  // test output 'ON'
+  connection.messagesIn = [];
+  var msgData = cbusLib.encodeACON(RetrievedValues.getNodeNumber(), channel)
+  await connection.write(msgData);
+  await utils.sleep(100);
+  connection.messagesIn.forEach(msg => {
+    if (msg.nodeNumber == test_adapter.getNodeNumber()){
+      if (msg.mnemonic == "ACON"){
+        winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACON '});
+      }
+    }
+  })
+  
+  
+  // test output 'OFF'
+  connection.messagesIn = [];
+  var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
+  await connection.write(msgData);
+  await utils.sleep(100);
+  connection.messagesIn.forEach(msg => {
+    if (msg.nodeNumber == test_adapter.getNodeNumber()){
+      if (msg.mnemonic == "ACOF"){
+        winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACOF '});
+      }
+    }
+  })
+  
 }
 
 async function setChanneltoOutput(connection, nodeNumber, channel){
