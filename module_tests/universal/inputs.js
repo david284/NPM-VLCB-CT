@@ -30,16 +30,6 @@ exports.test_input_off =  async function test_input_on(connection, test_adapter,
   var hasTestPassed = false;
   
   if (channel > 0){
-    /*
-    // set channel of unit under test to input
-    await setChanneltoInput(connection, RetrievedValues.getNodeNumber(), channel)
-
-    // set channel of test_adapter to Output
-    await test_adapter.setChanneltoOutput(channel)
-    */
-
-    // test input 'OFF'
-    hasTestPassed = false;
     connection.messagesIn = [];
     await test_adapter.setOutput(channel, 0)    // set test_adapter output to 'off'
     await utils.sleep(100);

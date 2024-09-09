@@ -19,47 +19,66 @@ exports.test_output =  async function test_output(connection, test_adapter, Retr
   //set UUT output to 0 - but don't test response - we're setting initial state
   var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
   await connection.write(msgData);
-  await utils.sleep(100);
-
 
   // test output 'ON'
-  hasTestPassed = false;
-  connection.messagesIn = [];
-  var msgData = cbusLib.encodeACON(RetrievedValues.getNodeNumber(), channel)
-  await connection.write(msgData);
-  await utils.sleep(100);
-  connection.messagesIn.forEach(msg => {
-    if (msg.nodeNumber == test_adapter.getNodeNumber()){
-      if (msg.mnemonic == "ACON"){
-        winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACON '});
-        if (msg.eventNumber == channel){
-          hasTestPassed = true;
-        }
-       }
-    }
-  })
-  utils.processResult(RetrievedValues, hasTestPassed, 'output ON');
-  
+  await exports.test_output_on(connection, test_adapter, RetrievedValues, channel)
   
   // test output 'OFF'
-  hasTestPassed = false;
-  connection.messagesIn = [];
-  var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
-  await connection.write(msgData);
-  await utils.sleep(100);
-  connection.messagesIn.forEach(msg => {
-    if (msg.nodeNumber == test_adapter.getNodeNumber()){
-      if (msg.mnemonic == "ACOF"){
-        winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACOF '});
-        if (msg.eventNumber == channel){
-          hasTestPassed = true;
+  await exports.test_output_off(connection, test_adapter, RetrievedValues, channel)
+
+}
+
+exports.test_output_off =  async function test_output_off(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
+  if (channel > 0){
+    connection.messagesIn = [];
+    var msgData = cbusLib.encodeACOF(RetrievedValues.getNodeNumber(), channel)
+    await connection.write(msgData);
+    await utils.sleep(100);
+    connection.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == test_adapter.getNodeNumber()){
+        if (msg.mnemonic == "ACOF"){
+          winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACOF '});
+          if (msg.eventNumber == channel){
+            hasTestPassed = true;
+          }
         }
       }
-    }
-  })
-  utils.processResult(RetrievedValues, hasTestPassed, 'output OFF');
+    })
+    utils.processResult(RetrievedValues, hasTestPassed, 'output OFF');
+    } else {
+    winston.info({message: 'universal: output test: invalid channel value 0'});
+  }
+  return hasTestPassed
   
 }
+
+
+exports.test_output_on =  async function test_output_off(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
+  if (channel > 0){
+    connection.messagesIn = [];
+    var msgData = cbusLib.encodeACON(RetrievedValues.getNodeNumber(), channel)
+    await connection.write(msgData);
+    await utils.sleep(100);
+    connection.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == test_adapter.getNodeNumber()){
+        if (msg.mnemonic == "ACON"){
+          winston.info({message: 'universal: output test: node ' + msg.nodeNumber + ' received ACON '});
+          if (msg.eventNumber == channel){
+            hasTestPassed = true;
+          }
+        }
+      }
+    })
+    utils.processResult(RetrievedValues, hasTestPassed, 'output ON');
+    } else {
+    winston.info({message: 'universal: output test: invalid channel value 0'});
+  }
+  return hasTestPassed  
+}
+
+
 
 async function setChanneltoOutput(connection, nodeNumber, channel){
   winston.info({message: 'universal: UUT: set channel ' + channel + ' to output '});

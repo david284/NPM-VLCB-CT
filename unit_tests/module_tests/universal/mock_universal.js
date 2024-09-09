@@ -1267,6 +1267,20 @@ class CANTEST extends CbusModule{
     this.addStoredEvent("00010000")
     this.addStoredEvent("FFFFFFFF")
   }
+  actionOffEvent(simulator, eventNumber){
+    winston.info({message: 'Mock Universal: modules: test_adapter OFF event'})
+		cbusLib.setCanHeader(2, simulator.getModule(65535).CanId);
+		var msgData = cbusLib.encodeACOF(65535, eventNumber);
+    simulator.broadcast(msgData)
+  }
+
+  actionOnEvent(simulator, eventNumber){
+    winston.info({message: 'Mock Universal: modules: test_adapter ON event'})
+		cbusLib.setCanHeader(2, simulator.getModule(65535).CanId);
+		var msgData = cbusLib.encodeACON(65535, eventNumber);
+    simulator.broadcast(msgData)
+  }
+
 }
 
 class Test_Adapter extends CbusModule{
