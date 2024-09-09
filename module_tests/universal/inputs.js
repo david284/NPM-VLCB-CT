@@ -14,45 +14,86 @@ exports.test_input =  async function test_input(connection, test_adapter, Retrie
   // set channel of test_adapter to Output
   await test_adapter.setChanneltoOutput(channel)
 
-
   //set test_adapter output to 0 - but don't test response - we're setting initial state
   await test_adapter.setOutput(channel, 0)
 
   // test input 'ON'
-  hasTestPassed = false;
-  connection.messagesIn = [];
-  await test_adapter.setOutput(channel, 1)    // set test_adapter output to 'on'
-  await utils.sleep(100);
-  connection.messagesIn.forEach(msg => {
-    if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-      if (msg.mnemonic == "ACON"){
-        winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACON '});
-        if (msg.eventNumber == channel){
-          hasTestPassed = true;
-        }
-      }
-    }
-  })
-  utils.processResult(RetrievedValues, hasTestPassed, 'input ON');
+  await exports.test_input_on(connection, test_adapter, RetrievedValues, channel)
 
   // test input 'OFF'
-  hasTestPassed = false;
-  connection.messagesIn = [];
-  await test_adapter.setOutput(channel, 0)    // set test_adapter output to 'off'
-  await utils.sleep(100);
-  connection.messagesIn.forEach(msg => {
-    if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
-      if (msg.mnemonic == "ACOF"){
-        winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACOF '});
-        if (msg.eventNumber == channel){
-          hasTestPassed = true;
-        }
-      }
-    }
-  })
-  utils.processResult(RetrievedValues, hasTestPassed, 'input OFF');
+  await exports.test_input_off(connection, test_adapter, RetrievedValues, channel)
 
 }
+
+
+exports.test_input_off =  async function test_input_on(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
+  
+  if (channel > 0){
+    /*
+    // set channel of unit under test to input
+    await setChanneltoInput(connection, RetrievedValues.getNodeNumber(), channel)
+
+    // set channel of test_adapter to Output
+    await test_adapter.setChanneltoOutput(channel)
+    */
+
+    // test input 'OFF'
+    hasTestPassed = false;
+    connection.messagesIn = [];
+    await test_adapter.setOutput(channel, 0)    // set test_adapter output to 'off'
+    await utils.sleep(100);
+    connection.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+        if (msg.mnemonic == "ACOF"){
+          winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACON '});
+          if (msg.eventNumber == channel){
+            hasTestPassed = true;
+          }
+        }
+      }
+    })
+    utils.processResult(RetrievedValues, hasTestPassed, 'input ON');
+  } else {
+    winston.info({message: 'universal: input test: invalid channel value 0'});
+  }
+  return hasTestPassed
+}
+
+
+exports.test_input_on =  async function test_input_on(connection, test_adapter, RetrievedValues, channel) {
+  var hasTestPassed = false;
+  
+  if (channel > 0){
+    /*
+    // set channel of unit under test to input
+    await setChanneltoInput(connection, RetrievedValues.getNodeNumber(), channel)
+
+    // set channel of test_adapter to Output
+    await test_adapter.setChanneltoOutput(channel)
+    */
+
+    // test input 'ON'
+    connection.messagesIn = [];
+    await test_adapter.setOutput(channel, 1)    // set test_adapter output to 'on'
+    await utils.sleep(100);
+    connection.messagesIn.forEach(msg => {
+      if (msg.nodeNumber == RetrievedValues.getNodeNumber()){
+        if (msg.mnemonic == "ACON"){
+          winston.info({message: 'universal: input test: node ' + RetrievedValues.getNodeNumber() + ' received ACON '});
+          if (msg.eventNumber == channel){
+            hasTestPassed = true;
+          }
+        }
+      }
+    })
+    utils.processResult(RetrievedValues, hasTestPassed, 'input ON');
+  } else {
+    winston.info({message: 'universal: input test: invalid channel value 0'});
+  }
+  return hasTestPassed
+}
+
 
 async function setChanneltoInput(connection, nodeNumber, channel){
   winston.info({message: 'universal: UUT: set channel ' + channel + ' to input '});

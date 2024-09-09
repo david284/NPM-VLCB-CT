@@ -59,7 +59,7 @@ module.exports = class IP_Network {
     this.testClient.write(msgData);
     winston.debug({message: 'IP_NETWORK: transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
     winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.text}); 
-    await utils.sleep(10)
+    await utils.sleep(30)
   }
 	
 	closeConnection(){
