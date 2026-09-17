@@ -3,6 +3,7 @@ const winston = require('winston');		// use config from root instance
 const {SerialPort} = require("serialport");
 const { ReadlineParser } = require('@serialport/parser-readline')
 const { MockBinding } = require('@serialport/binding-mock')
+const utils = require('./utilities.js');
 
 const cbusLib = require('cbuslibrary');
 
@@ -82,11 +83,12 @@ class SerialGC {
   } // end constructor
 
 
-  write(msgData) {
+  async write(msgData) {
     var decodedMsg = cbusLib.decode(msgData);
     this.serialPort.write(msgData)
     winston.debug({message: 'SerialGC: Transmit >>> ' + decodedMsg.encoded + ' ' + decodedMsg.text});		
     winston.info({message: 'VLCB:      >>> transmitted: ' + decodedMsg.encoded + ' ' + decodedMsg.text}); 
+    await utils.sleep(30)
   }
 
 	closeConnection(){
