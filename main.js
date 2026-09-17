@@ -31,6 +31,7 @@ const Type15_CANBridge = require('./Test_suites/Type15_CANBridgeService.js');
 const Type16_SLiM = require('./Test_suites/Type16_SLiMService.js');
 const Type17_LongMessage = require('./Test_suites/Type17_LongMessageService.js');
 
+const {run_module_tests} = require('./module_tests/common.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -87,6 +88,7 @@ async function run_main(){
     winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
     winston.info({message: '   nodeNumber=<XXX> - specifies node number, skips interactive prompt'});
     winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
+    winston.info({message: '   module           - runs module specific tests (if supported)'});
     winston.info({message: '\n'});
     await utils.sleep(100);   // wait for printing
 		process.exit()
@@ -145,9 +147,8 @@ async function run_main(){
 		
 
     // This will prompt for the node number, and then run the tests
-    // If nodeNumber was provided via CLI, skip the interactive prompt
-    if (options.nodeNumber !== undefined) {
-      RetrievedValues.data['enteredNodeNumber'] = options.nodeNumber;
+    rl.question('\n Enter Node number > ', async function(answer) {
+      RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
       winston.info({message: 'VLCB: ==== Node number from CLI - ' + options.nodeNumber});
       winston.info({message: ' '});
@@ -162,11 +163,36 @@ async function run_main(){
 			} else {
 	      winston.info({message: 'VLCB: ==== Node number entered - ' + RetrievedValues.getNodeNumber()});
 			}
-        winston.info({message: ' '});
-        RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
-        runtests();                        // ok - now run actual tests.........
-      });
-    }
+      winston.info({message: ' '});
+      RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
+      if (options.module){
+        await run_module_tests(connection, RetrievedValues)
+      } else {
+        await runtests();                        // ok - now run actual tests.........
+      }
+
+      //
+      // all tests done, so do final items
+      //
+      winston.info({message: '\n\nAll Tests finished' 
+        + '\n Passed count : ' + RetrievedValues.data.TestsPassed 
+        + '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
+
+      // ensure RetrievedValues is updated on disk
+      RetrievedValues.writeToDisk();
+
+      await utils.sleep(500);		// delay to allow the log writes to catch up
+
+      connection.closeConnection()
+      winston.info({message: '\nVLCB: test sequence completed'});
+      rl.close();
+      process.stdin.destroy();
+
+      // archive all results into zip file ...
+      files.copyFiles(RetrievedValues.data.DescriptorIdentity);
+      winston.info({message: '\n\nVLCB: End\n\n\n'});
+
+    });
   } else {
     // end app if no connection found (this condition should never occur, but still.....)
     winston.info({message: '\nnVLCB: ******** ERROR: no connection found - terminating \n'});
@@ -298,7 +324,7 @@ async function runtests() {
 		utils.processResult(RetrievedValues, true, 'HEARTB');
 	}
 
-		
+/*		
 
 	//
 	// all tests done, so do final items
@@ -320,6 +346,8 @@ async function runtests() {
   // archive all results into zip file ...
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
 	winston.info({message: '\n\nVLCB: End\n\n\n'});
+
+  */
 	
 }	// endRunTests()
 
@@ -337,9 +365,10 @@ function networkSelected() {
   
 function getCommandLineOptions(){
 	// command line arguments will be 'node' <javascript file started> '--' <arguments starting at index 3>
+  // aasume auto connection to start
+  options["connection"] = 'auto'
 	for (var item in process.argv){
     winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
-		options["connection"] = 'auto'
     if (process.argv[item].toLowerCase() == 'help'){
       options["help"] = true
     }
@@ -354,9 +383,8 @@ function getCommandLineOptions(){
       options["connection"] = 'serialPort'
 			options["serialPort"] = myArray[1]
     }
-    if (process.argv[item].toLowerCase().includes('nodenumber')){
-			const myArray = process.argv[item].split("=");
-      options["nodeNumber"] = parseInt(myArray[1]);
+    if (process.argv[item].toLowerCase() == 'module'){
+      options["module"] = true
     }
 	}
 
