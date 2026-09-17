@@ -86,6 +86,7 @@ async function run_main(){
     winston.info({message: '   auto             - (or blank) attempts to automatically find CANUSB4'});
     winston.info({message: '   network          - uses tcp connection'});
     winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
+    winston.info({message: '   nodeNumber=<XXX> - specifies node number, skips interactive prompt'});
     winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
     winston.info({message: '   module           - runs module specific tests (if supported)'});
     winston.info({message: '\n'});
@@ -95,7 +96,7 @@ async function run_main(){
 
   if(options.showSerials){
     utils.checkSerialPort()
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
 		process.exit()
 	}
 
@@ -107,7 +108,7 @@ async function run_main(){
 	if(options.connection == 'auto'){
     let canbus4_info = {'path': null}  // seems we have to create an object so it passes by ref
     utils.findCANUSB4(canbus4_info)
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
     winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
     if (canbus4_info.path) {
       connection = new SerialGC.SerialGC(canbus4_info.path)
@@ -120,7 +121,7 @@ async function run_main(){
 	if(options.connection == 'serialPort'){
     let serialPort_info = {'path': options.serialPort}
 		utils.checkSerialPort(serialPort_info)
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
 		if(serialPort_info.valid){
 			connection = new SerialGC.SerialGC(serialPort_info.path)
 		} else {
@@ -149,6 +150,14 @@ async function run_main(){
     rl.question('\n Enter Node number > ', async function(answer) {
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
+      winston.info({message: 'VLCB: ==== Node number from CLI - ' + options.nodeNumber});
+      winston.info({message: ' '});
+      RetrievedValues.setNodeNumber(options.nodeNumber);
+      runtests();
+    } else {
+      rl.question('\n Enter Node number > ', function(answer) {
+        RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
+        winston.info({message: ' '});
 			if (Number.isNaN(RetrievedValues.data.enteredNodeNumber)){
 				winston.info({message: 'VLCB: ==== No Node number entered'});
 			} else {
