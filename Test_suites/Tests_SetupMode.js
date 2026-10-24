@@ -100,6 +100,9 @@ module.exports = class SetupMode_tests {
         RetrievedValues.data.TestsFailed++;
       }
 		
+			// put module into VLCB mode (FCU_Compatibility = false)
+			await this.opcodes_7x.test_MODE(RetrievedValues, 17)
+
       utils.DisplayEndDivider(this.Title + ' tests finished');
       
       winston.debug({message: 'VLCB: Setup Mode : RetrievedValues \n' + JSON.stringify(RetrievedValues.data, null, "    ")});
