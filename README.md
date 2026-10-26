@@ -61,6 +61,7 @@ use 'npm start [command line options]'
    auto             - (or just 'npm start') attempts to automatically find CANUSB4
    network          - uses tcp connection
    serialPort=<XXX> - selects specific serial port (e.g. COM3)
+   nodeNumber=<XXX> - specifies node number, skips interactive prompt
    showserials      - just lists all serial ports, and terminates
 
 # Test-Results folder

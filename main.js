@@ -31,6 +31,7 @@ const Type15_CANBridge = require('./Test_suites/Type15_CANBridgeService.js');
 const Type16_SLiM = require('./Test_suites/Type16_SLiMService.js');
 const Type17_LongMessage = require('./Test_suites/Type17_LongMessageService.js');
 
+const {run_module_tests} = require('./module_tests/common.js');
 
 // Scope:
 // variables declared outside of the class are 'global' to this module only
@@ -85,7 +86,9 @@ async function run_main(){
     winston.info({message: '   auto             - (or blank) attempts to automatically find CANUSB4'});
     winston.info({message: '   network          - uses tcp connection'});
     winston.info({message: '   serialPort=<XXX> - selects specific serial port (e.g. COM3)'});
+    winston.info({message: '   nodeNumber=<XXX> - specifies node number, skips interactive prompt'});
     winston.info({message: '   showserials      - just lists all serial ports, and terminates'});
+    winston.info({message: '   module           - runs module specific tests (if supported)'});
     winston.info({message: '\n'});
     await utils.sleep(100);   // wait for printing
 		process.exit()
@@ -93,7 +96,7 @@ async function run_main(){
 
   if(options.showSerials){
     utils.checkSerialPort()
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
 		process.exit()
 	}
 
@@ -105,7 +108,7 @@ async function run_main(){
 	if(options.connection == 'auto'){
     let canbus4_info = {'path': null}  // seems we have to create an object so it passes by ref
     utils.findCANUSB4(canbus4_info)
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
     winston.debug({message: '---- canusb4 result ' + JSON.stringify(canbus4_info)});
     if (canbus4_info.path) {
       connection = new SerialGC.SerialGC(canbus4_info.path)
@@ -118,7 +121,7 @@ async function run_main(){
 	if(options.connection == 'serialPort'){
     let serialPort_info = {'path': options.serialPort}
 		utils.checkSerialPort(serialPort_info)
-    await utils.sleep(500);   // wait for serial port check to complete
+    await utils.sleep(2000);   // wait for serial port check to complete (RPi3 USB enumeration needs >1s)
 		if(serialPort_info.valid){
 			connection = new SerialGC.SerialGC(serialPort_info.path)
 		} else {
@@ -144,9 +147,17 @@ async function run_main(){
 		
 
     // This will prompt for the node number, and then run the tests
-    rl.question('\n Enter Node number > ', function(answer) {
+    rl.question('\n Enter Node number > ', async function(answer) {
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
+      winston.info({message: 'VLCB: ==== Node number from CLI - ' + options.nodeNumber});
+      winston.info({message: ' '});
+      RetrievedValues.setNodeNumber(options.nodeNumber);
+      runtests();
+    } else {
+      rl.question('\n Enter Node number > ', function(answer) {
+        RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
+        winston.info({message: ' '});
 			if (Number.isNaN(RetrievedValues.data.enteredNodeNumber)){
 				winston.info({message: 'VLCB: ==== No Node number entered'});
 			} else {
@@ -154,7 +165,33 @@ async function run_main(){
 			}
       winston.info({message: ' '});
       RetrievedValues.setNodeNumber(RetrievedValues.data.enteredNodeNumber)
-      runtests();                        // ok - now run actual tests.........
+      if (options.module){
+        await run_module_tests(connection, RetrievedValues)
+      } else {
+        await runtests();                        // ok - now run actual tests.........
+      }
+
+      //
+      // all tests done, so do final items
+      //
+      winston.info({message: '\n\nAll Tests finished' 
+        + '\n Passed count : ' + RetrievedValues.data.TestsPassed 
+        + '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
+
+      // ensure RetrievedValues is updated on disk
+      RetrievedValues.writeToDisk();
+
+      await utils.sleep(500);		// delay to allow the log writes to catch up
+
+      connection.closeConnection()
+      winston.info({message: '\nVLCB: test sequence completed'});
+      rl.close();
+      process.stdin.destroy();
+
+      // archive all results into zip file ...
+      files.copyFiles(RetrievedValues.data.DescriptorIdentity);
+      winston.info({message: '\n\nVLCB: End\n\n\n'});
+
     });
   } else {
     // end app if no connection found (this condition should never occur, but still.....)
@@ -287,7 +324,7 @@ async function runtests() {
 		utils.processResult(RetrievedValues, true, 'HEARTB');
 	}
 
-		
+/*		
 
 	//
 	// all tests done, so do final items
@@ -309,6 +346,8 @@ async function runtests() {
   // archive all results into zip file ...
 	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
 	winston.info({message: '\n\nVLCB: End\n\n\n'});
+
+  */
 	
 }	// endRunTests()
 
@@ -326,9 +365,10 @@ function networkSelected() {
   
 function getCommandLineOptions(){
 	// command line arguments will be 'node' <javascript file started> '--' <arguments starting at index 3>
+  // aasume auto connection to start
+  options["connection"] = 'auto'
 	for (var item in process.argv){
     winston.debug({message: 'main: argv ' + item + ' ' + process.argv[item]});
-		options["connection"] = 'auto'
     if (process.argv[item].toLowerCase() == 'help'){
       options["help"] = true
     }
@@ -342,6 +382,9 @@ function getCommandLineOptions(){
 			const myArray = process.argv[item].split("=");
       options["connection"] = 'serialPort'
 			options["serialPort"] = myArray[1]
+    }
+    if (process.argv[item].toLowerCase() == 'module'){
+      options["module"] = true
     }
 	}
 
