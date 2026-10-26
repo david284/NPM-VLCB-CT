@@ -14,7 +14,7 @@
     "cbuslibrary": "^2.1.1",
     "chai": "^4.2.0",
     "jsonfile": "^6.0.1",
-    "mocha": "^8.2.1",
+    "mocha": "^11.7.4",
     "mocha-param": "2.0.1",
     "openurl": "^1.1.1",
     "serialport": "^11.0.1",
