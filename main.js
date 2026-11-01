@@ -150,14 +150,6 @@ async function run_main(){
     rl.question('\n Enter Node number > ', async function(answer) {
       RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
       winston.info({message: ' '});
-      winston.info({message: 'VLCB: ==== Node number from CLI - ' + options.nodeNumber});
-      winston.info({message: ' '});
-      RetrievedValues.setNodeNumber(options.nodeNumber);
-      runtests();
-    } else {
-      rl.question('\n Enter Node number > ', function(answer) {
-        RetrievedValues.data['enteredNodeNumber'] = parseInt(answer)
-        winston.info({message: ' '});
 			if (Number.isNaN(RetrievedValues.data.enteredNodeNumber)){
 				winston.info({message: 'VLCB: ==== No Node number entered'});
 			} else {
@@ -193,12 +185,15 @@ async function run_main(){
       winston.info({message: '\n\nVLCB: End\n\n\n'});
 
     });
+
+
   } else {
     // end app if no connection found (this condition should never occur, but still.....)
     winston.info({message: '\nnVLCB: ******** ERROR: no connection found - terminating \n'});
     process.exit()
   }
 }
+
 
 
 // Block to call test suites to ensure they run in sequence
@@ -323,31 +318,6 @@ async function runtests() {
 	} else {
 		utils.processResult(RetrievedValues, true, 'HEARTB');
 	}
-
-/*		
-
-	//
-	// all tests done, so do final items
-	//
-	winston.info({message: '\n\nAll Tests finished' 
-				+ '\n Passed count : ' + RetrievedValues.data.TestsPassed 
-				+ '\n Failed count : ' + RetrievedValues.data.TestsFailed + '\n'});
-
-  // ensure RetrievedValues is updated on disk
-  RetrievedValues.writeToDisk();
-	
-	await utils.sleep(500);		// delay to allow the log writes to catch up
-
-	connection.closeConnection()
-	winston.info({message: '\nVLCB: test sequence completed'});
-	rl.close();
-	process.stdin.destroy();
-
-  // archive all results into zip file ...
-	files.copyFiles(RetrievedValues.data.DescriptorIdentity);
-	winston.info({message: '\n\nVLCB: End\n\n\n'});
-
-  */
 	
 }	// endRunTests()
 
