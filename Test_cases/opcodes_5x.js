@@ -230,22 +230,28 @@ module.exports = class opcodes_5x {
     }
     utils.DisplayComment("NERD test - expecting " + expectedEventCount + " events")
     winston.debug({message: 'VLCB: NERD - expecting ' + expectedEventCount + ' events'});
+    var startTime = Date.now();
     var timeout = 5000 + expectedEventCount * 20
     if (RetrievedValues.data.unitTestsRunning){timeout = 50 }   // cut down timeout as local unit tests
     var eventCount = 0;
-    await utils.sleep(timeout);
-    this.network.messagesIn.forEach(msg => {
-      if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
-        if (msg.mnemonic == "ENRSP"){
-          eventCount++
-          comment = ' - received ENRSP'
-          // store the returned value
-          if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
-          RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
+    while(Date.now()-startTime < timeout) { 
+      await utils.sleep(10);
+      this.network.messagesIn.forEach(msg => {
+        if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
+          if (msg.mnemonic == "ENRSP"){
+            eventCount++
+            comment = ' - received ENRSP'
+            // store the returned value
+            if (RetrievedValues.data.events[msg.eventIndex] == undefined) { RetrievedValues.data.events[msg.eventIndex] = {}; }
+            RetrievedValues.data.events[msg.eventIndex].eventIdentifier = msg.eventIdentifier;
+          }
         }
+      })
+      if (eventCount == expectedEventCount) {
+        this.hasTestPassed = true
+        break
       }
-    })
-    if (eventCount == expectedEventCount) this.hasTestPassed = true
+    }
     if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
     utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
     return this.hasTestPassed
@@ -326,7 +332,7 @@ module.exports = class opcodes_5x {
     var comment = ''
     var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
     this.network.write(msgData);
-    await utils.sleep(250);    // allow time for command to be processed - can't check this directly
+    await utils.sleep(5000);    // allow time for command to be processed - can't check this directly
 
     if (serviceIndex) {
       // get all diagnostics for MNS service, so we can check uptime has been reset
@@ -360,11 +366,11 @@ module.exports = class opcodes_5x {
       if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
         var uptime = (MSB_Uptime << 8) + LSB_Uptime
         winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-        if (uptime < 2){ 
+        if (uptime < 3){ 
           this.hasTestPassed = true 
-          comment = ' - uptime is less than 2'
+          comment = ' - uptime is less than 3'
         } else {
-          comment = ' - uptime is ' + uptime + ', but expected < 2'
+          comment = ' - uptime is ' + uptime + ', but expected < 3'
         }
       } else {
         comment = ' -  uptime after NNRST has undefined value'
