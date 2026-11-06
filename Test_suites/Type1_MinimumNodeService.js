@@ -133,6 +133,9 @@ module.exports = class MinimumNodeServiceTests{
 							// NNRST - node reset - check the uptime values after reset to see if the unit has actually reset
 							await this.opcodes_5x.test_NNRST(RetrievedValues, serviceIndex);
 
+         			// put module into VLCB mode (FCU_Compatibility = false)
+              // would have been changed by the previous NNRST
+        			await this.opcodes_7x.test_MODE(RetrievedValues, 17)
 						}
 					}
 				// NNRSM - node return to manufaturer defaults - should retain node number

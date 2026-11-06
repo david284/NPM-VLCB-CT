@@ -51,7 +51,7 @@ module.exports = class opcodes_7x {
           if (msg.mnemonic == "NVANS"){
             comment = ' - received NVANS message'
             if (msg.nodeVariableIndex >0) countNV++   // only count if non-zero (NV 0 isn't counted)
-            winston.debug({message: 'VLCB: received NVANS message ' + countNV});
+            //winston.debug({message: 'VLCB: received NVANS message ' + countNV});
             RetrievedValues.data.nodeVariables[msg.nodeVariableIndex] = msg.nodeVariableValue;
             if (NodeVariableIndex > 0) {
               // if requested NV is not 0, only expecting one response, so it's passed if we get here
