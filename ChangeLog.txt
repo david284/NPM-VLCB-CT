@@ -2,4 +2,5 @@
 Version 0.1.0
   Started change log
   Fixed RQNPN tests
+  Fixed REQEV test
   Fixed NNRST test
