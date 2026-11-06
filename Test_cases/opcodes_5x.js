@@ -332,8 +332,9 @@ module.exports = class opcodes_5x {
     var comment = ''
     var msgData = cbusLib.encodeNNRST(RetrievedValues.getNodeNumber());
     this.network.write(msgData);
-    await utils.sleep(5000);    // allow time for command to be processed - can't check this directly
-
+    // now allow time for command to be processed - can't check this directly
+    // note that checking the run time later should check for a time less than this timeout
+    await utils.sleep(5000);    
     if (serviceIndex) {
       // get all diagnostics for MNS service, so we can check uptime has been reset
       winston.debug({message: 'VLCB: NNRST test - getting all MNS diagnostics after NNRST'});
@@ -366,11 +367,12 @@ module.exports = class opcodes_5x {
       if ((MSB_Uptime != undefined) && (LSB_Uptime != undefined)) {
         var uptime = (MSB_Uptime << 8) + LSB_Uptime
         winston.info({message: 'VLCB:      NNRST: ' + ' uptime after NNRST = ' + uptime}); 
-        if (uptime < 3){ 
+        // the uptime should be less than the time allowed for NNRST to be processed earlier
+        if (uptime < 5){ 
           this.hasTestPassed = true 
-          comment = ' - uptime is less than 3'
+          comment = ' - uptime is less than 5'
         } else {
-          comment = ' - uptime is ' + uptime + ', but expected < 3'
+          comment = ' - uptime is ' + uptime + ', but expected < 5'
         }
       } else {
         comment = ' -  uptime after NNRST has undefined value'
