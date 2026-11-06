@@ -5,3 +5,4 @@ Version 0.1.0
   Fixed REQEV test
   Fixed NNRST test
   Fixed NVRD test - NNRST was reseting FCU Compatibility
+  Fixed NERD test

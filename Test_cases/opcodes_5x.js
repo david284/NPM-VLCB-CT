@@ -236,6 +236,7 @@ module.exports = class opcodes_5x {
     var eventCount = 0;
     while(Date.now()-startTime < timeout) { 
       await utils.sleep(10);
+      eventCount = 0
       this.network.messagesIn.forEach(msg => {
         if (msg.nodeNumber == RetrievedValues.getNodeNumber()) {
           if (msg.mnemonic == "ENRSP"){
@@ -252,7 +253,8 @@ module.exports = class opcodes_5x {
         break
       }
     }
-    if(!this.hasTestPassed){ comment = ' - missing expected ENRSP'; }
+    comment = ` - ENRSP count expected ${expectedEventCount} received ${eventCount}`
+    winston.debug({message: 'VLCB: NERD' + comment});
     utils.processResult(RetrievedValues, this.hasTestPassed, 'NERD (0x57)', comment);
     return this.hasTestPassed
   }
